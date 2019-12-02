@@ -34,3 +34,14 @@ fn decode_string() {
         assert_eq!(expect, &got);
     }
 }
+
+#[test]
+fn encode_to_string() {
+    let cases = encode_decode_test_cases();
+    for v in cases.iter() {
+        let (expect, src) = v;
+
+        let got = hex::encode_to_string(src);
+        assert_eq!(expect, &got);
+    }
+}

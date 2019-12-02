@@ -1,5 +1,9 @@
 use super::errors::Error;
 
+const HEXTABLE: [u8; 16] = [
+    b'0', b'1', b'2', b'3', b'4', b'5', b'6', b'7', b'8', b'9', b'a', b'b', b'c', b'd', b'e', b'f',
+];
+
 pub fn decode(dst: &mut [u8], src: &[u8]) -> Result<usize, Error> {
     let mut i: usize = 0;
 
@@ -27,6 +31,32 @@ pub fn decode_string(s: &str) -> Result<Vec<u8>, Error> {
     dst.resize(ell, 0);
 
     Ok(dst)
+}
+
+pub fn encode(dst: &mut [u8], src: &[u8]) -> usize {
+    let mut j = 0;
+    for v in src.iter() {
+        let vv = *v as usize;
+
+        dst[j] = HEXTABLE[vv >> 4];
+        dst[j + 1] = HEXTABLE[vv & 0x0f];
+
+        j += 2;
+    }
+
+    src.len() * 2
+}
+
+pub fn encode_len(n: usize) -> usize {
+    n * 2
+}
+
+pub fn encode_to_string(src: &[u8]) -> String {
+    let mut dst = vec![0; encode_len(src.len())];
+
+    encode(dst.as_mut_slice(), src);
+
+    String::from_utf8(dst).unwrap()
 }
 
 fn from_hex_char(c: u8) -> Result<u8, ()> {
