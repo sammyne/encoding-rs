@@ -11,3 +11,6 @@ Supported encodings go as follow
 - [x] hex
 - [ ] base58
 - [ ] base64
+
+## Head Ups
+- Stable rust doesn't support benchmark well, so [criterion](https://crates.io/crates/criterion) is used for now.

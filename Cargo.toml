@@ -8,3 +8,10 @@ edition = "2018"
 
 [dependencies]
 #serde = "1.0.104"
+
+[dev-dependencies]
+criterion = "0.3"
+
+[[bench]]
+name = "hex"
+harness = false
