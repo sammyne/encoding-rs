@@ -23,6 +23,10 @@ pub fn decode(dst: &mut [u8], src: &[u8]) -> Result<usize, Error> {
     Ok(i)
 }
 
+pub fn decoded_len(x: usize) -> usize {
+    x / 2
+}
+
 pub fn decode_string(s: &str) -> Result<Vec<u8>, Error> {
     let mut dst = vec![0; s.len() / 2];
 
@@ -47,12 +51,12 @@ pub fn encode(dst: &mut [u8], src: &[u8]) -> usize {
     src.len() * 2
 }
 
-pub fn encode_len(n: usize) -> usize {
+pub fn encoded_len(n: usize) -> usize {
     n * 2
 }
 
 pub fn encode_to_string(src: &[u8]) -> String {
-    let mut dst = vec![0; encode_len(src.len())];
+    let mut dst = vec![0; encoded_len(src.len())];
 
     encode(dst.as_mut_slice(), src);
 
