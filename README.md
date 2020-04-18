@@ -1,6 +1,7 @@
 # encoding-rs
 
 [![CircleCI](https://circleci.com/gh/sammyne/encoding-rs.svg?style=svg)](https://circleci.com/gh/sammyne/encoding-rs)
+![minimum rustc](https://img.shields.io/badge/rustc-1.42%2B-blue)
 
 This repository tries to implement a Go-like encoding library in Rust.
 
