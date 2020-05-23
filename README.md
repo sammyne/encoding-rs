@@ -1,7 +1,7 @@
 # encoding-rs
 
-[![CircleCI](https://circleci.com/gh/sammyne/encoding-rs.svg?style=svg)](https://circleci.com/gh/sammyne/encoding-rs)
-![rust](https://github.com/sammyne/encoding-rs/workflows/rust/badge.svg?branch=master)
+![master](https://github.com/sammyne/encoding-rs/workflows/rust/badge.svg?branch=master)
+![dev](https://github.com/sammyne/encoding-rs/workflows/rust/badge.svg?branch=dev)
 [![docs badge](https://img.shields.io/badge/docs-0.2.0-blue)](https://sammyne.github.io/encoding-rs/encoding/)
 ![minimum rustc](https://img.shields.io/badge/rustc-1.43%2B-blue)
 
