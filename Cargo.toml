@@ -8,6 +8,7 @@ edition = "2018"
 
 [dependencies]
 #serde = "1.0.104"
+thiserror = "1.0.17"
 
 [dev-dependencies]
 criterion = "0.3"
