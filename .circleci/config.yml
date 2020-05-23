@@ -5,7 +5,7 @@ jobs:
   build:
     docker:
       # specify the version
-      - image: circleci/rust:1.40.0-buster
+      - image: circleci/rust:1.43.0-buster
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
