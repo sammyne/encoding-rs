@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["MAX_VARINT_LEN16",""],["MAX_VARINT_LEN32",""],["MAX_VARINT_LEN64",""]],"fn":[["put_uvarint",""],["put_varint",""],["read_uvarint",""],["read_varint",""],["uvariant",""],["variant",""]],"struct":[["BigEndian",""],["LittleEndian",""]],"trait":[["ByteOrder",""]]});

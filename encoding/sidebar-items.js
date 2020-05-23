@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["hex",""]]});
+initSidebarItems({"enum":[["Error",""]],"mod":[["binary",""],["hex",""]]});
