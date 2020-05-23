@@ -1,10 +1,10 @@
-name: rust
+name: build
 
 on:
   push:
-    branches-ignore: [ 'gh-pages' ]
+    branches: [ 'master' ]
   pull_request:
-    branches-ignore: [ 'gh-pages' ]
+    branches: [ 'master' ]
 
 jobs:
   test:
