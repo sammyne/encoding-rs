@@ -260,10 +260,8 @@ impl Encoding {
             if src.len() == src_idx {
                 match j {
                     0 => return Ok((0, 0)),
-                    1 => return Err(Error::CorruputInputError(src_idx)),
-                    _ if self.pad_char.is_some() => {
-                        return Err(Error::CorruputInputError(src_idx - j))
-                    }
+                    1 => return Err(new_corrupted_error(src_idx)),
+                    _ if self.pad_char.is_some() => return Err(new_corrupted_error(src_idx - j)),
                     _ => {}
                 }
 
@@ -283,11 +281,11 @@ impl Encoding {
             }
 
             if !self.is_pad_char(c) {
-                return Err(Error::CorruputInputError(src_idx - 1));
+                return Err(new_corrupted_error(src_idx - 1));
             }
 
             match j {
-                0 | 1 => return Err(Error::CorruputInputError(src_idx - 1)), // at most 2 padding char
+                0 | 1 => return Err(new_corrupted_error(src_idx - 1)), // at most 2 padding char
                 2 => {
                     while src_idx < src.len()
                         && (src[src_idx] == constants::LF || src[src_idx] == constants::CR)
@@ -296,11 +294,11 @@ impl Encoding {
                     }
 
                     if src_idx == src.len() {
-                        return Err(Error::CorruputInputError(src.len()));
+                        return Err(new_corrupted_error(src.len()));
                     }
 
                     if !self.is_pad_char(src[src_idx]) {
-                        return Err(Error::CorruputInputError(src_idx - 1));
+                        return Err(new_corrupted_error(src_idx - 1));
                     }
 
                     src_idx += 1;
@@ -315,7 +313,7 @@ impl Encoding {
             }
 
             if src_idx < src.len() {
-                return Err(Error::CorruputInputError(src_idx));
+                return Err(new_corrupted_error(src_idx));
             }
 
             break j;
@@ -338,14 +336,14 @@ impl Encoding {
         if dlen >= 3 {
             dst[1] = dbuf[1];
             if self.strict && dbuf[2] != 0 {
-                return Err(Error::CorruputInputError(src_idx - 1));
+                return Err(new_corrupted_error(src_idx - 1));
             }
             dbuf[1] = 0;
         }
         if dlen >= 2 {
             dst[0] = dbuf[0];
             if self.strict && dbuf[2] != 0 {
-                return Err(Error::CorruputInputError(src_idx - 2));
+                return Err(new_corrupted_error(src_idx - 2));
             }
         }
 
@@ -386,4 +384,8 @@ fn assemble64(n1: u8, n2: u8, n3: u8, n4: u8, n5: u8, n6: u8, n7: u8, n8: u8) ->
         | (n8 as u64) << 16;
 
     return Ok(out);
+}
+
+fn new_corrupted_error(idx: usize) -> Error {
+    return Error::CorruputInputError("base64", idx);
 }
