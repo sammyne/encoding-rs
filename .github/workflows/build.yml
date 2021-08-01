@@ -2,16 +2,16 @@ name: build
 
 on:
   push:
-    branches: [ 'master' ]
+    branches: [ 'main' ]
   pull_request:
-    branches: [ 'master' ]
+    branches: [ 'main' ]
 
 jobs:
   test:
 
     runs-on: ubuntu-18.04
     container: 
-      image: rust:1.43.0
+      image: rust:1.54.0
 
     steps:
     - uses: actions/checkout@v2
