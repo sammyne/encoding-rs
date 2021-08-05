@@ -88,6 +88,10 @@ impl Encoding {
         }
     }
 
+    pub fn is_with_padding(&self) -> bool {
+        self.spec.padding.is_some()
+    }
+
     pub fn with_padding(&mut self, padding: char) -> &Self {
         if !padding.is_ascii() {
             panic!("invalid padding")
