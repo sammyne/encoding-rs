@@ -121,7 +121,7 @@ impl Encoding {
 }
 
 //fn new_corrupted_error(idx: usize) -> Error {
-//    Error::CorruputInputError("base32", idx)
+//    Error::CorruptInputError("base32", idx)
 //}
 
 fn new_io_error<E>(err: E, n: usize) -> Error

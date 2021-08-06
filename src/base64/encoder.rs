@@ -387,5 +387,5 @@ fn assemble64(n1: u8, n2: u8, n3: u8, n4: u8, n5: u8, n6: u8, n7: u8, n8: u8) ->
 }
 
 fn new_corrupted_error(idx: usize) -> Error {
-    return Error::CorruputInputError("base64", idx);
+    return Error::CorruptInputError("base64", idx);
 }
