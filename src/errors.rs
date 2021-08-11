@@ -1,3 +1,4 @@
+use std::convert::Into;
 use std::io;
 
 #[derive(thiserror::Error, Debug)]
@@ -10,4 +11,14 @@ pub enum Error {
     IO(io::Error, usize),
     #[error("binary: varint overflows a 64-bit integer")]
     Overflow,
+}
+
+impl Into<io::Error> for Error {
+    fn into(self) -> io::Error {
+        if let Error::IO(err, _) = self {
+            return err;
+        }
+
+        io::Error::new(io::ErrorKind::Other, self.to_string())
+    }
 }
