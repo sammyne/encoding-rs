@@ -1,14 +1,21 @@
 use std::io::{self, Write};
 
-pub struct Encoder {
+pub struct Encoder<'a, W>
+where
+    W: Write,
+{
     err: Option<io::Error>,
-    w: Box<dyn Write>,
+    //w: Box<dyn Write>,
+    w: &'a mut W,
     buf: [u8; 4],
     nbuf: usize,
     out: [u8; 1024],
 }
 
-impl Write for Encoder {
+impl<'a, W> Write for Encoder<'a, W>
+where
+    W: Write,
+{
     fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
         self.error_or(0)?;
 
@@ -32,7 +39,7 @@ impl Write for Encoder {
             let nout = super::encode(&mut self.out, &self.buf);
             if let Err(err) = self.w.write(&self.out[..nout]) {
                 self.err = Some(err);
-                return Ok(written);
+                return self.nonzero_or_error(written);
             }
             self.nbuf = 0;
         }
@@ -48,7 +55,7 @@ impl Write for Encoder {
                 let nout = super::encode(&mut self.out, &p[..nn]);
                 if let Err(err) = self.w.write(&self.out[..nout]) {
                     self.err = Some(err);
-                    return Ok(written);
+                    return self.nonzero_or_error(written);
                 }
             }
 
@@ -57,9 +64,7 @@ impl Write for Encoder {
         }
 
         // Trailing fringe.
-        for i in 0..p.len() {
-            self.buf[i] = p[i];
-        }
+        self.buf[..p.len()].copy_from_slice(p);
         self.nbuf = p.len();
         written += p.len();
 
@@ -79,8 +84,12 @@ impl Write for Encoder {
     }
 }
 
-impl Encoder {
-    pub fn new(w: Box<dyn Write>) -> Box<dyn Write> {
+impl<'a, W> Encoder<'a, W>
+where
+    W: Write,
+{
+    //pub fn new(w: Box<dyn Write>) -> Box<dyn Write> {
+    pub fn new(w: &'a mut W) -> Self {
         let out = Self {
             err: None,
             w: w,
@@ -89,7 +98,7 @@ impl Encoder {
             out: [0u8; 1024],
         };
 
-        Box::new(out)
+        out
     }
 
     fn error_or<T>(&self, ok: T) -> io::Result<T> {
@@ -98,5 +107,13 @@ impl Encoder {
         } else {
             Ok(ok)
         }
+    }
+
+    fn nonzero_or_error(&self, ok: usize) -> io::Result<usize> {
+        if ok != 0 {
+            return Ok(ok);
+        }
+
+        self.error_or(0)
     }
 }

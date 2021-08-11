@@ -1,5 +1,6 @@
 //#![feature(test)]
 
+pub(self) mod builtin;
 mod errors;
 
 pub mod ascii85;

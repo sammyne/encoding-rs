@@ -70,9 +70,6 @@ pub fn encode(dst: &mut [u8], src: &[u8]) -> usize {
     let mut written = 0usize;
     let (mut dst_idx, mut src_idx) = (0, 0);
     while src_idx < src.len() {
-        println!("----");
-        println!("src_idx={}, len(src)={}", src_idx, src.len());
-        println!("dst_idx={}, len(dst)={}", dst_idx, dst.len());
         let (dst, src) = (&mut dst[dst_idx..], &src[src_idx..]);
 
         dst[0..5].fill(0);

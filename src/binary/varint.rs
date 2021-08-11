@@ -82,9 +82,7 @@ pub fn uvariant(buf: &[u8]) -> (u64, isize) {
 
     for (i, &b) in buf.iter().enumerate() {
         if b < 0x80 {
-            println!("i={}", i);
             if i > 9 || (i == 9 && b > 1) {
-                println!("ii={}", i);
                 return (0, -((i + 1) as isize));
             }
 
