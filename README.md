@@ -14,7 +14,7 @@ Supported encodings go as follow
 
 | scheme  | implementation          | document                               | comment |
 | ------- | ----------------------- | -------------------------------------- | ------- |
-| ascii85 |                         |
+| ascii85 | :ballot_box_with_check: |
 | asn1    |                         |
 | base32  |                         |
 | base58  |                         |
