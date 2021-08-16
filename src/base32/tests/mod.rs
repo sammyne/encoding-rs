@@ -1,4 +1,4 @@
-pub use crate::base32::STD_ENCODING;
+use crate::base32::STD_ENCODING;
 
 #[test]
 fn decode() {
