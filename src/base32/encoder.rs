@@ -2,9 +2,12 @@ use std::io::{self, Write};
 
 use crate::base32::Encoding;
 
-pub struct Encoder {
+pub struct Encoder<'a, W>
+where
+    W: Write,
+{
     enc: Encoding,
-    w: Box<dyn Write>,
+    w: &'a mut W,
     err: Option<io::Error>,
 
     buf: [u8; 5],
@@ -12,7 +15,10 @@ pub struct Encoder {
     out: [u8; 1024],
 }
 
-impl Write for Encoder {
+impl<'a, W> Write for Encoder<'a, W>
+where
+    W: Write,
+{
     fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
         if self.err.is_some() {
             return self.error_or(0);
@@ -76,18 +82,19 @@ impl Write for Encoder {
     }
 }
 
-impl Encoder {
-    pub fn new(enc: Encoding, w: Box<dyn Write>) -> Box<dyn io::Write> {
-        let out = Self {
+impl<'a, W> Encoder<'a, W>
+where
+    W: Write,
+{
+    pub fn new(enc: Encoding, w: &'a mut W) -> Self {
+        Self {
             enc: enc,
             w: w,
             err: None,
             buf: [0u8; 5],
             nbuf: 0,
             out: [0u8; 1024],
-        };
-
-        Box::new(out)
+        }
     }
 
     fn error_or<T>(&self, ok: T) -> io::Result<T> {

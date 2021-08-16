@@ -5,7 +5,6 @@ where
     W: Write,
 {
     err: Option<io::Error>,
-    //w: Box<dyn Write>,
     w: &'a mut W,
     buf: [u8; 4],
     nbuf: usize,
