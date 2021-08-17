@@ -20,12 +20,10 @@ where
     W: Write,
 {
     fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
-        if self.err.is_some() {
-            return self.error_or(0);
-        }
+        self.error_or(0)?;
         let mut buf = buf;
-
         let mut written = 0usize;
+
         // Leading fringe
         if self.nbuf > 0 {
             let mut i = 0usize;
@@ -39,6 +37,13 @@ where
             if self.nbuf < 5 {
                 return Ok(written);
             }
+
+            self.enc.encode(&mut self.out, &self.buf);
+            if let Err(err) = self.w.write(&self.out[..8]) {
+                self.err = Some(err);
+                self.error_or(0)?;
+            }
+            self.nbuf = 0;
         }
 
         // Large interior chunks
@@ -52,7 +57,7 @@ where
             self.enc.encode(self.out.as_mut(), &buf[0..nn]);
             if let Err(err) = self.w.write(&self.out[..(nn / 5 * 8)]) {
                 self.err = Some(err);
-                return self.error_or(0);
+                self.error_or(0)?;
             }
             written += nn;
             buf = &buf[nn..];
