@@ -1,6 +1,6 @@
 use lazy_static::lazy_static;
 
-use super::constants;
+use crate::base32::constants;
 use crate::Error;
 
 lazy_static! {
@@ -12,7 +12,7 @@ lazy_static! {
 pub struct Encoding {
     encode: [u8; 32],
     decode_map: [u8; 256],
-    pad_char: Option<u8>,
+    pub(super) pad_char: Option<u8>,
 }
 
 impl Encoding {
@@ -182,7 +182,7 @@ impl Encoding {
         self
     }
 
-    fn decode_(&self, dst: &mut [u8], src: &[u8]) -> Result<(usize, bool), Error> {
+    pub(super) fn decode_(&self, dst: &mut [u8], src: &[u8]) -> Result<(usize, bool), Error> {
         let mut dsti = 0usize;
         let (mut src, olen) = (src, src.len());
 
@@ -215,7 +215,7 @@ impl Encoding {
                     }
 
                     for k in 0..(8 - 1 - j) {
-                        if (src.len() < k) && (src[k] != pad_char) {
+                        if (src.len() > k) && (src[k] != pad_char) {
                             // incorrect padding
                             return Err(new_corrupted_error(olen - src.len() + k - 1));
                         }
@@ -281,7 +281,7 @@ where
 }
 */
 
-fn strip_newlines(dst: &mut [u8], src: &[u8]) -> usize {
+pub fn strip_newlines(dst: &mut [u8], src: &[u8]) -> usize {
     let mut offset = 0usize;
     for &c in src {
         if c == constants::CR || c == constants::LF {
