@@ -26,6 +26,20 @@ Supported encodings go as follow
 | pem     |                         |
 | xml     |                         |
 
+## Quickstart
+
+### tests
+
+```bash
+cargo test
+```
+
+### benchmark
+
+```bash
+cargo bench
+```
+
 ## Head Ups
 
 - Stable rust doesn't support benchmark well, so [criterion](https://crates.io/crates/criterion) is used for now.
