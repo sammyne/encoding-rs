@@ -5,6 +5,11 @@ on:
 #    branches: [ 'main' ]
   pull_request:
     branches: [ 'main' ]
+    paths:
+    - 'benches/**'
+    - 'examples/**'
+    - 'src/**'
+    - 'tests/**'
 
 jobs:
   test:
