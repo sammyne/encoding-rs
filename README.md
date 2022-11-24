@@ -4,8 +4,6 @@
 [![docs badge](https://img.shields.io/badge/docs-0.2.0-blue)](https://sammyne.github.io/encoding-rs/encoding/)
 ![minimum rustc](https://img.shields.io/badge/rustc-1.54%2B-blue)
 
-![dev](https://github.com/sammyne/encoding-rs/workflows/build-dev/badge.svg?branch=dev)
-
 This repository tries to implement a Go-like encoding library in Rust.
 
 ## Overview
