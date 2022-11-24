@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["decode",""],["encode",""],["max_encoded_len",""]],"struct":[["Decoder",""],["Encoder",""]]};

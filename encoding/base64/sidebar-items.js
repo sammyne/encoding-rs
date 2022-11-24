@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["STD_PADDING",""]],"struct":[["Encoding",""],["RAW_STD_ENCODING",""],["RAW_URL_ENCODING",""],["STD_ENCODING",""],["URL_ENCODING",""]]};

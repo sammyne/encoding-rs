@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["STD_PADDING",""]],"fn":[["strip_newlines",""]],"struct":[["Decoder",""],["Encoder",""],["Encoding",""],["HEX_ENCODING",""],["STD_ENCODING",""]]};

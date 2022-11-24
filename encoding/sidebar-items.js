@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["Error",""]],"mod":[["binary",""],["hex",""]]});
+window.SIDEBAR_ITEMS = {"enum":[["Error",""]],"mod":[["ascii85",""],["base32",""],["base64",""],["binary",""],["hex",""]]};

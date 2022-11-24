@@ -1,3 +1,4 @@
-var N = null;var sourcesIndex = {};
-sourcesIndex["encoding"] = {"name":"","dirs":[{"name":"binary","files":["binary.rs","mod.rs","varint.rs"]},{"name":"hex","dirs":[{"name":"dumper","files":["mod.rs"]}],"files":["errors.rs","hex.rs","mod.rs"]}],"files":["errors.rs","lib.rs"]};
+var sourcesIndex = JSON.parse('{\
+"encoding":["",[["ascii85",[],["decoder.rs","encoder.rs","encoding.rs","mod.rs"]],["base32",[["decoder",[],["decoder.rs","filter.rs","mod.rs"]]],["constants.rs","encoder.rs","encoding.rs","mod.rs"]],["base64",[],["constants.rs","encoder.rs","mod.rs"]],["binary",[],["binary.rs","mod.rs","varint.rs"]],["builtin",[],["mod.rs"]],["hex",[["dumper",[],["mod.rs"]]],["errors.rs","hex.rs","mod.rs"]]],["errors.rs","lib.rs"]]\
+}');
 createSourceSidebar();
