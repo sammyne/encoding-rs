@@ -1,5 +1,20 @@
 use crate::Error;
 
+/// Decodes `src` into `dst`, returning both the number
+/// of bytes written to `dst` and the number consumed from `src`.
+/// If `src` contains invalid ascii85 data, `decode` will return the
+/// number of bytes successfully written and a
+/// [CorruptInputError](crate::Error::CorruptInputError).
+/// `decode` ignores space and control characters in `src`.
+/// Often, ascii85-encoded data is wrapped in <~ and ~> symbols.
+/// `decode` expects these to have been stripped by the caller.
+///
+/// If flush is true, `decode` assumes that `src` represents the
+/// end of the input stream and processes it completely rather
+/// than wait for the completion of another 32-bit block.
+///
+/// [Decoder::new](crate::ascii85::Decoder::new) wraps an io::Read
+/// interface around `decode`.
 pub fn decode(dst: &mut [u8], src: &[u8], flush: bool) -> Result<(usize, usize), Error> {
     let (mut v, mut nb, mut ndst, mut nsrc) = (0u32, 0, 0usize, 0usize);
 
@@ -62,6 +77,16 @@ pub fn decode(dst: &mut [u8], src: &[u8], flush: bool) -> Result<(usize, usize),
     return Ok((ndst, nsrc));
 }
 
+/// Encodes `src` into at most [max_encoded_len(src.len())](max_encoded_len)
+/// bytes of `dst`, returning the actual number of bytes written.
+//
+/// The encoding handles 4-byte chunks, using a special encoding
+/// for the last fragment, so `encode` is not appropriate for use on
+/// individual blocks of a large data stream. Use
+/// [Encoder::new()](crate::ascii85::Encoder::new) instead.
+//
+/// Often, ascii85-encoded data is wrapped in <~ and ~> symbols.
+/// `encode` does not add these.
 pub fn encode(dst: &mut [u8], src: &[u8]) -> usize {
     if src.len() == 0 {
         return 0;
@@ -119,6 +144,7 @@ pub fn encode(dst: &mut [u8], src: &[u8]) -> usize {
     return written;
 }
 
+/// Returns the maximum length of an encoding of `n` source bytes.
 pub fn max_encoded_len(n: usize) -> usize {
     (n + 3) / 4 * 5
 }
