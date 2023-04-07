@@ -4,10 +4,23 @@ use crate::base32::constants;
 use crate::Error;
 
 lazy_static! {
+    /// StdEncoding is the standard base32 encoding, as defined in
+    /// [RFC 4648](https://www.rfc-editor.org/rfc/rfc4648.html).
     pub static ref STD_ENCODING: Encoding = Encoding::new(constants::ENCODE_STD);
+
+    /// The “Extended Hex Alphabet” defined in
+    /// [RFC 4648](https://www.rfc-editor.org/rfc/rfc4648.html).
+    /// It is typically used in DNS.
     pub static ref HEX_ENCODING: Encoding = Encoding::new(constants::ENCODE_HEX);
 }
 
+/// An `Encoding` is a radix 32 encoding/decoding scheme, defined by a
+/// 32-character alphabet. The most common is the "base32" encoding
+/// introduced for SASL GSSAPI and standardized in [RFC 4648].
+/// The alternate "base32hex" encoding is used in DNSSEC.
+///
+/// [RFC 4648]: https://rfc-editor.org/rfc/rfc4648.html
+///
 #[derive(Clone)]
 pub struct Encoding {
     encode: [u8; 32],
@@ -16,6 +29,8 @@ pub struct Encoding {
 }
 
 impl Encoding {
+    /// Returns a new `Encoding` defined by the given alphabet,
+    /// which must be a 32-byte string.
     pub fn new<T>(encoder: T) -> Self
     where
         T: AsRef<str>,
@@ -47,6 +62,18 @@ impl Encoding {
         }
     }
 
+    /// Decodes `src` using the encoding `enc`. It writes at most
+    /// [decoded_len(src.len())][crate::base32::Encoding::decoded_len] bytes
+    /// to `dst` and returns the number of bytes
+    /// written. If `src` contains invalid base32 data, it will return the
+    /// number of bytes successfully written and
+    /// [CorruptInputError](crate::Error::CorruptInputError).
+    /// New line characters (\r and \n) are ignored.
+    ///
+    /// # Example
+    /// ```
+    #[doc = include_str!("../../examples/base32_decode.rs")]
+    /// ```
     pub fn decode(&self, dst: &mut [u8], src: &[u8]) -> Result<usize, Error> {
         if src.len() == 0 {
             return Ok(0);
@@ -57,6 +84,8 @@ impl Encoding {
         self.decode_(dst, &buf[..l]).map(|(n, _)| n)
     }
 
+    /// Returns the maximum length in bytes of the decoded data
+    /// corresponding to `n` bytes of base32-encoded data.
     pub fn decoded_len(&self, n: usize) -> usize {
         if self.pad_char.is_none() {
             n * 5 / 8
@@ -65,6 +94,7 @@ impl Encoding {
         }
     }
 
+    /// Returns the bytes represented by the base32 string `s`.
     pub fn decode_string(&self, s: &str) -> Result<Vec<u8>, Error> {
         let mut out = vec![0u8; self.decoded_len(s.len())];
         let n = self.decode(out.as_mut_slice(), s.as_bytes())?;
@@ -73,6 +103,18 @@ impl Encoding {
         Ok(out)
     }
 
+    /// Encodes `src` using the encoding `enc`, writing
+    /// [encoded_len(len(src))][crate::base32::Encoding::encoded_len]
+    /// bytes to `dst`.
+    ///
+    /// The encoding pads the output to a multiple of 8 bytes,
+    /// so `encode` is not appropriate for use on individual blocks
+    /// of a large data stream. Use [Encoder::new()][crate::base32::Encoder::new] instead.
+    ///
+    /// # Example
+    /// ```
+    #[doc = include_str!("../../examples/base32_encoding_encode.rs")]
+    /// ```
     pub fn encode(&self, dst: &mut [u8], src: &[u8]) {
         let (mut dst, mut src) = (dst, src);
         while src.len() > 0 {
@@ -148,12 +190,20 @@ impl Encoding {
         }
     }
 
+    /// Returns the base32 encoding of `src`.
+    ///
+    /// # Example
+    /// ```
+    #[doc = include_str!("../../examples/base32_encoding_encode_to_string.rs")]
+    /// ```
     pub fn encode_to_string(&self, src: &[u8]) -> String {
         let mut out = " ".repeat(self.encoded_len(src.len()));
         self.encode(unsafe { out.as_bytes_mut() }, src);
         out
     }
 
+    /// Returns the length in bytes of the base32 encoding
+    /// of an input buffer of length `n`.
     pub fn encoded_len(&self, n: usize) -> usize {
         if self.pad_char.is_none() {
             (n * 8 + 4) / 5
@@ -162,6 +212,11 @@ impl Encoding {
         }
     }
 
+    /// Creates a new encoding identical to `self` except
+    /// with a specified padding character, or `None` to disable padding.
+    /// The padding character must not be '\r' or '\n', must not
+    /// be contained in the encoding's alphabet and must be a rune equal or
+    /// below '\xff'.
     pub fn with_padding(&mut self, padding: Option<u8>) -> &mut Self {
         if padding.is_none() {
             self.pad_char = None;

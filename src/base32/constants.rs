@@ -1,3 +1,4 @@
+/// Standard padding character
 pub const STD_PADDING: u8 = b'=';
 
 pub(crate) const ENCODE_STD: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
