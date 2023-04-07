@@ -91,6 +91,14 @@ impl<'a, W> Encoder<'a, W>
 where
     W: Write,
 {
+    /// Returns a new base32 stream encoder. Data written to
+    /// the returned writer will be encoded using `enc` and then written to `w`.
+    /// Base32 encodings operate in 5-byte blocks.
+    ///
+    /// # Example
+    /// ```
+    #[doc = include_str!("../../examples/base32_encoder.rs")]
+    /// ```
     pub fn new(enc: Encoding, w: &'a mut W) -> Self {
         Self {
             enc: enc,

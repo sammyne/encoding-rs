@@ -115,6 +115,7 @@ impl<R> Decoder<R>
 where
     R: Read,
 {
+    /// Constructs a new base32 stream decoder.
     pub fn new(enc: Encoding, r: R) -> Self {
         Self {
             enc: enc,
