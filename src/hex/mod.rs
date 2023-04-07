@@ -1,3 +1,6 @@
+//! Module hex implements hexadecimal encoding and decoding.
+//!
+
 mod dumper;
 mod hex;
 
