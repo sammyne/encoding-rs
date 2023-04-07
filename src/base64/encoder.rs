@@ -8,20 +8,57 @@ use super::constants;
 use lazy_static::lazy_static;
 
 lazy_static! {
+    /// RAW_STD_ENCODING is the standard raw, unpadded base64 encoding,
+    /// as defined in [RFC 4648 section 3.2].
+    /// This is the same as [STD_ENCODING](/encoding/base64/struct.STD_ENCODING.html)
+    /// but omits padding characters.
+    ///
+    /// [RFC 4648 section 3.2]: https://rfc-editor.org/rfc/rfc4648.html#section-3.2
     pub static ref RAW_STD_ENCODING: Encoding = {
         let mut v = Encoding::new(constants::ENCODE_STD);
         v.without_padding();
         v
     };
+
+    /// RAW_URL_ENCODING is the unpadded alternate base64 encoding defined in [RFC 4648].
+    /// It is typically used in URLs and file names.
+    /// This is the same as [URL_ENCODING](/encoding/base64/struct.URL_ENCODING.html)
+    /// but omits padding characters.
+    ///
+    /// [RFC 4648]: https://rfc-editor.org/rfc/rfc4648.html
     pub static ref RAW_URL_ENCODING: Encoding = {
         let mut v = Encoding::new(constants::ENCODE_URL);
         v.without_padding();
         v
     };
+
+    /// STD_ENCODING is the standard base64 encoding, as defined in
+    /// [RFC 4648].
+    ///
+    /// [RFC 4648]: https://rfc-editor.org/rfc/rfc4648.html
     pub static ref STD_ENCODING: Encoding = Encoding::new(constants::ENCODE_STD);
+
+    /// URL_ENCODING is the alternate base64 encoding defined in [RFC 4648].
+    /// It is typically used in URLs and file names.
+    ///
+    /// [RFC 4648]: https://rfc-editor.org/rfc/rfc4648.html
     pub static ref URL_ENCODING: Encoding = Encoding::new(constants::ENCODE_URL);
 }
 
+/// An Encoding is a radix 64 encoding/decoding scheme, defined by a
+/// 64-character alphabet. The most common encoding is the "base64"
+/// encoding defined in [RFC 4648] and used in MIME ([RFC 2045]) and PEM
+/// ([RFC 1421]).  [RFC 4648] also defines an alternate encoding, which is
+/// the standard encoding with `-` and `_` substituted for `+` and `/`.
+/// 
+/// # Example
+/// ```
+#[doc = include_str!("../../examples/base64.rs")]
+/// ```
+///
+/// [RFC 4648]: https://rfc-editor.org/rfc/rfc4648.html
+/// [RFC 2045]: https://rfc-editor.org/rfc/rfc2045.html
+/// [RFC 1421]: https://rfc-editor.org/rfc/rfc1421.html
 #[derive(Clone)]
 pub struct Encoding {
     encode: [u8; 64],
@@ -31,6 +68,11 @@ pub struct Encoding {
 }
 
 impl Encoding {
+    /// Returns a new padded Encoding defined by the given alphabet,
+    /// which must be a 64-byte string that does not contain the padding character
+    /// or CR / LF ('\r', '\n').
+    /// The resulting `Encoding` uses the default padding character ('='),
+    /// which may be changed or disabled via [with_padding][Self::with_padding].
     pub fn new(encoder: &str) -> Self {
         if encoder.len() != 64 {
             panic!("encoding alphabet is not 64-bytes long")
@@ -68,6 +110,12 @@ impl Encoding {
         }
     }
 
+    /// Decodes `src` using the encoding `self`. It writes at most
+    /// [decoded_len(src.len())][Self::decoded_len] bytes to `dst` and returns the number of bytes
+    /// written. If `src` contains invalid base64 data, it will return the
+    /// number of bytes successfully written and
+    /// [CorruptInputError](crate::Error::CorruptInputError).
+    /// New line characters (\r and \n) are ignored.
     pub fn decode(&self, dst: &mut [u8], src: &[u8]) -> Result<usize, Error> {
         if src.len() == 0 {
             return Ok(0);
@@ -143,6 +191,8 @@ impl Encoding {
         Ok(n)
     }
 
+    /// Returns the maximum length in bytes of the decoded data
+    /// corresponding to `n` bytes of base64-encoded data.
     pub fn decoded_len(&self, n: usize) -> usize {
         match self.pad_char {
             None => n * 6 / 8,
@@ -150,6 +200,7 @@ impl Encoding {
         }
     }
 
+    /// Returns the bytes represented by the base64 string `s`.
     pub fn decode_string(&self, s: &str) -> Result<Vec<u8>, Error> {
         let mut out = vec![0u8; self.encoded_len(s.len())];
         let n = self.decode(out.as_mut_slice(), s.as_bytes())?;
@@ -159,6 +210,12 @@ impl Encoding {
         Ok(out)
     }
 
+    /// Encodes `src` using the encoding `self`, writing
+    /// [encoded_len(src.len())][Self::encoded_len] bytes to `dst`.
+    ///
+    /// The encoding pads the output to a multiple of 4 bytes,
+    /// so `encode` is not appropriate for use on individual blocks
+    /// of a large data stream.
     pub fn encode(&self, dst: &mut [u8], src: &[u8]) {
         if src.len() == 0 {
             return;
@@ -203,6 +260,8 @@ impl Encoding {
         }
     }
 
+    /// Returns the length in bytes of the base64 encoding
+    /// of an input buffer of length `n`.
     pub fn encoded_len(&self, n: usize) -> usize {
         match self.pad_char {
             None => (n * 8 + 5) / 6,
@@ -210,6 +269,7 @@ impl Encoding {
         }
     }
 
+    /// Returns the base64 encoding of `src`.
     pub fn encode_to_string(&self, src: &[u8]) -> String {
         let mut buf = vec![0u8; self.encoded_len(src.len())];
         self.encode(&mut buf, src);
@@ -217,11 +277,24 @@ impl Encoding {
         String::from_utf8(buf).expect("unfallible")
     }
 
+    /// Creates a new encoding identical to enc except with
+    /// strict decoding enabled. In this mode, the decoder requires that
+    /// trailing padding bits are zero, as described in [RFC 4648 section 3.5].
+    ///
+    /// Note that the input is still malleable, as new line characters
+    /// (CR and LF) are still ignored.
+    ///
+    /// [RFC 4648 section 3.5]: https://rfc-editor.org/rfc/rfc4648.html#section-3.5
     pub fn strict(&mut self) -> &Self {
         self.strict = true;
         self
     }
 
+    /// Creates a new encoding identical to `self` except
+    /// with a specified padding character.
+    /// The padding character must not be '\r' or '\n', must not
+    /// be contained in the encoding's alphabet and must be a rune equal or
+    /// below '\xff'.
     pub fn with_padding(&mut self, padding: char) -> &Self {
         if !padding.is_ascii() {
             panic!("invalid padding")
@@ -241,6 +314,7 @@ impl Encoding {
         self
     }
 
+    /// Creates a new encoding identical to `self` except without padding.
     pub fn without_padding(&mut self) -> &Self {
         self.pad_char = None;
 
