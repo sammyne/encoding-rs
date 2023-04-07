@@ -1,4 +1,5 @@
-//#![feature(test)]
+//! encoding defines interfaces shared by other modules that convert data to and from byte-level and textual
+//! representations.
 
 pub(self) mod builtin;
 mod errors;
