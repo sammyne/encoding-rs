@@ -87,7 +87,9 @@ impl<'a, W> Encoder<'a, W>
 where
     W: Write,
 {
-    //pub fn new(w: Box<dyn Write>) -> Box<dyn Write> {
+    /// Returns a new ascii85 stream encoder. Data written to
+    /// the returned writer will be encoded and then written to `w`.
+    /// Ascii85 encodings operate in 32-bit blocks.
     pub fn new(w: &'a mut W) -> Self {
         let out = Self {
             err: None,

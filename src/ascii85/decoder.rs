@@ -21,6 +21,7 @@ impl<R> Decoder<R>
 where
     R: Read,
 {
+    /// Constructs a new ascii85 stream decoder.
     pub fn new(r: R) -> Self {
         Self {
             err: None,
