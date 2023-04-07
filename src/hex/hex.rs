@@ -4,6 +4,13 @@ const HEXTABLE: [u8; 16] = [
     b'0', b'1', b'2', b'3', b'4', b'5', b'6', b'7', b'8', b'9', b'a', b'b', b'c', b'd', b'e', b'f',
 ];
 
+/// Decodes src into [decoded_len(src.len())][decoded_len] bytes,
+/// returning the actual number of bytes written to `dst`.
+///
+/// `decode` expects that `src` contains only hexadecimal
+/// characters and that `src` has even length.
+/// If the input is malformed, `decode` returns the number
+/// of bytes decoded before the error.
 pub fn decode(dst: &mut [u8], src: &[u8]) -> Result<usize, Error> {
     let mut i: usize = 0;
 
@@ -23,10 +30,18 @@ pub fn decode(dst: &mut [u8], src: &[u8]) -> Result<usize, Error> {
     Ok(i)
 }
 
+/// Returns the length of a decoding of `x` source bytes.
+/// Specifically, it returns `x / 2`.
 pub fn decoded_len(x: usize) -> usize {
     x / 2
 }
 
+/// Returns the bytes represented by the hexadecimal string `s`.
+///
+/// `decode_string` expects that src contains only hexadecimal
+/// characters and that src has even length.
+/// If the input is malformed, `decode_string` returns
+/// the bytes decoded before the error.
 pub fn decode_string(s: &str) -> Result<Vec<u8>, Error> {
     let mut dst = vec![0; s.len() / 2];
 
@@ -37,6 +52,11 @@ pub fn decode_string(s: &str) -> Result<Vec<u8>, Error> {
     Ok(dst)
 }
 
+/// Encodes `src` into [encoded_len(src.len())][encoded_len]
+/// bytes of `dst`. As a convenience, it returns the number
+/// of bytes written to `dst`, but this value is always
+/// [encoded_len(src.len())][encoded_len].
+/// `encode` implements hexadecimal encoding.
 pub fn encode(dst: &mut [u8], src: &[u8]) -> usize {
     let mut j = 0;
     for v in src.iter() {
@@ -51,10 +71,13 @@ pub fn encode(dst: &mut [u8], src: &[u8]) -> usize {
     src.len() * 2
 }
 
+/// Returns the length of an encoding of `n` source bytes.
+/// Specifically, it returns `n * 2`.
 pub fn encoded_len(n: usize) -> usize {
     n * 2
 }
 
+/// Returns the hexadecimal encoding of src.
 pub fn encode_to_string(src: &[u8]) -> String {
     let mut dst = vec![0; encoded_len(src.len())];
 

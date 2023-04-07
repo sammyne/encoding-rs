@@ -126,6 +126,8 @@ where
     }
 }
 
+/// Returns a string that contains a hex dump of the given data. The format
+/// of the hex dump matches the output of `hexdump -C` on the command line.
 pub fn dump(data: &[u8]) -> String {
     if data.len() == 0 {
         return "".to_string();
