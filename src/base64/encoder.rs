@@ -50,7 +50,7 @@ lazy_static! {
 /// encoding defined in [RFC 4648] and used in MIME ([RFC 2045]) and PEM
 /// ([RFC 1421]).  [RFC 4648] also defines an alternate encoding, which is
 /// the standard encoding with `-` and `_` substituted for `+` and `/`.
-/// 
+///
 /// # Example
 /// ```
 #[doc = include_str!("../../examples/base64.rs")]
