@@ -125,6 +125,7 @@
 <span id="125">125</span>
 <span id="126">126</span>
 <span id="127">127</span>
+<span id="128">128</span>
 </pre><pre class="rust"><code><span class="kw">use </span>core::slice;
 <span class="kw">use </span>std::io::{<span class="self">self</span>, Read};
 
@@ -148,7 +149,8 @@
 <span class="kw">where
     </span>R: Read,
 {
-    <span class="kw">pub fn </span>new(r: R) -&gt; <span class="self">Self </span>{
+    <span class="doccomment">/// Constructs a new ascii85 stream decoder.
+    </span><span class="kw">pub fn </span>new(r: R) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             err: <span class="prelude-val">None</span>,
             read_err: <span class="prelude-val">None</span>,

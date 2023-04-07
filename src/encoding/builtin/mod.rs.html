@@ -7,7 +7,17 @@
 <span id="7">7</span>
 <span id="8">8</span>
 <span id="9">9</span>
-</pre><pre class="rust"><code><span class="kw">pub fn </span>copy&lt;T&gt;(dst: <span class="kw-2">&amp;mut </span>[T], src: <span class="kw-2">&amp;</span>[T]) -&gt; usize
+<span id="10">10</span>
+<span id="11">11</span>
+<span id="12">12</span>
+<span id="13">13</span>
+<span id="14">14</span>
+</pre><pre class="rust"><code><span class="doccomment">/// The `copy` built-in function copies elements from a source slice into a
+/// destination slice. (As a special case, it also will copy bytes from a
+/// string to a slice of bytes.) The source and destination may overlap. `copy`
+/// returns the number of elements copied, which will be the minimum of
+/// `src.len()` and `dst.len()`.
+</span><span class="kw">pub fn </span>copy&lt;T&gt;(dst: <span class="kw-2">&amp;mut </span>[T], src: <span class="kw-2">&amp;</span>[T]) -&gt; usize
 <span class="kw">where
     </span>T: Copy,
 {

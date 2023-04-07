@@ -122,9 +122,50 @@
 <span id="122">122</span>
 <span id="123">123</span>
 <span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
+<span id="135">135</span>
+<span id="136">136</span>
+<span id="137">137</span>
+<span id="138">138</span>
+<span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
+<span id="149">149</span>
+<span id="150">150</span>
 </pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::Error;
 
-<span class="kw">pub fn </span>decode(dst: <span class="kw-2">&amp;mut </span>[u8], src: <span class="kw-2">&amp;</span>[u8], flush: bool) -&gt; <span class="prelude-ty">Result</span>&lt;(usize, usize), Error&gt; {
+<span class="doccomment">/// Decodes `src` into `dst`, returning both the number
+/// of bytes written to `dst` and the number consumed from `src`.
+/// If `src` contains invalid ascii85 data, `decode` will return the
+/// number of bytes successfully written and a
+/// [CorruptInputError](crate::Error::CorruptInputError).
+/// `decode` ignores space and control characters in `src`.
+/// Often, ascii85-encoded data is wrapped in &lt;~ and ~&gt; symbols.
+/// `decode` expects these to have been stripped by the caller.
+///
+/// If flush is true, `decode` assumes that `src` represents the
+/// end of the input stream and processes it completely rather
+/// than wait for the completion of another 32-bit block.
+///
+/// [Decoder::new](crate::ascii85::Decoder::new) wraps an io::Read
+/// interface around `decode`.
+</span><span class="kw">pub fn </span>decode(dst: <span class="kw-2">&amp;mut </span>[u8], src: <span class="kw-2">&amp;</span>[u8], flush: bool) -&gt; <span class="prelude-ty">Result</span>&lt;(usize, usize), Error&gt; {
     <span class="kw">let </span>(<span class="kw-2">mut </span>v, <span class="kw-2">mut </span>nb, <span class="kw-2">mut </span>ndst, <span class="kw-2">mut </span>nsrc) = (<span class="number">0u32</span>, <span class="number">0</span>, <span class="number">0usize</span>, <span class="number">0usize</span>);
 
     <span class="kw">for </span>(i, <span class="kw-2">&amp;</span>b) <span class="kw">in </span>src.iter().enumerate() {
@@ -186,7 +227,17 @@
     <span class="kw">return </span><span class="prelude-val">Ok</span>((ndst, nsrc));
 }
 
-<span class="kw">pub fn </span>encode(dst: <span class="kw-2">&amp;mut </span>[u8], src: <span class="kw-2">&amp;</span>[u8]) -&gt; usize {
+<span class="doccomment">/// Encodes `src` into at most [max_encoded_len(src.len())](max_encoded_len)
+/// bytes of `dst`, returning the actual number of bytes written.
+</span><span class="comment">//
+</span><span class="doccomment">/// The encoding handles 4-byte chunks, using a special encoding
+/// for the last fragment, so `encode` is not appropriate for use on
+/// individual blocks of a large data stream. Use
+/// [Encoder::new()](crate::ascii85::Encoder::new) instead.
+</span><span class="comment">//
+</span><span class="doccomment">/// Often, ascii85-encoded data is wrapped in &lt;~ and ~&gt; symbols.
+/// `encode` does not add these.
+</span><span class="kw">pub fn </span>encode(dst: <span class="kw-2">&amp;mut </span>[u8], src: <span class="kw-2">&amp;</span>[u8]) -&gt; usize {
     <span class="kw">if </span>src.len() == <span class="number">0 </span>{
         <span class="kw">return </span><span class="number">0</span>;
     }
@@ -243,7 +294,8 @@
     <span class="kw">return </span>written;
 }
 
-<span class="kw">pub fn </span>max_encoded_len(n: usize) -&gt; usize {
+<span class="doccomment">/// Returns the maximum length of an encoding of `n` source bytes.
+</span><span class="kw">pub fn </span>max_encoded_len(n: usize) -&gt; usize {
     (n + <span class="number">3</span>) / <span class="number">4 </span>* <span class="number">5
 </span>}
 </code></pre></div>

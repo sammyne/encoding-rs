@@ -6,7 +6,41 @@
 <span id="6">6</span>
 <span id="7">7</span>
 <span id="8">8</span>
-</pre><pre class="rust"><code><span class="kw">mod </span>binary;
+<span id="9">9</span>
+<span id="10">10</span>
+<span id="11">11</span>
+<span id="12">12</span>
+<span id="13">13</span>
+<span id="14">14</span>
+<span id="15">15</span>
+<span id="16">16</span>
+<span id="17">17</span>
+<span id="18">18</span>
+<span id="19">19</span>
+<span id="20">20</span>
+<span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
+</pre><pre class="rust"><code><span class="doccomment">//! Module binary implements simple translation between numbers and byte
+//! sequences and encoding and decoding of varints.
+//!
+//! Numbers are translated by reading and writing fixed-size values.
+//! A fixed-size value is either a fixed-size arithmetic
+//! type (bool, i8, u8, i16, f32, ...)
+//! or an array or struct containing only fixed-size values.
+//!
+//! The varint functions encode and decode single integer values using
+//! a variable-length encoding; smaller values require fewer bytes.
+//! For a specification, see
+//! &lt;https://developers.google.com/protocol-buffers/docs/encoding&gt;.
+//!
+//! This module favors simplicity over efficiency. Clients that require
+//! high-performance serialization, especially for large data structures,
+//! should look at more advanced solutions such as protocol buffers.
+
+</span><span class="kw">mod </span>binary;
 <span class="kw">mod </span>varint;
 
 <span class="attribute">#[cfg(test)]

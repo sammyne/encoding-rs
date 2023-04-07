@@ -121,13 +121,23 @@
 <span id="121">121</span>
 <span id="122">122</span>
 <span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
 </pre><pre class="rust"><code><span class="kw">use </span>core::convert::TryInto;
 <span class="kw">use </span>std::fmt::{<span class="self">self</span>, Display, Formatter};
 
-<span class="kw">pub struct </span>BigEndian;
-<span class="kw">pub struct </span>LittleEndian;
+<span class="doccomment">/// `BigEndian` is the big-endian implementation of [ByteOrder].
+</span><span class="kw">pub struct </span>BigEndian;
 
-<span class="kw">pub trait </span>ByteOrder: Display {
+<span class="doccomment">/// `LittleEndian` is the little-endian implementation of [ByteOrder].
+</span><span class="kw">pub struct </span>LittleEndian;
+
+<span class="doccomment">/// A ByteOrder specifies how to convert byte slices into
+/// 16-, 32-, or 64-bit unsigned integers.
+</span><span class="kw">pub trait </span>ByteOrder: Display {
     <span class="kw">fn </span>uint16(src: <span class="kw-2">&amp;</span>[u8]) -&gt; u16;
     <span class="kw">fn </span>uint32(src: <span class="kw-2">&amp;</span>[u8]) -&gt; u32;
     <span class="kw">fn </span>uint64(src: <span class="kw-2">&amp;</span>[u8]) -&gt; u64;

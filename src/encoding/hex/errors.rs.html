@@ -3,10 +3,16 @@
 <span id="3">3</span>
 <span id="4">4</span>
 <span id="5">5</span>
+<span id="6">6</span>
+<span id="7">7</span>
+<span id="8">8</span>
 </pre><pre class="rust"><code><span class="attribute">#[derive(Debug)]
 </span><span class="kw">pub enum </span>Error {
-    ErrLength(u32),
-    InvalidByteError(usize, u8),
+    <span class="doccomment">/// ErrLength reports an attempt to decode an odd-length input
+    /// using [decode][crate::hex::decode] or [decode_string][crate::hex::decode_string].
+    </span>ErrLength(u32),
+    <span class="doccomment">/// InvalidByteError values describe errors resulting from an invalid byte in a hex string.
+    </span>InvalidByteError(usize, u8),
 }
 </code></pre></div>
 </section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="encoding" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0 (897e37553 2022-11-02)" ></div></body></html>

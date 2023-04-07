@@ -110,15 +110,42 @@
 <span id="110">110</span>
 <span id="111">111</span>
 <span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
 </pre><pre class="rust"><code><span class="kw">use </span>std::io::{<span class="self">self</span>, Read};
 
 <span class="kw">use </span><span class="kw">crate</span>::Error;
 
-<span class="kw">pub const </span>MAX_VARINT_LEN16: usize = <span class="number">3</span>;
-<span class="kw">pub const </span>MAX_VARINT_LEN32: usize = <span class="number">5</span>;
-<span class="kw">pub const </span>MAX_VARINT_LEN64: usize = <span class="number">10</span>;
+<span class="doccomment">/// `MaxVarintLen16` is the maximum length of a varint-encoded 16-bit integer.
+</span><span class="kw">pub const </span>MAX_VARINT_LEN16: usize = <span class="number">3</span>;
+<span class="doccomment">/// `MaxVarintLen32` is the maximum length of a varint-encoded 32-bit integer.
+</span><span class="kw">pub const </span>MAX_VARINT_LEN32: usize = <span class="number">5</span>;
+<span class="doccomment">/// `MaxVarintLen64` is the maximum length of a varint-encoded 64-bit integer.
+</span><span class="kw">pub const </span>MAX_VARINT_LEN64: usize = <span class="number">10</span>;
 
-<span class="kw">pub fn </span>put_uvarint(buf: <span class="kw-2">&amp;mut </span>[u8], x: u64) -&gt; usize {
+<span class="doccomment">/// Encodes a uint64 into `buf` and returns the number of bytes written.
+/// If the buffer is too small, `put_uvarint` will panic.
+</span><span class="kw">pub fn </span>put_uvarint(buf: <span class="kw-2">&amp;mut </span>[u8], x: u64) -&gt; usize {
     <span class="kw">let </span><span class="kw-2">mut </span>i = <span class="number">0usize</span>;
 
     <span class="kw">let </span><span class="kw-2">mut </span>x = x;
@@ -132,7 +159,9 @@
     i + <span class="number">1
 </span>}
 
-<span class="kw">pub fn </span>put_varint(buf: <span class="kw-2">&amp;mut </span>[u8], x: i64) -&gt; usize {
+<span class="doccomment">/// Encodes an int64 into `buf` and returns the number of bytes written.
+/// If the buffer is too small, `put_varint` will panic.
+</span><span class="kw">pub fn </span>put_varint(buf: <span class="kw-2">&amp;mut </span>[u8], x: i64) -&gt; usize {
     <span class="comment">// @see ZigZag encoding as https://developers.google.com/protocol-buffers/docs/encoding#signed-integers
     // h(x) = (x&lt;&lt;1) ^ (x&gt;&gt;31), where &#39;&gt;&gt;&#39; is arithmetic right shift preserving sign bit
     </span><span class="kw">let </span>ux = <span class="kw">if </span>x &gt;= <span class="number">0 </span>{
@@ -144,7 +173,8 @@
     put_uvarint(buf, ux)
 }
 
-<span class="kw">pub fn </span>read_uvarint&lt;R&gt;(r: R) -&gt; <span class="prelude-ty">Result</span>&lt;u64, Error&gt;
+<span class="doccomment">/// Reads an encoded unsigned integer from `r` and returns it as a uint64.
+</span><span class="kw">pub fn </span>read_uvarint&lt;R&gt;(r: R) -&gt; <span class="prelude-ty">Result</span>&lt;u64, Error&gt;
 <span class="kw">where
     </span>R: Read,
 {
@@ -172,7 +202,7 @@
     <span class="prelude-val">Err</span>(Error::IO(io::Error::from(io::ErrorKind::UnexpectedEof), n))
 }
 
-<span class="comment">// read_variant reads an encoded signed integer from r and returns it as an int64.
+<span class="doccomment">/// Reads an encoded signed integer from `r` and returns it as an int64.
 </span><span class="kw">pub fn </span>read_varint&lt;R&gt;(r: R) -&gt; <span class="prelude-ty">Result</span>&lt;i64, Error&gt;
 <span class="kw">where
     </span>R: Read,
@@ -188,7 +218,14 @@
     <span class="prelude-val">Ok</span>(x)
 }
 
-<span class="kw">pub fn </span>uvariant(buf: <span class="kw-2">&amp;</span>[u8]) -&gt; (u64, isize) {
+<span class="doccomment">/// Decodes a uint64 from `buf` and returns that value and the
+/// number of bytes read (&gt; 0). If an error occurred, the value is 0
+/// and the number of bytes `n` is &lt;= 0 meaning:
+///
+///	n == 0: buf too small
+///	n  &lt; 0: value larger than 64 bits (overflow)
+///	        and -n is the number of bytes read
+</span><span class="kw">pub fn </span>uvariant(buf: <span class="kw-2">&amp;</span>[u8]) -&gt; (u64, isize) {
     <span class="kw">let </span><span class="kw-2">mut </span>x = <span class="number">0u64</span>;
     <span class="kw">let </span><span class="kw-2">mut </span>s = <span class="number">0u32</span>;
 
@@ -210,7 +247,14 @@
     (<span class="number">0</span>, <span class="number">0</span>)
 }
 
-<span class="kw">pub fn </span>variant(buf: <span class="kw-2">&amp;</span>[u8]) -&gt; (i64, isize) {
+<span class="doccomment">/// Decodes an int64 from `buf` and returns that value and the
+/// number of bytes read (&gt; 0). If an error occurred, the value is 0
+/// and the number of bytes `n` is &lt;= 0 with the following meaning:
+</span><span class="comment">//
+</span><span class="doccomment">///	n == 0: buf too small
+///	n  &lt; 0: value larger than 64 bits (overflow)
+///	        and -n is the number of bytes read
+</span><span class="kw">pub fn </span>variant(buf: <span class="kw-2">&amp;</span>[u8]) -&gt; (i64, isize) {
     <span class="kw">let </span>(ux, n) = uvariant(buf);
     <span class="kw">let </span>x = {
         <span class="kw">let </span><span class="kw-2">mut </span>v = (ux &gt;&gt; <span class="number">1</span>) <span class="kw">as </span>i64;

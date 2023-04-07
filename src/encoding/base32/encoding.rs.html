@@ -293,17 +293,85 @@
 <span id="293">293</span>
 <span id="294">294</span>
 <span id="295">295</span>
+<span id="296">296</span>
+<span id="297">297</span>
+<span id="298">298</span>
+<span id="299">299</span>
+<span id="300">300</span>
+<span id="301">301</span>
+<span id="302">302</span>
+<span id="303">303</span>
+<span id="304">304</span>
+<span id="305">305</span>
+<span id="306">306</span>
+<span id="307">307</span>
+<span id="308">308</span>
+<span id="309">309</span>
+<span id="310">310</span>
+<span id="311">311</span>
+<span id="312">312</span>
+<span id="313">313</span>
+<span id="314">314</span>
+<span id="315">315</span>
+<span id="316">316</span>
+<span id="317">317</span>
+<span id="318">318</span>
+<span id="319">319</span>
+<span id="320">320</span>
+<span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
+<span id="324">324</span>
+<span id="325">325</span>
+<span id="326">326</span>
+<span id="327">327</span>
+<span id="328">328</span>
+<span id="329">329</span>
+<span id="330">330</span>
+<span id="331">331</span>
+<span id="332">332</span>
+<span id="333">333</span>
+<span id="334">334</span>
+<span id="335">335</span>
+<span id="336">336</span>
+<span id="337">337</span>
+<span id="338">338</span>
+<span id="339">339</span>
+<span id="340">340</span>
+<span id="341">341</span>
+<span id="342">342</span>
+<span id="343">343</span>
+<span id="344">344</span>
+<span id="345">345</span>
+<span id="346">346</span>
+<span id="347">347</span>
+<span id="348">348</span>
+<span id="349">349</span>
+<span id="350">350</span>
 </pre><pre class="rust"><code><span class="kw">use </span>lazy_static::lazy_static;
 
 <span class="kw">use </span><span class="kw">crate</span>::base32::constants;
 <span class="kw">use </span><span class="kw">crate</span>::Error;
 
 <span class="macro">lazy_static! </span>{
-    <span class="kw">pub static </span><span class="kw-2">ref </span>STD_ENCODING: Encoding = Encoding::new(constants::ENCODE_STD);
-    <span class="kw">pub static </span><span class="kw-2">ref </span>HEX_ENCODING: Encoding = Encoding::new(constants::ENCODE_HEX);
+    <span class="doccomment">/// StdEncoding is the standard base32 encoding, as defined in
+    /// [RFC 4648](https://www.rfc-editor.org/rfc/rfc4648.html).
+    </span><span class="kw">pub static </span><span class="kw-2">ref </span>STD_ENCODING: Encoding = Encoding::new(constants::ENCODE_STD);
+
+    <span class="doccomment">/// The “Extended Hex Alphabet” defined in
+    /// [RFC 4648](https://www.rfc-editor.org/rfc/rfc4648.html).
+    /// It is typically used in DNS.
+    </span><span class="kw">pub static </span><span class="kw-2">ref </span>HEX_ENCODING: Encoding = Encoding::new(constants::ENCODE_HEX);
 }
 
-<span class="attribute">#[derive(Clone)]
+<span class="doccomment">/// An `Encoding` is a radix 32 encoding/decoding scheme, defined by a
+/// 32-character alphabet. The most common is the &quot;base32&quot; encoding
+/// introduced for SASL GSSAPI and standardized in [RFC 4648].
+/// The alternate &quot;base32hex&quot; encoding is used in DNSSEC.
+///
+/// [RFC 4648]: https://rfc-editor.org/rfc/rfc4648.html
+///
+</span><span class="attribute">#[derive(Clone)]
 </span><span class="kw">pub struct </span>Encoding {
     encode: [u8; <span class="number">32</span>],
     decode_map: [u8; <span class="number">256</span>],
@@ -311,7 +379,9 @@
 }
 
 <span class="kw">impl </span>Encoding {
-    <span class="kw">pub fn </span>new&lt;T&gt;(encoder: T) -&gt; <span class="self">Self
+    <span class="doccomment">/// Returns a new `Encoding` defined by the given alphabet,
+    /// which must be a 32-byte string.
+    </span><span class="kw">pub fn </span>new&lt;T&gt;(encoder: T) -&gt; <span class="self">Self
     </span><span class="kw">where
         </span>T: AsRef&lt;str&gt;,
     {
@@ -342,7 +412,19 @@
         }
     }
 
-    <span class="kw">pub fn </span>decode(<span class="kw-2">&amp;</span><span class="self">self</span>, dst: <span class="kw-2">&amp;mut </span>[u8], src: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;usize, Error&gt; {
+    <span class="doccomment">/// Decodes `src` using the encoding `enc`. It writes at most
+    /// [decoded_len(src.len())][crate::base32::Encoding::decoded_len] bytes
+    /// to `dst` and returns the number of bytes
+    /// written. If `src` contains invalid base32 data, it will return the
+    /// number of bytes successfully written and
+    /// [CorruptInputError](crate::Error::CorruptInputError).
+    /// New line characters (\r and \n) are ignored.
+    ///
+    /// # Example
+    /// ```
+    </span><span class="attribute">#[doc = <span class="macro">include_str!</span>(<span class="string">&quot;../../examples/base32_decode.rs&quot;</span>)]
+    </span><span class="doccomment">/// ```
+    </span><span class="kw">pub fn </span>decode(<span class="kw-2">&amp;</span><span class="self">self</span>, dst: <span class="kw-2">&amp;mut </span>[u8], src: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;usize, Error&gt; {
         <span class="kw">if </span>src.len() == <span class="number">0 </span>{
             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="number">0</span>);
         }
@@ -352,7 +434,9 @@
         <span class="self">self</span>.decode_(dst, <span class="kw-2">&amp;</span>buf[..l]).map(|(n, <span class="kw">_</span>)| n)
     }
 
-    <span class="kw">pub fn </span>decoded_len(<span class="kw-2">&amp;</span><span class="self">self</span>, n: usize) -&gt; usize {
+    <span class="doccomment">/// Returns the maximum length in bytes of the decoded data
+    /// corresponding to `n` bytes of base32-encoded data.
+    </span><span class="kw">pub fn </span>decoded_len(<span class="kw-2">&amp;</span><span class="self">self</span>, n: usize) -&gt; usize {
         <span class="kw">if </span><span class="self">self</span>.pad_char.is_none() {
             n * <span class="number">5 </span>/ <span class="number">8
         </span>} <span class="kw">else </span>{
@@ -360,7 +444,8 @@
         </span>}
     }
 
-    <span class="kw">pub fn </span>decode_string(<span class="kw-2">&amp;</span><span class="self">self</span>, s: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;u8&gt;, Error&gt; {
+    <span class="doccomment">/// Returns the bytes represented by the base32 string `s`.
+    </span><span class="kw">pub fn </span>decode_string(<span class="kw-2">&amp;</span><span class="self">self</span>, s: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;u8&gt;, Error&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>out = <span class="macro">vec!</span>[<span class="number">0u8</span>; <span class="self">self</span>.decoded_len(s.len())];
         <span class="kw">let </span>n = <span class="self">self</span>.decode(out.as_mut_slice(), s.as_bytes())<span class="question-mark">?</span>;
         out.resize(n, <span class="number">0</span>);
@@ -368,7 +453,19 @@
         <span class="prelude-val">Ok</span>(out)
     }
 
-    <span class="kw">pub fn </span>encode(<span class="kw-2">&amp;</span><span class="self">self</span>, dst: <span class="kw-2">&amp;mut </span>[u8], src: <span class="kw-2">&amp;</span>[u8]) {
+    <span class="doccomment">/// Encodes `src` using the encoding `enc`, writing
+    /// [encoded_len(len(src))][crate::base32::Encoding::encoded_len]
+    /// bytes to `dst`.
+    ///
+    /// The encoding pads the output to a multiple of 8 bytes,
+    /// so `encode` is not appropriate for use on individual blocks
+    /// of a large data stream. Use [Encoder::new()][crate::base32::Encoder::new] instead.
+    ///
+    /// # Example
+    /// ```
+    </span><span class="attribute">#[doc = <span class="macro">include_str!</span>(<span class="string">&quot;../../examples/base32_encoding_encode.rs&quot;</span>)]
+    </span><span class="doccomment">/// ```
+    </span><span class="kw">pub fn </span>encode(<span class="kw-2">&amp;</span><span class="self">self</span>, dst: <span class="kw-2">&amp;mut </span>[u8], src: <span class="kw-2">&amp;</span>[u8]) {
         <span class="kw">let </span>(<span class="kw-2">mut </span>dst, <span class="kw-2">mut </span>src) = (dst, src);
         <span class="kw">while </span>src.len() &gt; <span class="number">0 </span>{
             <span class="kw">let </span><span class="kw-2">mut </span>b = [<span class="number">0u8</span>; <span class="number">8</span>];
@@ -443,13 +540,21 @@
         }
     }
 
-    <span class="kw">pub fn </span>encode_to_string(<span class="kw-2">&amp;</span><span class="self">self</span>, src: <span class="kw-2">&amp;</span>[u8]) -&gt; String {
+    <span class="doccomment">/// Returns the base32 encoding of `src`.
+    ///
+    /// # Example
+    /// ```
+    </span><span class="attribute">#[doc = <span class="macro">include_str!</span>(<span class="string">&quot;../../examples/base32_encoding_encode_to_string.rs&quot;</span>)]
+    </span><span class="doccomment">/// ```
+    </span><span class="kw">pub fn </span>encode_to_string(<span class="kw-2">&amp;</span><span class="self">self</span>, src: <span class="kw-2">&amp;</span>[u8]) -&gt; String {
         <span class="kw">let </span><span class="kw-2">mut </span>out = <span class="string">&quot; &quot;</span>.repeat(<span class="self">self</span>.encoded_len(src.len()));
         <span class="self">self</span>.encode(<span class="kw">unsafe </span>{ out.as_bytes_mut() }, src);
         out
     }
 
-    <span class="kw">pub fn </span>encoded_len(<span class="kw-2">&amp;</span><span class="self">self</span>, n: usize) -&gt; usize {
+    <span class="doccomment">/// Returns the length in bytes of the base32 encoding
+    /// of an input buffer of length `n`.
+    </span><span class="kw">pub fn </span>encoded_len(<span class="kw-2">&amp;</span><span class="self">self</span>, n: usize) -&gt; usize {
         <span class="kw">if </span><span class="self">self</span>.pad_char.is_none() {
             (n * <span class="number">8 </span>+ <span class="number">4</span>) / <span class="number">5
         </span>} <span class="kw">else </span>{
@@ -457,7 +562,12 @@
         </span>}
     }
 
-    <span class="kw">pub fn </span>with_padding(<span class="kw-2">&amp;mut </span><span class="self">self</span>, padding: <span class="prelude-ty">Option</span>&lt;u8&gt;) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self </span>{
+    <span class="doccomment">/// Creates a new encoding identical to `self` except
+    /// with a specified padding character, or `None` to disable padding.
+    /// The padding character must not be &#39;\r&#39; or &#39;\n&#39;, must not
+    /// be contained in the encoding&#39;s alphabet and must be a rune equal or
+    /// below &#39;\xff&#39;.
+    </span><span class="kw">pub fn </span>with_padding(<span class="kw-2">&amp;mut </span><span class="self">self</span>, padding: <span class="prelude-ty">Option</span>&lt;u8&gt;) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self </span>{
         <span class="kw">if </span>padding.is_none() {
             <span class="self">self</span>.pad_char = <span class="prelude-val">None</span>;
             <span class="kw">return </span><span class="self">self</span>;

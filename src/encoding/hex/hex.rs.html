@@ -98,13 +98,43 @@
 <span id="98">98</span>
 <span id="99">99</span>
 <span id="100">100</span>
+<span id="101">101</span>
+<span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
 </pre><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::errors::Error;
 
 <span class="kw">const </span>HEXTABLE: [u8; <span class="number">16</span>] = [
     <span class="string">b&#39;0&#39;</span>, <span class="string">b&#39;1&#39;</span>, <span class="string">b&#39;2&#39;</span>, <span class="string">b&#39;3&#39;</span>, <span class="string">b&#39;4&#39;</span>, <span class="string">b&#39;5&#39;</span>, <span class="string">b&#39;6&#39;</span>, <span class="string">b&#39;7&#39;</span>, <span class="string">b&#39;8&#39;</span>, <span class="string">b&#39;9&#39;</span>, <span class="string">b&#39;a&#39;</span>, <span class="string">b&#39;b&#39;</span>, <span class="string">b&#39;c&#39;</span>, <span class="string">b&#39;d&#39;</span>, <span class="string">b&#39;e&#39;</span>, <span class="string">b&#39;f&#39;</span>,
 ];
 
-<span class="kw">pub fn </span>decode(dst: <span class="kw-2">&amp;mut </span>[u8], src: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;usize, Error&gt; {
+<span class="doccomment">/// Decodes src into [decoded_len(src.len())][decoded_len] bytes,
+/// returning the actual number of bytes written to `dst`.
+///
+/// `decode` expects that `src` contains only hexadecimal
+/// characters and that `src` has even length.
+/// If the input is malformed, `decode` returns the number
+/// of bytes decoded before the error.
+</span><span class="kw">pub fn </span>decode(dst: <span class="kw-2">&amp;mut </span>[u8], src: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;usize, Error&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>i: usize = <span class="number">0</span>;
 
     <span class="kw">for </span>j <span class="kw">in </span>(<span class="number">1</span>..src.len()).filter(|idx| (idx % <span class="number">2 </span>== <span class="number">1</span>)) {
@@ -123,11 +153,19 @@
     <span class="prelude-val">Ok</span>(i)
 }
 
-<span class="kw">pub fn </span>decoded_len(x: usize) -&gt; usize {
+<span class="doccomment">/// Returns the length of a decoding of `x` source bytes.
+/// Specifically, it returns `x / 2`.
+</span><span class="kw">pub fn </span>decoded_len(x: usize) -&gt; usize {
     x / <span class="number">2
 </span>}
 
-<span class="kw">pub fn </span>decode_string(s: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;u8&gt;, Error&gt; {
+<span class="doccomment">/// Returns the bytes represented by the hexadecimal string `s`.
+///
+/// `decode_string` expects that src contains only hexadecimal
+/// characters and that src has even length.
+/// If the input is malformed, `decode_string` returns
+/// the bytes decoded before the error.
+</span><span class="kw">pub fn </span>decode_string(s: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;u8&gt;, Error&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>dst = <span class="macro">vec!</span>[<span class="number">0</span>; s.len() / <span class="number">2</span>];
 
     <span class="kw">let </span>ell = decode(dst.as_mut_slice(), s.as_bytes())<span class="question-mark">?</span>;
@@ -137,7 +175,12 @@
     <span class="prelude-val">Ok</span>(dst)
 }
 
-<span class="kw">pub fn </span>encode(dst: <span class="kw-2">&amp;mut </span>[u8], src: <span class="kw-2">&amp;</span>[u8]) -&gt; usize {
+<span class="doccomment">/// Encodes `src` into [encoded_len(src.len())][encoded_len]
+/// bytes of `dst`. As a convenience, it returns the number
+/// of bytes written to `dst`, but this value is always
+/// [encoded_len(src.len())][encoded_len].
+/// `encode` implements hexadecimal encoding.
+</span><span class="kw">pub fn </span>encode(dst: <span class="kw-2">&amp;mut </span>[u8], src: <span class="kw-2">&amp;</span>[u8]) -&gt; usize {
     <span class="kw">let </span><span class="kw-2">mut </span>j = <span class="number">0</span>;
     <span class="kw">for </span>v <span class="kw">in </span>src.iter() {
         <span class="kw">let </span>vv = <span class="kw-2">*</span>v <span class="kw">as </span>usize;
@@ -151,11 +194,14 @@
     src.len() * <span class="number">2
 </span>}
 
-<span class="kw">pub fn </span>encoded_len(n: usize) -&gt; usize {
+<span class="doccomment">/// Returns the length of an encoding of `n` source bytes.
+/// Specifically, it returns `n * 2`.
+</span><span class="kw">pub fn </span>encoded_len(n: usize) -&gt; usize {
     n * <span class="number">2
 </span>}
 
-<span class="kw">pub fn </span>encode_to_string(src: <span class="kw-2">&amp;</span>[u8]) -&gt; String {
+<span class="doccomment">/// Returns the hexadecimal encoding of src.
+</span><span class="kw">pub fn </span>encode_to_string(src: <span class="kw-2">&amp;</span>[u8]) -&gt; String {
     <span class="kw">let </span><span class="kw-2">mut </span>dst = <span class="macro">vec!</span>[<span class="number">0</span>; encoded_len(src.len())];
 
     encode(dst.as_mut_slice(), src);

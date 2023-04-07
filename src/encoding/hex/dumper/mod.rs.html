@@ -146,6 +146,8 @@
 <span id="146">146</span>
 <span id="147">147</span>
 <span id="148">148</span>
+<span id="149">149</span>
+<span id="150">150</span>
 </pre><pre class="rust"><code><span class="kw">use </span>std::io::{Error, ErrorKind, <span class="prelude-ty">Result</span>, Write};
 
 <span class="kw">pub struct </span>Dumper&lt;W&gt;
@@ -274,7 +276,9 @@
     }
 }
 
-<span class="kw">pub fn </span>dump(data: <span class="kw-2">&amp;</span>[u8]) -&gt; String {
+<span class="doccomment">/// Returns a string that contains a hex dump of the given data. The format
+/// of the hex dump matches the output of `hexdump -C` on the command line.
+</span><span class="kw">pub fn </span>dump(data: <span class="kw-2">&amp;</span>[u8]) -&gt; String {
     <span class="kw">if </span>data.len() == <span class="number">0 </span>{
         <span class="kw">return </span><span class="string">&quot;&quot;</span>.to_string();
     }

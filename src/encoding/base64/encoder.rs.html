@@ -389,6 +389,80 @@
 <span id="389">389</span>
 <span id="390">390</span>
 <span id="391">391</span>
+<span id="392">392</span>
+<span id="393">393</span>
+<span id="394">394</span>
+<span id="395">395</span>
+<span id="396">396</span>
+<span id="397">397</span>
+<span id="398">398</span>
+<span id="399">399</span>
+<span id="400">400</span>
+<span id="401">401</span>
+<span id="402">402</span>
+<span id="403">403</span>
+<span id="404">404</span>
+<span id="405">405</span>
+<span id="406">406</span>
+<span id="407">407</span>
+<span id="408">408</span>
+<span id="409">409</span>
+<span id="410">410</span>
+<span id="411">411</span>
+<span id="412">412</span>
+<span id="413">413</span>
+<span id="414">414</span>
+<span id="415">415</span>
+<span id="416">416</span>
+<span id="417">417</span>
+<span id="418">418</span>
+<span id="419">419</span>
+<span id="420">420</span>
+<span id="421">421</span>
+<span id="422">422</span>
+<span id="423">423</span>
+<span id="424">424</span>
+<span id="425">425</span>
+<span id="426">426</span>
+<span id="427">427</span>
+<span id="428">428</span>
+<span id="429">429</span>
+<span id="430">430</span>
+<span id="431">431</span>
+<span id="432">432</span>
+<span id="433">433</span>
+<span id="434">434</span>
+<span id="435">435</span>
+<span id="436">436</span>
+<span id="437">437</span>
+<span id="438">438</span>
+<span id="439">439</span>
+<span id="440">440</span>
+<span id="441">441</span>
+<span id="442">442</span>
+<span id="443">443</span>
+<span id="444">444</span>
+<span id="445">445</span>
+<span id="446">446</span>
+<span id="447">447</span>
+<span id="448">448</span>
+<span id="449">449</span>
+<span id="450">450</span>
+<span id="451">451</span>
+<span id="452">452</span>
+<span id="453">453</span>
+<span id="454">454</span>
+<span id="455">455</span>
+<span id="456">456</span>
+<span id="457">457</span>
+<span id="458">458</span>
+<span id="459">459</span>
+<span id="460">460</span>
+<span id="461">461</span>
+<span id="462">462</span>
+<span id="463">463</span>
+<span id="464">464</span>
+<span id="465">465</span>
 </pre><pre class="rust"><code><span class="kw">use </span>std::io;
 
 <span class="kw">use </span><span class="kw">crate</span>::binary::{BigEndian, ByteOrder};
@@ -399,21 +473,58 @@
 <span class="kw">use </span>lazy_static::lazy_static;
 
 <span class="macro">lazy_static! </span>{
-    <span class="kw">pub static </span><span class="kw-2">ref </span>RAW_STD_ENCODING: Encoding = {
+    <span class="doccomment">/// RAW_STD_ENCODING is the standard raw, unpadded base64 encoding,
+    /// as defined in [RFC 4648 section 3.2].
+    /// This is the same as [STD_ENCODING](/encoding/base64/struct.STD_ENCODING.html)
+    /// but omits padding characters.
+    ///
+    /// [RFC 4648 section 3.2]: https://rfc-editor.org/rfc/rfc4648.html#section-3.2
+    </span><span class="kw">pub static </span><span class="kw-2">ref </span>RAW_STD_ENCODING: Encoding = {
         <span class="kw">let </span><span class="kw-2">mut </span>v = Encoding::new(constants::ENCODE_STD);
         v.without_padding();
         v
     };
-    <span class="kw">pub static </span><span class="kw-2">ref </span>RAW_URL_ENCODING: Encoding = {
+
+    <span class="doccomment">/// RAW_URL_ENCODING is the unpadded alternate base64 encoding defined in [RFC 4648].
+    /// It is typically used in URLs and file names.
+    /// This is the same as [URL_ENCODING](/encoding/base64/struct.URL_ENCODING.html)
+    /// but omits padding characters.
+    ///
+    /// [RFC 4648]: https://rfc-editor.org/rfc/rfc4648.html
+    </span><span class="kw">pub static </span><span class="kw-2">ref </span>RAW_URL_ENCODING: Encoding = {
         <span class="kw">let </span><span class="kw-2">mut </span>v = Encoding::new(constants::ENCODE_URL);
         v.without_padding();
         v
     };
-    <span class="kw">pub static </span><span class="kw-2">ref </span>STD_ENCODING: Encoding = Encoding::new(constants::ENCODE_STD);
-    <span class="kw">pub static </span><span class="kw-2">ref </span>URL_ENCODING: Encoding = Encoding::new(constants::ENCODE_URL);
+
+    <span class="doccomment">/// STD_ENCODING is the standard base64 encoding, as defined in
+    /// [RFC 4648].
+    ///
+    /// [RFC 4648]: https://rfc-editor.org/rfc/rfc4648.html
+    </span><span class="kw">pub static </span><span class="kw-2">ref </span>STD_ENCODING: Encoding = Encoding::new(constants::ENCODE_STD);
+
+    <span class="doccomment">/// URL_ENCODING is the alternate base64 encoding defined in [RFC 4648].
+    /// It is typically used in URLs and file names.
+    ///
+    /// [RFC 4648]: https://rfc-editor.org/rfc/rfc4648.html
+    </span><span class="kw">pub static </span><span class="kw-2">ref </span>URL_ENCODING: Encoding = Encoding::new(constants::ENCODE_URL);
 }
 
-<span class="attribute">#[derive(Clone)]
+<span class="doccomment">/// An Encoding is a radix 64 encoding/decoding scheme, defined by a
+/// 64-character alphabet. The most common encoding is the &quot;base64&quot;
+/// encoding defined in [RFC 4648] and used in MIME ([RFC 2045]) and PEM
+/// ([RFC 1421]).  [RFC 4648] also defines an alternate encoding, which is
+/// the standard encoding with `-` and `_` substituted for `+` and `/`.
+///
+/// # Example
+/// ```
+</span><span class="attribute">#[doc = <span class="macro">include_str!</span>(<span class="string">&quot;../../examples/base64.rs&quot;</span>)]
+</span><span class="doccomment">/// ```
+///
+/// [RFC 4648]: https://rfc-editor.org/rfc/rfc4648.html
+/// [RFC 2045]: https://rfc-editor.org/rfc/rfc2045.html
+/// [RFC 1421]: https://rfc-editor.org/rfc/rfc1421.html
+</span><span class="attribute">#[derive(Clone)]
 </span><span class="kw">pub struct </span>Encoding {
     encode: [u8; <span class="number">64</span>],
     decode_map: [u8; <span class="number">256</span>],
@@ -422,7 +533,12 @@
 }
 
 <span class="kw">impl </span>Encoding {
-    <span class="kw">pub fn </span>new(encoder: <span class="kw-2">&amp;</span>str) -&gt; <span class="self">Self </span>{
+    <span class="doccomment">/// Returns a new padded Encoding defined by the given alphabet,
+    /// which must be a 64-byte string that does not contain the padding character
+    /// or CR / LF (&#39;\r&#39;, &#39;\n&#39;).
+    /// The resulting `Encoding` uses the default padding character (&#39;=&#39;),
+    /// which may be changed or disabled via [with_padding][Self::with_padding].
+    </span><span class="kw">pub fn </span>new(encoder: <span class="kw-2">&amp;</span>str) -&gt; <span class="self">Self </span>{
         <span class="kw">if </span>encoder.len() != <span class="number">64 </span>{
             <span class="macro">panic!</span>(<span class="string">&quot;encoding alphabet is not 64-bytes long&quot;</span>)
         }
@@ -459,7 +575,13 @@
         }
     }
 
-    <span class="kw">pub fn </span>decode(<span class="kw-2">&amp;</span><span class="self">self</span>, dst: <span class="kw-2">&amp;mut </span>[u8], src: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;usize, Error&gt; {
+    <span class="doccomment">/// Decodes `src` using the encoding `self`. It writes at most
+    /// [decoded_len(src.len())][Self::decoded_len] bytes to `dst` and returns the number of bytes
+    /// written. If `src` contains invalid base64 data, it will return the
+    /// number of bytes successfully written and
+    /// [CorruptInputError](crate::Error::CorruptInputError).
+    /// New line characters (\r and \n) are ignored.
+    </span><span class="kw">pub fn </span>decode(<span class="kw-2">&amp;</span><span class="self">self</span>, dst: <span class="kw-2">&amp;mut </span>[u8], src: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;usize, Error&gt; {
         <span class="kw">if </span>src.len() == <span class="number">0 </span>{
             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="number">0</span>);
         }
@@ -534,14 +656,17 @@
         <span class="prelude-val">Ok</span>(n)
     }
 
-    <span class="kw">pub fn </span>decoded_len(<span class="kw-2">&amp;</span><span class="self">self</span>, n: usize) -&gt; usize {
+    <span class="doccomment">/// Returns the maximum length in bytes of the decoded data
+    /// corresponding to `n` bytes of base64-encoded data.
+    </span><span class="kw">pub fn </span>decoded_len(<span class="kw-2">&amp;</span><span class="self">self</span>, n: usize) -&gt; usize {
         <span class="kw">match </span><span class="self">self</span>.pad_char {
             <span class="prelude-val">None </span>=&gt; n * <span class="number">6 </span>/ <span class="number">8</span>,
             <span class="kw">_ </span>=&gt; n / <span class="number">4 </span>* <span class="number">3</span>,
         }
     }
 
-    <span class="kw">pub fn </span>decode_string(<span class="kw-2">&amp;</span><span class="self">self</span>, s: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;u8&gt;, Error&gt; {
+    <span class="doccomment">/// Returns the bytes represented by the base64 string `s`.
+    </span><span class="kw">pub fn </span>decode_string(<span class="kw-2">&amp;</span><span class="self">self</span>, s: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;u8&gt;, Error&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>out = <span class="macro">vec!</span>[<span class="number">0u8</span>; <span class="self">self</span>.encoded_len(s.len())];
         <span class="kw">let </span>n = <span class="self">self</span>.decode(out.as_mut_slice(), s.as_bytes())<span class="question-mark">?</span>;
 
@@ -550,7 +675,13 @@
         <span class="prelude-val">Ok</span>(out)
     }
 
-    <span class="kw">pub fn </span>encode(<span class="kw-2">&amp;</span><span class="self">self</span>, dst: <span class="kw-2">&amp;mut </span>[u8], src: <span class="kw-2">&amp;</span>[u8]) {
+    <span class="doccomment">/// Encodes `src` using the encoding `self`, writing
+    /// [encoded_len(src.len())][Self::encoded_len] bytes to `dst`.
+    ///
+    /// The encoding pads the output to a multiple of 4 bytes,
+    /// so `encode` is not appropriate for use on individual blocks
+    /// of a large data stream.
+    </span><span class="kw">pub fn </span>encode(<span class="kw-2">&amp;</span><span class="self">self</span>, dst: <span class="kw-2">&amp;mut </span>[u8], src: <span class="kw-2">&amp;</span>[u8]) {
         <span class="kw">if </span>src.len() == <span class="number">0 </span>{
             <span class="kw">return</span>;
         }
@@ -594,26 +725,42 @@
         }
     }
 
-    <span class="kw">pub fn </span>encoded_len(<span class="kw-2">&amp;</span><span class="self">self</span>, n: usize) -&gt; usize {
+    <span class="doccomment">/// Returns the length in bytes of the base64 encoding
+    /// of an input buffer of length `n`.
+    </span><span class="kw">pub fn </span>encoded_len(<span class="kw-2">&amp;</span><span class="self">self</span>, n: usize) -&gt; usize {
         <span class="kw">match </span><span class="self">self</span>.pad_char {
             <span class="prelude-val">None </span>=&gt; (n * <span class="number">8 </span>+ <span class="number">5</span>) / <span class="number">6</span>,
             <span class="kw">_ </span>=&gt; (n + <span class="number">2</span>) / <span class="number">3 </span>* <span class="number">4</span>,
         }
     }
 
-    <span class="kw">pub fn </span>encode_to_string(<span class="kw-2">&amp;</span><span class="self">self</span>, src: <span class="kw-2">&amp;</span>[u8]) -&gt; String {
+    <span class="doccomment">/// Returns the base64 encoding of `src`.
+    </span><span class="kw">pub fn </span>encode_to_string(<span class="kw-2">&amp;</span><span class="self">self</span>, src: <span class="kw-2">&amp;</span>[u8]) -&gt; String {
         <span class="kw">let </span><span class="kw-2">mut </span>buf = <span class="macro">vec!</span>[<span class="number">0u8</span>; <span class="self">self</span>.encoded_len(src.len())];
         <span class="self">self</span>.encode(<span class="kw-2">&amp;mut </span>buf, src);
 
         String::from_utf8(buf).expect(<span class="string">&quot;unfallible&quot;</span>)
     }
 
-    <span class="kw">pub fn </span>strict(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="self">Self </span>{
+    <span class="doccomment">/// Creates a new encoding identical to enc except with
+    /// strict decoding enabled. In this mode, the decoder requires that
+    /// trailing padding bits are zero, as described in [RFC 4648 section 3.5].
+    ///
+    /// Note that the input is still malleable, as new line characters
+    /// (CR and LF) are still ignored.
+    ///
+    /// [RFC 4648 section 3.5]: https://rfc-editor.org/rfc/rfc4648.html#section-3.5
+    </span><span class="kw">pub fn </span>strict(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="self">Self </span>{
         <span class="self">self</span>.strict = <span class="bool-val">true</span>;
         <span class="self">self
     </span>}
 
-    <span class="kw">pub fn </span>with_padding(<span class="kw-2">&amp;mut </span><span class="self">self</span>, padding: char) -&gt; <span class="kw-2">&amp;</span><span class="self">Self </span>{
+    <span class="doccomment">/// Creates a new encoding identical to `self` except
+    /// with a specified padding character.
+    /// The padding character must not be &#39;\r&#39; or &#39;\n&#39;, must not
+    /// be contained in the encoding&#39;s alphabet and must be a rune equal or
+    /// below &#39;\xff&#39;.
+    </span><span class="kw">pub fn </span>with_padding(<span class="kw-2">&amp;mut </span><span class="self">self</span>, padding: char) -&gt; <span class="kw-2">&amp;</span><span class="self">Self </span>{
         <span class="kw">if </span>!padding.is_ascii() {
             <span class="macro">panic!</span>(<span class="string">&quot;invalid padding&quot;</span>)
         }
@@ -632,7 +779,8 @@
         <span class="self">self
     </span>}
 
-    <span class="kw">pub fn </span>without_padding(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="self">Self </span>{
+    <span class="doccomment">/// Creates a new encoding identical to `self` except without padding.
+    </span><span class="kw">pub fn </span>without_padding(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="self">Self </span>{
         <span class="self">self</span>.pad_char = <span class="prelude-val">None</span>;
 
         <span class="self">self
