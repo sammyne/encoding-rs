@@ -1,9 +1,14 @@
 use core::convert::TryInto;
 use std::fmt::{self, Display, Formatter};
 
+/// `BigEndian` is the big-endian implementation of [ByteOrder].
 pub struct BigEndian;
+
+/// `LittleEndian` is the little-endian implementation of [ByteOrder].
 pub struct LittleEndian;
 
+/// A ByteOrder specifies how to convert byte slices into
+/// 16-, 32-, or 64-bit unsigned integers.
 pub trait ByteOrder: Display {
     fn uint16(src: &[u8]) -> u16;
     fn uint32(src: &[u8]) -> u32;
