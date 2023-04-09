@@ -1,6 +1,8 @@
-/target
+**/target/
 **/*.rs.bk
 Cargo.lock
 
 # temporary files
 _*
+
+.vscode/
