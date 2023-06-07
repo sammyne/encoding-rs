@@ -116,61 +116,68 @@ lazy_static! {
         ReadTest::default()
             .with_name("CRLF")
             .with_input("§a,§b\r\n¶§c,§d\r\n")
-            .with_output(&[&["a","b"],&["c","d"]]),
+            .with_output(&[&["a", "b"], &["c", "d"]]),
         ReadTest::default()
             .with_name("BareCR")
             .with_input("§a,§b\rc,§d\r\n")
-            .with_output(&[&["a","b\rc","d"]]),
+            .with_output(&[&["a", "b\rc", "d"]]),
         ReadTest::default()
             .with_name("RFC4180test")
             .with_fields_per_record(Some(0))
-            .with_input(r#"§#field1,§field2,§field3
+            .with_input(
+                r#"§#field1,§field2,§field3
 ¶§"aaa",§"bb
 b",§"ccc"
 ¶§"a,a",§"b""bb",§"ccc"
 ¶§zzz,§yyy,§xxx
-"#)
-            .with_output(&[&["#field1","field2","field3"],&["aaa","bb\nb","ccc"],&["a,a","b\"bb","ccc"],&["zzz","yyy","xxx"]]),
+"#
+            )
+            .with_output(&[
+                &["#field1", "field2", "field3"],
+                &["aaa", "bb\nb", "ccc"],
+                &["a,a", "b\"bb", "ccc"],
+                &["zzz", "yyy", "xxx"]
+            ]),
         ReadTest::default()
             .with_name("NoEOLTest")
             .with_input("§a,§b,§c")
-            .with_output(&[&["a","b","c"]]),
+            .with_output(&[&["a", "b", "c"]]),
         ReadTest::default()
             .with_comma(';')
             .with_name("Semicolon")
             .with_input("§a;§b;§c\n")
-            .with_output(&[&["a","b","c"]]),
+            .with_output(&[&["a", "b", "c"]]),
         ReadTest::default()
             .with_name("MultiLine")
             .with_input("§\"two\nline\",§\"one line\",§\"three\nline\nfield\"")
-            .with_output(&[&["two\nline","one line","three\nline\nfield"]]),
+            .with_output(&[&["two\nline", "one line", "three\nline\nfield"]]),
         ReadTest::default()
             .with_name("BlankLine")
             .with_input("§a,§b,§c\n\n¶§d,§e,§f\n\n")
-            .with_output(&[&["a","b","c"],&["d","e","f"]]),
+            .with_output(&[&["a", "b", "c"], &["d", "e", "f"]]),
         ReadTest::default()
             .with_name("BlankLineFieldCount")
             .with_fields_per_record(Some(0))
             .with_input("§a,§b,§c\n\n¶§d,§e,§f\n\n")
-            .with_output(&[&["a","b","c"],&["d","e","f"]]),
+            .with_output(&[&["a", "b", "c"], &["d", "e", "f"]]),
         ReadTest::default()
             .with_name("TrimSpace")
             .with_input(" §a,  §b,   §c\n")
-            .with_output(&[&["a","b","c"]])
+            .with_output(&[&["a", "b", "c"]])
             .with_trim_leading_space(true),
         ReadTest::default()
             .with_name("LeadingSpace")
             .with_input("§ a,§  b,§   c\n")
-            .with_output(&[&[" a","  b","   c"]]),
+            .with_output(&[&[" a", "  b", "   c"]]),
         ReadTest::default()
             .with_comment('#')
             .with_name("Comment")
             .with_input("#1,2,3\n§a,§b,§c\n#comment")
-            .with_output(&[&["a","b","c"]]),
+            .with_output(&[&["a", "b", "c"]]),
         ReadTest::default()
             .with_name("NoComment")
             .with_input("§#1,§2,§3\n¶§a,§b,§c")
-            .with_output(&[&["#1","2","3"],&["a","b","c"]]),
+            .with_output(&[&["#1", "2", "3"], &["a", "b", "c"]]),
         ReadTest::default()
             .with_name("LazyQuotes")
             .with_input(r#"§a "word",§"1"2",§a",§"b"#)
@@ -194,7 +201,7 @@ b",§"ccc"
             .with_name("TrimQuote")
             .with_input(r#" §"a",§" b",§c"#)
             .with_trim_leading_space(true)
-            .with_output(&[&["a"," b","c"]]),
+            .with_output(&[&["a", " b", "c"]]),
         ReadTest::default()
             .with_name("BadBareQuote")
             .with_errors([Some(Error::BareQuote.into())])
@@ -212,53 +219,58 @@ b",§"ccc"
             .with_errors([None, Some(Error::FieldCount.into())])
             .with_fields_per_record(Some(0))
             .with_input("§a,§b,§c\n¶∑§d,§e")
-            .with_output(&[&["a","b","c"], &["d","e"]]),
+            .with_output(&[&["a", "b", "c"], &["d", "e"]]),
         ReadTest::default()
             .with_name("BadFieldCountMultiple")
             .with_fields_per_record(Some(0))
             .with_input("§a,§b,§c\n¶∑§d,§e\n¶∑§f")
-            .with_errors([None, Some(Error::FieldCount.into()), Some(Error::FieldCount.into())])
-            .with_output(&[&["a","b","c"], &["d","e"], &["f"]]),
+            .with_errors([
+                None,
+                Some(Error::FieldCount.into()),
+                Some(Error::FieldCount.into())
+            ])
+            .with_output(&[&["a", "b", "c"], &["d", "e"], &["f"]]),
         ReadTest::default()
             .with_name("BadFieldCount1")
             .with_errors([Some(Error::FieldCount.into())])
             .with_fields_per_record(Some(2))
             .with_input("§∑a,§b,§c")
-            .with_output(&[&["a","b","c"]]),
+            .with_output(&[&["a", "b", "c"]]),
         ReadTest::default()
             .with_name("FieldCount")
             .with_input("§a,§b,§c\n¶§d,§e")
-            .with_output(&[&["a","b","c"], &["d","e"]]),
+            .with_output(&[&["a", "b", "c"], &["d", "e"]]),
         ReadTest::default()
             .with_name("TrailingCommaEOF")
             .with_input("§a,§b,§c,§")
-            .with_output(&[&["a","b","c",""]]),
+            .with_output(&[&["a", "b", "c", ""]]),
         ReadTest::default()
             .with_name("TrailingCommaEOL")
             .with_input("§a,§b,§c,§\n")
-            .with_output(&[&["a","b","c",""]]),
+            .with_output(&[&["a", "b", "c", ""]]),
         ReadTest::default()
             .with_name("TrailingCommaSpaceEOF")
             .with_input("§a,§b,§c, §")
-            .with_output(&[&["a","b","c",""]])
+            .with_output(&[&["a", "b", "c", ""]])
             .with_trim_leading_space(true),
         ReadTest::default()
             .with_name("TrailingCommaSpaceEOL")
             .with_input("§a,§b,§c, §\n")
-            .with_output(&[&["a","b","c",""]])
+            .with_output(&[&["a", "b", "c", ""]])
             .with_trim_leading_space(true),
         ReadTest::default()
             .with_name("TrailingCommaLine3")
             .with_input("§a,§b,§c\n¶§d,§e,§f\n¶§g,§hi,§")
-            .with_output(&[&["a","b","c"],&["d","e","f"],&["g","hi",""]])
+            .with_output(&[&["a", "b", "c"], &["d", "e", "f"], &["g", "hi", ""]])
             .with_trim_leading_space(true),
         ReadTest::default()
             .with_name("NotTrailingComma3")
             .with_input("§a,§b,§c,§ \n")
-            .with_output(&[&["a","b","c"," "]]),
+            .with_output(&[&["a", "b", "c", " "]]),
         ReadTest::default()
             .with_name("CommaFieldTest")
-            .with_input(r#"§x,§y,§z,§w
+            .with_input(
+                r#"§x,§y,§z,§w
 ¶§x,§y,§z,§
 ¶§x,§y,§,§
 ¶§x,§,§,§
@@ -268,28 +280,29 @@ b",§"ccc"
 ¶§"x",§"y",§"",§""
 ¶§"x",§"",§"",§""
 ¶§"",§"",§"",§""
-"#)
+"#
+            )
             .with_output(&[
-                &["x","y","z","w"],
-                &["x","y","z",""],
-                &["x","y","",""],
-                &["x","","",""],
-                &["","","",""],
-                &["x","y","z","w"],
-                &["x","y","z",""],
-                &["x","y","",""],
-                &["x","","",""],
-                &["","","",""]
+                &["x", "y", "z", "w"],
+                &["x", "y", "z", ""],
+                &["x", "y", "", ""],
+                &["x", "", "", ""],
+                &["", "", "", ""],
+                &["x", "y", "z", "w"],
+                &["x", "y", "z", ""],
+                &["x", "y", "", ""],
+                &["x", "", "", ""],
+                &["", "", "", ""]
             ]),
         ReadTest::default()
             .with_name("TrailingCommaIneffective1")
             .with_input("§a,§b,§\n¶§c,§d,§e")
-            .with_output(&[&["a","b",""],&["c","d","e"]])
+            .with_output(&[&["a", "b", ""], &["c", "d", "e"]])
             .with_trim_leading_space(true),
         ReadTest::default()
             .with_name("ReadAllReuseRecord")
             .with_input("§a,§b\n¶§c,§d")
-            .with_output(&[&["a","b"],&["c","d"]]),
+            .with_output(&[&["a", "b"], &["c", "d"]]),
         ReadTest::default()
             .with_name("StartLine1")
             .with_errors([Some(Error::Quote.into())])
@@ -298,19 +311,19 @@ b",§"ccc"
             .with_name("StartLine2")
             .with_errors([None, Some(Error::Quote.into())])
             .with_input("§a,§b\n¶§\"d\n\n,e∑")
-            .with_output(&[&["a","b"]]),
+            .with_output(&[&["a", "b"]]),
         ReadTest::default()
             .with_name("CRLFInQuotedField")
             .with_input("§A,§\"Hello\r\nHi\",§B\r\n")
-            .with_output(&[&["A","Hello\nHi","B"]]),
+            .with_output(&[&["A", "Hello\nHi", "B"]]),
         ReadTest::default()
             .with_name("BinaryBlobField")
             .with_input("§x09A\u{b41c},§aktau")
-            .with_output(&[&["x09A\u{b41c}","aktau"]]),
+            .with_output(&[&["x09A\u{b41c}", "aktau"]]),
         ReadTest::default()
             .with_name("TrailingCR")
             .with_input("§field1,§field2\r")
-            .with_output(&[&["field1","field2"]]),
+            .with_output(&[&["field1", "field2"]]),
         ReadTest::default()
             .with_name("QuotedTrailingCR")
             .with_input("§\"field\"\r")
@@ -330,19 +343,23 @@ b",§"ccc"
         ReadTest::default()
             .with_name("FieldCRCRLF")
             .with_input("§field\r\r\n¶§field\r\r\n")
-            .with_output(&[&["field\r"],&["field\r"]]),
+            .with_output(&[&["field\r"], &["field\r"]]),
         ReadTest::default()
             .with_name("FieldCRCRLFCR")
             .with_input("§field\r\r\n¶§\rfield\r\r\n\r")
-            .with_output(&[&["field\r"],&["\rfield\r"]]),
+            .with_output(&[&["field\r"], &["\rfield\r"]]),
         ReadTest::default()
             .with_name("FieldCRCRLFCRCR")
             .with_input("§field\r\r\n¶§\r\rfield\r\r\n¶§\r\r")
-            .with_output(&[&["field\r"],&["\r\rfield\r"],&["\r"]]),
+            .with_output(&[&["field\r"], &["\r\rfield\r"], &["\r"]]),
         ReadTest::default()
             .with_name("MultiFieldCRCRLFCRCR")
             .with_input("§field1,§field2\r\r\n¶§\r\rfield1,§field2\r\r\n¶§\r\r,§")
-            .with_output(&[&["field1","field2\r"],&["\r\rfield1","field2\r"],&["\r\r",""]]),
+            .with_output(&[
+                &["field1", "field2\r"],
+                &["\r\rfield1", "field2\r"],
+                &["\r\r", ""]
+            ]),
         ReadTest::default()
             .with_name("NonASCIICommaAndComment")
             .with_comma('£')
@@ -350,25 +367,25 @@ b",§"ccc"
             .with_input("§a£§b,c£ \t§d,e\n€ comment\n")
             .with_input("§a£§b,c£ \t§d,e\n€ comment\n")
             .with_input("§a£§b,c£ \t§d,e\n€ comment\n")
-            .with_output(&[&["a","b,c","d,e"]])
+            .with_output(&[&["a", "b,c", "d,e"]])
             .with_trim_leading_space(true),
         ReadTest::default()
             .with_name("NonASCIICommaAndCommentWithQuotes")
             .with_comma('€')
             .with_comment('λ')
             .with_input("§a€§\"  b,\"€§ c\nλ comment\n")
-            .with_output(&[&["a","  b,"," c"]]),
+            .with_output(&[&["a", "  b,", " c"]]),
         ReadTest::default()
             .with_name("NonASCIICommaConfusion")
             .with_comma('λ')
             .with_comment('€')
             .with_input("§\"abθcd\"λ§efθgh")
-            .with_output(&[&["abθcd","efθgh"]]),
+            .with_output(&[&["abθcd", "efθgh"]]),
         ReadTest::default()
             .with_name("NonASCIICommentConfusion")
             .with_comment('θ')
             .with_input("§λ\n¶§λ\nθ\n¶§λ\n")
-            .with_output(&[&["λ"],&["λ"],&["λ"]]),
+            .with_output(&[&["λ"], &["λ"], &["λ"]]),
         ReadTest::default()
             .with_name("QuotedFieldMultipleLF")
             .with_input("§\"\n\n\n\n\"")
@@ -379,7 +396,9 @@ b",§"ccc"
         ReadTest::default()
             .with_name("HugeLines")
             .with_comment('#')
-            .with_input("#ignore\n".repeat(10000) + "§" + &"@".repeat(5000) + ",§" + &"*".repeat(5000))
+            .with_input(
+                "#ignore\n".repeat(10000) + "§" + &"@".repeat(5000) + ",§" + &"*".repeat(5000)
+            )
             .with_output(&[&["@".repeat(5000), "*".repeat(5000)]]),
         ReadTest::default()
             .with_name("QuoteWithTrailingCRLF")
