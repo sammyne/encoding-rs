@@ -2,6 +2,8 @@ use std::fmt::Display;
 use std::io::{self, BufRead, BufReader, Read};
 use std::mem;
 
+use crate::validator;
+
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
     #[error("bare \" in non-quoted-field")]
@@ -222,12 +224,12 @@ where
         &mut self,
         dst: Option<Vec<String>>,
     ) -> Result<Vec<String>, (ParseError, Option<Vec<String>>)> {
-        if !valid_delimiter(self.comma) {
+        if !validator::valid_delimiter(self.comma) {
             let err = ParseError::new(0, 0, 0, Error::InvalidDelimiter);
             return Err((err, dst));
         }
         match &self.comment {
-            Some(v) if (self.comma == *v) || !valid_delimiter(*v) => {
+            Some(v) if (self.comma == *v) || !validator::valid_delimiter(*v) => {
                 let err = ParseError::new(0, 0, 0, Error::InvalidDelimiter);
                 return Err((err, dst));
             }
@@ -460,13 +462,6 @@ where
         1
     } else {
         0
-    }
-}
-
-fn valid_delimiter(c: char) -> bool {
-    match c {
-        '\0' | '"' | '\r' | '\n' | '�' => false,
-        _ => true,
     }
 }
 
