@@ -440,7 +440,7 @@ b",§"ccc"
             .with_other_errors([Some(Error::InvalidDelimiter)]),
         ReadTest::default()
             .with_name("BadComma4")
-            .with_comma('�')
+            .with_comma(char::REPLACEMENT_CHARACTER)
             .with_other_errors([Some(Error::InvalidDelimiter)]),
         ReadTest::default()
             .with_name("BadComment1")
@@ -452,7 +452,7 @@ b",§"ccc"
             .with_other_errors([Some(Error::InvalidDelimiter)]),
         ReadTest::default()
             .with_name("BadComment3")
-            .with_comment('�')
+            .with_comment(char::REPLACEMENT_CHARACTER)
             .with_other_errors([Some(Error::InvalidDelimiter)]),
         ReadTest::default()
             .with_name("BadCommaComment")
