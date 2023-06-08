@@ -3,7 +3,7 @@ use std::io::Cursor;
 
 use lazy_static::lazy_static;
 
-use super::{Error, ParseError, Reader};
+use super::{ReadError, ParseError, Reader};
 
 #[test]
 fn read() {
@@ -52,7 +52,7 @@ fn read() {
                     &err_positions,
                 ))
             } else if rec_num >= tt.output.len() {
-                Some(ReadError::Parse(ParseError::new(0, 0, 0, Error::Eof)))
+                Some(TestReadError::Parse(ParseError::new(0, 0, 0, ReadError::Eof)))
             } else {
                 None
             };
@@ -86,7 +86,7 @@ fn read() {
                 }
                 Err(err) => {
                     match err.err {
-                        Error::FieldCount => {}
+                        ReadError::FieldCount => {}
                         _ => {
                             assert!(
                                 rec_num >= tt.output.len(),
@@ -195,7 +195,7 @@ b",§"ccc"
             .with_output(&[&[r#"a""b"#, "c"]]),
         ReadTest::default()
             .with_name("BadDoubleQuotes")
-            .with_errors([Some(Error::BareQuote.into())])
+            .with_errors([Some(ReadError::BareQuote.into())])
             .with_input(r#"§a∑""b,c"#),
         ReadTest::default()
             .with_name("TrimQuote")
@@ -204,19 +204,19 @@ b",§"ccc"
             .with_output(&[&["a", " b", "c"]]),
         ReadTest::default()
             .with_name("BadBareQuote")
-            .with_errors([Some(Error::BareQuote.into())])
+            .with_errors([Some(ReadError::BareQuote.into())])
             .with_input(r#"§a ∑"word","b""#),
         ReadTest::default()
             .with_name("BadTrailingQuote")
-            .with_errors([Some(Error::BareQuote.into())])
+            .with_errors([Some(ReadError::BareQuote.into())])
             .with_input(r#"§"a word",b∑""#),
         ReadTest::default()
             .with_name("ExtraneousQuote")
-            .with_errors([Some(Error::Quote.into())])
+            .with_errors([Some(ReadError::Quote.into())])
             .with_input(r#"§"a ∑"word","b""#),
         ReadTest::default()
             .with_name("BadFieldCount")
-            .with_errors([None, Some(Error::FieldCount.into())])
+            .with_errors([None, Some(ReadError::FieldCount.into())])
             .with_fields_per_record(Some(0))
             .with_input("§a,§b,§c\n¶∑§d,§e")
             .with_output(&[&["a", "b", "c"], &["d", "e"]]),
@@ -226,13 +226,13 @@ b",§"ccc"
             .with_input("§a,§b,§c\n¶∑§d,§e\n¶∑§f")
             .with_errors([
                 None,
-                Some(Error::FieldCount.into()),
-                Some(Error::FieldCount.into())
+                Some(ReadError::FieldCount.into()),
+                Some(ReadError::FieldCount.into())
             ])
             .with_output(&[&["a", "b", "c"], &["d", "e"], &["f"]]),
         ReadTest::default()
             .with_name("BadFieldCount1")
-            .with_errors([Some(Error::FieldCount.into())])
+            .with_errors([Some(ReadError::FieldCount.into())])
             .with_fields_per_record(Some(2))
             .with_input("§∑a,§b,§c")
             .with_output(&[&["a", "b", "c"]]),
@@ -305,11 +305,11 @@ b",§"ccc"
             .with_output(&[&["a", "b"], &["c", "d"]]),
         ReadTest::default()
             .with_name("StartLine1")
-            .with_errors([Some(Error::Quote.into())])
+            .with_errors([Some(ReadError::Quote.into())])
             .with_input("§a,\"b\nc∑\"d,e"),
         ReadTest::default()
             .with_name("StartLine2")
-            .with_errors([None, Some(Error::Quote.into())])
+            .with_errors([None, Some(ReadError::Quote.into())])
             .with_input("§a,§b\n¶§\"d\n\n,e∑")
             .with_output(&[&["a", "b"]]),
         ReadTest::default()
@@ -330,7 +330,7 @@ b",§"ccc"
             .with_output(&[&["field"]]),
         ReadTest::default()
             .with_name("QuotedTrailingCRCR")
-            .with_errors([Some(Error::Quote.into())])
+            .with_errors([Some(ReadError::Quote.into())])
             .with_input("§\"field∑\"\r\r"),
         ReadTest::default()
             .with_name("FieldCR")
@@ -402,7 +402,7 @@ b",§"ccc"
             .with_output(&[&["@".repeat(5000), "*".repeat(5000)]]),
         ReadTest::default()
             .with_name("QuoteWithTrailingCRLF")
-            .with_errors([Some(Error::Quote.into())])
+            .with_errors([Some(ReadError::Quote.into())])
             .with_input("§\"foo∑\"bar\"\r\n"),
         ReadTest::default()
             .with_name("LazyQuoteWithTrailingCRLF")
@@ -419,7 +419,7 @@ b",§"ccc"
             .with_output(&[&[r#"""""#]]),
         ReadTest::default()
             .with_name("OddQuotes")
-            .with_errors([Some(Error::Quote.into())])
+            .with_errors([Some(ReadError::Quote.into())])
             .with_input(r#"§"""""""∑"#),
         ReadTest::default()
             .with_name("LazyOddQuotes")
@@ -429,43 +429,43 @@ b",§"ccc"
         ReadTest::default()
             .with_name("BadComma1")
             .with_comma('\n')
-            .with_other_errors([Some(Error::InvalidDelimiter)]),
+            .with_other_errors([Some(ReadError::InvalidDelimiter)]),
         ReadTest::default()
             .with_name("BadComma2")
             .with_comma('\r')
-            .with_other_errors([Some(Error::InvalidDelimiter)]),
+            .with_other_errors([Some(ReadError::InvalidDelimiter)]),
         ReadTest::default()
             .with_name("BadComma3")
             .with_comma('"')
-            .with_other_errors([Some(Error::InvalidDelimiter)]),
+            .with_other_errors([Some(ReadError::InvalidDelimiter)]),
         ReadTest::default()
             .with_name("BadComma4")
             .with_comma(char::REPLACEMENT_CHARACTER)
-            .with_other_errors([Some(Error::InvalidDelimiter)]),
+            .with_other_errors([Some(ReadError::InvalidDelimiter)]),
         ReadTest::default()
             .with_name("BadComment1")
             .with_comment('\n')
-            .with_other_errors([Some(Error::InvalidDelimiter)]),
+            .with_other_errors([Some(ReadError::InvalidDelimiter)]),
         ReadTest::default()
             .with_name("BadComment2")
             .with_comment('\r')
-            .with_other_errors([Some(Error::InvalidDelimiter)]),
+            .with_other_errors([Some(ReadError::InvalidDelimiter)]),
         ReadTest::default()
             .with_name("BadComment3")
             .with_comment(char::REPLACEMENT_CHARACTER)
-            .with_other_errors([Some(Error::InvalidDelimiter)]),
+            .with_other_errors([Some(ReadError::InvalidDelimiter)]),
         ReadTest::default()
             .with_name("BadCommaComment")
             .with_comma('X')
             .with_comment('X')
-            .with_other_errors([Some(Error::InvalidDelimiter)]),
+            .with_other_errors([Some(ReadError::InvalidDelimiter)]),
     ];
 }
 
 #[derive(Debug)]
-enum ReadError {
+enum TestReadError {
     Parse(ParseError),
-    Other(Error),
+    Other(ReadError),
 }
 
 #[derive(Default)]
@@ -474,7 +474,7 @@ struct ReadTest {
     input: String,
     output: Vec<Vec<String>>,
     // positions: Vec<Vec<[usize; 2]>>,
-    errors: Vec<Option<ReadError>>,
+    errors: Vec<Option<TestReadError>>,
 
     comma: Option<char>,
     comment: Option<char>,
@@ -483,11 +483,11 @@ struct ReadTest {
     trim_leading_space: bool,
 }
 
-impl ReadError {
+impl TestReadError {
     fn equal_partially(&self, err: &ParseError) -> bool {
         match self {
-            ReadError::Parse(v) => v.equal_partially(err),
-            ReadError::Other(v) => v.equal_partially(&err.err),
+            TestReadError::Parse(v) => v.equal_partially(err),
+            TestReadError::Other(v) => v.equal_partially(&err.err),
         }
     }
 }
@@ -506,15 +506,15 @@ impl ReadTest {
     fn with_errors<const N: usize>(mut self, errors: [Option<ParseError>; N]) -> Self {
         self.errors = errors
             .into_iter()
-            .map(|v| v.map(ReadError::Parse))
+            .map(|v| v.map(TestReadError::Parse))
             .collect();
         self
     }
 
-    fn with_other_errors<const N: usize>(mut self, errors: [Option<Error>; N]) -> Self {
+    fn with_other_errors<const N: usize>(mut self, errors: [Option<ReadError>; N]) -> Self {
         self.errors = errors
             .into_iter()
-            .map(|v| v.map(ReadError::Other))
+            .map(|v| v.map(TestReadError::Other))
             .collect();
         self
     }
@@ -571,27 +571,27 @@ impl ReadTest {
     }
 }
 
-fn copy_error_partially(err: &Error) -> Error {
+fn copy_error_partially(err: &ReadError) -> ReadError {
     match err {
-        Error::BareQuote => Error::BareQuote,
-        Error::Eof => Error::Eof,
-        Error::FieldCount => Error::FieldCount,
-        Error::InvalidDelimiter => Error::InvalidDelimiter,
-        Error::Io(v) => Error::Io(v.kind().into()),
-        Error::Quote => Error::Quote,
-        Error::TrailingComma => Error::TrailingComma,
+        ReadError::BareQuote => ReadError::BareQuote,
+        ReadError::Eof => ReadError::Eof,
+        ReadError::FieldCount => ReadError::FieldCount,
+        ReadError::InvalidDelimiter => ReadError::InvalidDelimiter,
+        ReadError::Io(v) => ReadError::Io(v.kind().into()),
+        ReadError::Quote => ReadError::Quote,
+        ReadError::TrailingComma => ReadError::TrailingComma,
     }
 }
 
 fn error_with_position(
-    err: &ReadError,
+    err: &TestReadError,
     rec_num: usize,
     positions: &[Vec<[usize; 2]>],
     err_positions: &HashMap<usize, [usize; 2]>,
-) -> ReadError {
+) -> TestReadError {
     match err {
-        ReadError::Other(v) => ReadError::Other(copy_error_partially(v)),
-        ReadError::Parse(v) => {
+        TestReadError::Other(v) => TestReadError::Other(copy_error_partially(v)),
+        TestReadError::Parse(v) => {
             assert!(
                 rec_num < positions.len(),
                 "no positions found for error at record {}",
@@ -605,7 +605,7 @@ fn error_with_position(
             let err = copy_error_partially(&v.err);
             let parse_err = ParseError::new(positions[rec_num][0][0], err_pos[0], err_pos[1], err);
 
-            ReadError::Parse(parse_err)
+            TestReadError::Parse(parse_err)
         }
     }
 }
@@ -614,10 +614,10 @@ fn error_with_position(
 /// with the position adjusted according to the error's
 /// index inside positions.
 fn first_error(
-    errs: &[Option<ReadError>],
+    errs: &[Option<TestReadError>],
     positions: &[Vec<[usize; 2]>],
     err_positions: &HashMap<usize, [usize; 2]>,
-) -> Option<ReadError> {
+) -> Option<TestReadError> {
     for (i, v) in errs.iter().enumerate() {
         if let Some(err) = v {
             return Some(error_with_position(err, i, positions, err_positions));

@@ -5,7 +5,7 @@ use std::mem;
 use crate::validator;
 
 #[derive(thiserror::Error, Debug)]
-pub enum Error {
+pub enum ReadError {
     #[error("bare \" in non-quoted-field")]
     BareQuote,
     #[error("EOF")]
@@ -27,7 +27,7 @@ pub struct ParseError {
     pub start_line: usize,
     pub line: usize,
     pub column: usize,
-    pub err: Error,
+    pub err: ReadError,
 }
 
 pub struct Reader<R>
@@ -55,16 +55,16 @@ struct Position {
     pub col: usize,
 }
 
-impl Error {
+impl ReadError {
     pub fn equal_partially(&self, other: &Self) -> bool {
         match (self, other) {
-            (Error::BareQuote, Error::BareQuote) => true,
-            (Error::Eof, Error::Eof) => true,
-            (Error::FieldCount, Error::FieldCount) => true,
-            (Error::InvalidDelimiter, Error::InvalidDelimiter) => true,
-            (Error::Io(x), Error::Io(y)) => x.kind() == y.kind(),
-            (Error::Quote, Error::Quote) => true,
-            (Error::TrailingComma, Error::TrailingComma) => true,
+            (ReadError::BareQuote, ReadError::BareQuote) => true,
+            (ReadError::Eof, ReadError::Eof) => true,
+            (ReadError::FieldCount, ReadError::FieldCount) => true,
+            (ReadError::InvalidDelimiter, ReadError::InvalidDelimiter) => true,
+            (ReadError::Io(x), ReadError::Io(y)) => x.kind() == y.kind(),
+            (ReadError::Quote, ReadError::Quote) => true,
+            (ReadError::TrailingComma, ReadError::TrailingComma) => true,
             (_, _) => false,
         }
     }
@@ -78,7 +78,7 @@ impl ParseError {
             && self.err.equal_partially(&other.err)
     }
 
-    fn new(start_line: usize, line: usize, column: usize, err: Error) -> Self {
+    fn new(start_line: usize, line: usize, column: usize, err: ReadError) -> Self {
         Self {
             start_line,
             line,
@@ -91,7 +91,7 @@ impl ParseError {
 impl Display for ParseError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &self.err {
-            Error::FieldCount => return write!(f, "record on line {}: {}", self.line, self.err),
+            ReadError::FieldCount => return write!(f, "record on line {}: {}", self.line, self.err),
             _ => {}
         }
 
@@ -125,8 +125,8 @@ impl std::error::Error for ParseError {
     }
 }
 
-impl From<Error> for ParseError {
-    fn from(value: Error) -> Self {
+impl From<ReadError> for ParseError {
+    fn from(value: ReadError) -> Self {
         Self::new(0, 0, 0, value)
     }
 }
@@ -167,7 +167,7 @@ where
             match self.read_record(None) {
                 Ok(v) => out.push(v),
                 Err((err, _)) => match &err.err {
-                    &Error::Eof => return Ok(out),
+                    &ReadError::Eof => return Ok(out),
                     _ => return Err(err),
                 },
             };
@@ -193,10 +193,10 @@ where
     }
 
     // todo: pass line buf from outside
-    fn read_line(&mut self) -> Result<String, Error> {
+    fn read_line(&mut self) -> Result<String, ReadError> {
         let mut line = String::new();
-        match self.r.read_line(&mut line).map_err(Error::Io)? {
-            0 => return Err(Error::Eof),
+        match self.r.read_line(&mut line).map_err(ReadError::Io)? {
+            0 => return Err(ReadError::Eof),
             _ => {}
         }
 
@@ -225,12 +225,12 @@ where
         dst: Option<Vec<String>>,
     ) -> Result<Vec<String>, (ParseError, Option<Vec<String>>)> {
         if !validator::valid_delimiter(self.comma) {
-            let err = ParseError::new(0, 0, 0, Error::InvalidDelimiter);
+            let err = ParseError::new(0, 0, 0, ReadError::InvalidDelimiter);
             return Err((err, dst));
         }
         match &self.comment {
             Some(v) if (self.comma == *v) || !validator::valid_delimiter(*v) => {
-                let err = ParseError::new(0, 0, 0, Error::InvalidDelimiter);
+                let err = ParseError::new(0, 0, 0, ReadError::InvalidDelimiter);
                 return Err((err, dst));
             }
             _ => {}
@@ -254,8 +254,8 @@ where
             break;
         }
 
-        if let Some(Error::Eof) = &err_read {
-            return Err((Error::Eof.into(), dst));
+        if let Some(ReadError::Eof) = &err_read {
+            return Err((ReadError::Eof.into(), dst));
         }
 
         // parse each field in the record
@@ -298,7 +298,7 @@ where
                 if !self.lazy_quotes {
                     if let Some(j) = field.find('"') {
                         let err =
-                            ParseError::new(rec_line, self.num_line, pos.col + j, Error::BareQuote);
+                            ParseError::new(rec_line, self.num_line, pos.col + j, ReadError::BareQuote);
                         break 'parse_field Some(err);
                     }
                 }
@@ -351,7 +351,7 @@ where
                                     rec_line,
                                     self.num_line,
                                     pos.col - QUOTE_LEN,
-                                    Error::Quote,
+                                    ReadError::Quote,
                                 );
                                 break 'parse_field Some(err);
                             }
@@ -376,7 +376,7 @@ where
                                     pos.line += 1;
                                     pos.col = 1;
                                 }
-                                Err(Error::Eof) => err_read = None,
+                                Err(ReadError::Eof) => err_read = None,
                                 Err(err) => err_read = Some(err),
                             }
                         }
@@ -384,7 +384,7 @@ where
                             // Abrupt end of file (EOF or error).
                             if !self.lazy_quotes && err_read.is_none() {
                                 let err =
-                                    ParseError::new(rec_line, pos.line, pos.col, Error::Quote);
+                                    ParseError::new(rec_line, pos.line, pos.col, ReadError::Quote);
                                 break 'parse_field Some(err);
                             }
                             self.field_indices.push(self.record_buffer.len());
@@ -425,7 +425,7 @@ where
             Some(0) => self.fields_per_record = Some(out.len()),
             Some(v) => {
                 if out.len() != v {
-                    let err = ParseError::new(rec_line, rec_line, 1, Error::FieldCount);
+                    let err = ParseError::new(rec_line, rec_line, 1, ReadError::FieldCount);
                     let buf = if reused { Some(out) } else { None };
                     return Err((err, buf));
                 }
