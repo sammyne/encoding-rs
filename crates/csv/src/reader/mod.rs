@@ -4,51 +4,103 @@ use std::mem;
 
 use crate::validator;
 
+/// Error cause occurred during parsing records.
 #[derive(thiserror::Error, Debug)]
 pub enum ReadError {
+    /// bare `"` in non-quoted-field
     #[error("bare \" in non-quoted-field")]
     BareQuote,
     #[error("EOF")]
     Eof,
+    /// wrong number of fields
     #[error("wrong number of fields")]
     FieldCount,
+    /// invalid field or comment delimiter
     #[error("invalid field or comment delimiter")]
     InvalidDelimiter,
     #[error("io: {0}")]
     Io(#[from] io::Error),
+    /// extraneous or missing `"` in quoted-field
     #[error("extraneous or missing \" in quoted-field")]
     Quote,
+    /// extra delimiter at end of line
     #[error("extra delimiter at end of line")]
     TrailingComma,
 }
 
+/// A ParseError is returned for parsing errors.
+/// Line numbers are 1-indexed and columns are 0-indexed.
 #[derive(Debug)]
 pub struct ParseError {
+    /// Line where the record starts
     pub start_line: usize,
+    /// Line where the error occurred
     pub line: usize,
+    /// Column (1-based byte index) where the error occurred
     pub column: usize,
+    /// The actual error
     pub err: ReadError,
 }
 
+/// A Reader reads records from a CSV-encoded file.
+///
+/// As returned by [Reader::new], a Reader expects input conforming to RFC 4180.
+/// The exported fields can be changed to customize the details before the
+/// first call to [read][Self::read] or [read_all][Self::read_all].
+///
+/// The Reader converts all `\r\n` sequences in its input to plain `\n`,
+/// including in multiline field values, so that the returned data does
+/// not depend on which line-ending convention an input file uses.
 pub struct Reader<R>
 where
     R: Read,
 {
+    /// Comma is the field delimiter.
+    /// It is set to comma (',') by [Reader::new].
+    /// Comma must be a valid rune and must not be `\r`, `\n`,
+    /// or the Unicode replacement character (0xFFFD).
     pub comma: char,
+    // `comment`, if not `None`, is the comment character. Lines beginning with the
+    // `comment` character without preceding whitespace are ignored.
+    // With leading whitespace the `comment` character becomes part of the
+    // field, even if `trim_leading_space` is `true`.
+    // `comment` must be a valid rune and must not be `\r`, `\n`,
+    // or the Unicode replacement character (0xFFFD).
+    // It must also not be equal to `comma`.
     pub comment: Option<char>,
+    // The number of expected fields per record.
+    // If `fields_per_record` is positive, [read][Self::read] requires each record to
+    // have the given number of fields. If `fields_per_record` is 0, [read][Self::read] sets it to
+    // the number of fields in the first record, so that future records must
+    // have the same field count. If `fields_per_record` is negative, no check is
+    // made and records may have a variable number of fields.
     pub fields_per_record: Option<usize>,
+    // If `lazy_quotes` is true, a quote may appear in an unquoted field and a
+    // non-doubled quote may appear in a quoted field.
     pub lazy_quotes: bool,
+    // If `trim_leading_space` is true, leading white space in a field is ignored.
+    // This is done even if the field delimiter, `comma`, is white space.
     pub trim_leading_space: bool,
-    // pub reuse_record: bool,
+
+    /// An index of fields inside `record_buffer`.
+    /// The i'th field ends at offset `field_indices[i]` in `record_buffer`.
     field_indices: Vec<usize>,
+    /// An index of field positions for the last record returned by Read.
     field_positions: Vec<Position>,
     last_record: Vec<String>,
+    /// The current line being read in the CSV file.
     num_line: usize,
+    /// The input stream byte offset of the current reader position.
     offset: usize,
     r: BufReader<R>,
+    /// Holds the unescaped fields, one after another.
+    /// The fields can be accessed by using the indexes in `field_indexes`.
+    /// E.g., For the row `a,"b","c""d",e`, recordBuffer will contain `abc"de`
+    /// and fieldIndexes will contain the indexes [1, 2, 5, 6].
     record_buffer: Vec<u8>,
 }
 
+/// Holds the position of a field in the current line.
 #[derive(Clone, Copy)]
 struct Position {
     pub line: usize,
@@ -56,6 +108,7 @@ struct Position {
 }
 
 impl ReadError {
+    /// check if ReadError equals for all variants except `Io`, and check only equality of `Io`'s kind.
     pub fn equal_partially(&self, other: &Self) -> bool {
         match (self, other) {
             (ReadError::BareQuote, ReadError::BareQuote) => true,
@@ -71,6 +124,7 @@ impl ReadError {
 }
 
 impl ParseError {
+    /// check if all fields of ParseError equals except `err`, and `err` is check using [ReadError::equal_partially]. 
     pub fn equal_partially(&self, other: &Self) -> bool {
         (self.start_line == other.start_line)
             && (self.line == other.line)
@@ -91,7 +145,9 @@ impl ParseError {
 impl Display for ParseError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &self.err {
-            ReadError::FieldCount => return write!(f, "record on line {}: {}", self.line, self.err),
+            ReadError::FieldCount => {
+                return write!(f, "record on line {}: {}", self.line, self.err)
+            }
             _ => {}
         }
 
@@ -135,6 +191,12 @@ impl<R> Reader<R>
 where
     R: Read,
 {
+    /// Returns the line and column corresponding to
+    /// the start of the field with the given index in the slice most recently
+    /// returned by [read][Self::read]. Numbering of lines and columns starts at 1;
+    /// columns are counted in bytes, not runes.
+    ///
+    /// If this is called with an out-of-bounds index, it panics.
     pub fn field_pos(&self, field: usize) -> (usize, usize) {
         assert!(
             field < self.field_positions.len(),
@@ -145,10 +207,19 @@ where
         (p.line, p.col)
     }
 
+    /// Returns the input stream byte offset of the current reader
+    /// position. The offset gives the location of the end of the most recently
+    /// read row and the beginning of the next row.
     pub fn input_offset(&self) -> usize {
         self.offset
     }
 
+    // Reads one record (a slice of fields) from r.
+    // If the record has an unexpected number of fields,
+    // `read` returns the record along with the error `ReadError::FieldCount`.
+    // Except for that case, `read` always returns either a non-nil
+    // record or a non-nil error, but not both.
+    // If there is no data left to be read, `read` returns error `ReadError::Eof`.
     pub fn read(&mut self) -> Result<&[String], ParseError> {
         let buf = mem::take(&mut self.last_record);
         match self.read_record(Some(buf)) {
@@ -161,6 +232,11 @@ where
         Ok(self.last_record.as_slice())
     }
 
+    /// Reads all the remaining records from `r`.
+    /// Each record is a slice of fields.
+    /// A successful call returns no error, not err == `ReadError::Eof`. Because `read_all` is
+    /// defined to read until EOF, it does not treat end of file as an error to be
+    /// reported.
     pub fn read_all(&mut self) -> Result<Vec<Vec<String>>, ParseError> {
         let mut out = vec![];
         loop {
@@ -174,6 +250,7 @@ where
         }
     }
 
+    /// Returns a new [Reader] that reads from r.
     pub fn new(r: R) -> Self {
         Self {
             comma: ',',
@@ -192,7 +269,11 @@ where
         }
     }
 
-    // todo: pass line buf from outside
+    /// readLine reads the next line (with the trailing endline).
+    /// If EOF is hit without a trailing endline, it will be omitted.
+    /// If some bytes were read, then the error is never `ReadError::Eof`.
+    /// The result is only valid until the next call to `read_line`.
+    /// todo: pass line buf from outside
     fn read_line(&mut self) -> Result<String, ReadError> {
         let mut line = String::new();
         match self.r.read_line(&mut line).map_err(ReadError::Io)? {
@@ -202,6 +283,7 @@ where
 
         let read_size = line.len();
 
+        // For backwards compatibility, drop trailing \r before EOF.
         if line.ends_with('\r') {
             line.pop();
         }
@@ -236,16 +318,16 @@ where
             _ => {}
         }
 
+        // Read line (automatically skipping past empty lines and any comments).
         let mut line = String::new();
         let mut err_read = None;
         while err_read.is_none() {
             match self.read_line() {
                 Ok(v) => {
-                    if self.comment == v.chars().next() {
-                        continue;
-                    }
-                    if v.len() == length_newline(v.as_bytes()) {
-                        continue;
+                    if (self.comment == v.chars().next())
+                        || (v.len() == length_newline(v.as_bytes()))
+                    {
+                        continue; // Skip comment or empty lines
                     }
                     line = v;
                 }
@@ -261,7 +343,7 @@ where
         // parse each field in the record
         const QUOTE_LEN: usize = "\"".len();
         let comma_len = self.comma.len_utf8();
-        let rec_line = self.num_line;
+        let rec_line = self.num_line; // Starting line for record
 
         self.record_buffer.clear();
         self.field_indices.clear();
@@ -287,6 +369,7 @@ where
             }
 
             if line_ref.is_empty() || !line_ref.starts_with('"') {
+                // Non-quoted string field
                 let (field, i) = match line_ref.find(self.comma) {
                     None => (
                         &line_ref[..(line_ref.len() - length_newline(line_ref))],
@@ -297,8 +380,12 @@ where
                 // Check to make sure a quote does not appear in field.
                 if !self.lazy_quotes {
                     if let Some(j) = field.find('"') {
-                        let err =
-                            ParseError::new(rec_line, self.num_line, pos.col + j, ReadError::BareQuote);
+                        let err = ParseError::new(
+                            rec_line,
+                            self.num_line,
+                            pos.col + j,
+                            ReadError::BareQuote,
+                        );
                         break 'parse_field Some(err);
                     }
                 }
@@ -431,20 +518,12 @@ where
                 }
             }
         }
-        //if self.fields_per_record > 0 {
-        //    if out.len() != self.fields_per_record {
-        //        let err = ParseError::new(rec_line, rec_line, 1, Error::FieldCount);
-        //        let buf = if reused { Some(out) } else { None };
-        //        return Err((err, buf));
-        //    }
-        //} else if self.fields_per_record == 0 {
-        //    self.fields_per_record = out.len();
-        //}
 
         Ok(out)
     }
 }
 
+/// Returns a new [Reader] that reads from r.
 pub fn new_reader<R>(r: R) -> Reader<R>
 where
     R: Read,
@@ -452,6 +531,7 @@ where
     Reader::new(r)
 }
 
+/// reports the number of bytes for the trailing \n.
 fn length_newline<S>(b: S) -> usize
 where
     S: AsRef<[u8]>,
