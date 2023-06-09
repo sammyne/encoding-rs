@@ -1,5 +1,6 @@
-use encoding::hex::{self, Dumper};
 use std::io::Write;
+
+use hex::{self, Dumper};
 
 const EXPECTED_HEX_DUMP: &'static str = r##"00000000  1e 1f 20 21 22 23 24 25  26 27 28 29 2a 2b 2c 2d  |.. !"#$%&'()*+,-|
 00000010  2e 2f 30 31 32 33 34 35  36 37 38 39 3a 3b 3c 3d  |./0123456789:;<=|
