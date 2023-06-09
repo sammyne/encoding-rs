@@ -1,6 +1,6 @@
 use std::io::Write;
 
-use hex::{self, Dumper};
+//use hex::{self, Dumper};
 
 const EXPECTED_HEX_DUMP: &'static str = r##"00000000  1e 1f 20 21 22 23 24 25  26 27 28 29 2a 2b 2c 2d  |.. !"#$%&'()*+,-|
 00000010  2e 2f 30 31 32 33 34 35  36 37 38 39 3a 3b 3c 3d  |./0123456789:;<=|
@@ -43,7 +43,7 @@ fn dumper() {
 
     for stride in 1..data.len() {
         let mut out = Vec::new();
-        let mut dumper = Dumper::new(&mut out);
+        let mut dumper = hex::dumper(&mut out);
 
         let mut done = 0usize;
 
@@ -58,6 +58,7 @@ fn dumper() {
         }
 
         let _ = dumper.flush();
+        std::mem::drop(dumper);
 
         let got = String::from_utf8(out).expect("nonn-utf8 string");
         assert_eq!(EXPECTED_HEX_DUMP, &got);
@@ -82,7 +83,7 @@ fn dump() {
 #[test]
 fn dump_doubleclose() {
     let mut out = Vec::new();
-    let mut dumper = Dumper::new(&mut out);
+    let mut dumper = hex::dumper(&mut out);
 
     let _ = dumper.write(b"gopher");
     let _ = dumper.flush();
@@ -90,6 +91,7 @@ fn dump_doubleclose() {
 
     let _ = dumper.write(b"gopher");
     let _ = dumper.flush();
+    std::mem::drop(dumper);
 
     let expected = "00000000  67 6f 70 68 65 72                                 |gopher|\n";
     let got = String::from_utf8(out).expect("invalid utf8 string");
@@ -99,10 +101,11 @@ fn dump_doubleclose() {
 #[test]
 fn dump_earlyclose() {
     let mut out = Vec::new();
-    let mut dumper = Dumper::new(&mut out);
+    let mut dumper = hex::dumper(&mut out);
 
     let _ = dumper.flush();
     let _ = dumper.write(b"gopher");
+    std::mem::drop(dumper);
 
     assert_eq!(out.len(), 0, "should write no data");
 }

@@ -67,7 +67,7 @@ pub fn decode_string(s: &str) -> Result<Vec<u8>, Error> {
 /// of bytes written to `dst`, but this value is always
 /// [encoded_len(src.len())][encoded_len].
 /// `encode` implements hexadecimal encoding.
-/// 
+///
 /// # Example
 /// ```
 #[doc = include_str!("../examples/encode.rs")]
@@ -93,7 +93,7 @@ pub fn encoded_len(n: usize) -> usize {
 }
 
 /// Returns the hexadecimal encoding of `src`.
-/// 
+///
 /// # Example
 /// ```
 #[doc = include_str!("../examples/encode_to_string.rs")]
