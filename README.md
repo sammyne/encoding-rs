@@ -10,19 +10,19 @@ This repository tries to implement a Go-like encoding library in Rust.
 
 Supported encodings go as follow
 
-| scheme  | implementation          | document                               | comment |
-| ------- | ----------------------- | -------------------------------------- | ------- |
-| ascii85 | :ballot_box_with_check: |
-| asn1    |                         |
-| base32  |                         |
-| base58  |                         |
-| base64  | :ballot_box_with_check: |                                        |         |
-| binary  | :ballot_box_with_check: | [:ballot_box_with_check:][binary-docs] |
-| csv     | :ballot_box_with_check: |
-| hex     | :ballot_box_with_check: |
-| json    | N/A                     | use [serde_json]                       |
-| pem     |                         |
-| xml     |                         |
+> Click the encoding link would show the doc page of that encoding.
+
+- [x] ascii85
+- [ ] asn1
+- [ ] base32
+- [ ] base58
+- [ ] base64
+- [ ] [binary][binary-doc]
+- [x] [csv][csv-doc]: reads and writes comma-separated values (CSV) files formatted as [RFC 4180].
+- [ ] hex
+- [ ] json: use [serde_json]
+- [ ] pem
+- [ ] xml
 
 ## Quickstart
 
@@ -43,5 +43,7 @@ cargo bench
 - Stable rust doesn't support benchmark well, so [criterion](https://crates.io/crates/criterion) is used for now.
 - docs is released at the `gh-pages` branch for the `main` branch only
 
-[binary-docs]: https://sammyne.github.io/encoding-rs/encoding/binary/index.html
+[binary-doc]: https://sammyne.github.io/encoding-rs/encoding/binary/index.html
+[csv-doc]: https://sammyne.github.io/encoding-rs/csv/
 [serde_json]: https://crates.io/crates/serde_json
+[RFC 4180]: https://rfc-editor.org/rfc/rfc4180.html
