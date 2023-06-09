@@ -28,6 +28,11 @@ pub enum WriteError {
 /// [flush][Writer::flush] method to guarantee all data has been forwarded to
 /// the underlying [io::Write]. Any errors that occurred should
 /// be checked by calling the [error][Writer::error] method.
+///
+/// # Example
+/// ```
+#[doc = include_str!("../../examples/writer.rs")]
+/// ```
 pub struct Writer<W>
 where
     W: Write,
@@ -103,6 +108,11 @@ where
 
     /// Writes multiple CSV records to `self` using [write][Self::write] and then calls [flush][Self::flush],
     /// returning any error from the [flush][Self::flush].
+    ///
+    /// # Example
+    /// ```
+    #[doc = include_str!("../../examples/writer_write_all.rs")]
+    /// ```
     pub fn write_all<T, S>(&mut self, records: &[T]) -> Result<(), WriteError>
     where
         T: AsRef<[S]>,
@@ -197,6 +207,8 @@ where
 }
 
 /// Returns a new [Writer] that writes to w.
+///
+/// [Writer::new] is preferred over this function.
 pub fn new_writer<W>(w: W) -> Writer<W>
 where
     W: Write,

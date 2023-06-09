@@ -51,6 +51,42 @@ pub struct ParseError {
 /// The Reader converts all `\r\n` sequences in its input to plain `\n`,
 /// including in multiline field values, so that the returned data does
 /// not depend on which line-ending convention an input file uses.
+///
+/// # Example
+/// ```
+#[doc = include_str!("../../examples/reader.rs")]
+/// ```
+///
+/// # Example (Options)
+/// ```
+/// use csv::Reader;
+/// 
+/// fn main() {
+///     const IN: &'static str = r#"first_name;last_name;username
+/// "Rob";"Pike";rob
+/// ## lines beginning with a # character are ignored
+/// Ken;Thompson;ken
+/// "Robert";"Griesemer";"gri"
+/// "#;
+/// 
+///     let mut r = Reader::new(IN.as_bytes());
+///     r.comma = ';';
+///     r.comment = Some('#');
+/// 
+///     let got = r
+///         .read_all()
+///         .map(|v| format!("{v:?}"))
+///         .expect("read all failed");
+/// 
+///     const EXPECT: &'static str = std::concat!(
+///         r#"[["first_name", "last_name", "username"], "#,
+///         r#"["Rob", "Pike", "rob"], "#,
+///         r#"["Ken", "Thompson", "ken"], "#,
+///         r#"["Robert", "Griesemer", "gri"]]"#
+///     );
+///     assert_eq!(EXPECT, got);
+/// }
+/// ```
 pub struct Reader<R>
 where
     R: Read,
@@ -124,7 +160,7 @@ impl ReadError {
 }
 
 impl ParseError {
-    /// check if all fields of ParseError equals except `err`, and `err` is check using [ReadError::equal_partially]. 
+    /// check if all fields of ParseError equals except `err`, and `err` is check using [ReadError::equal_partially].
     pub fn equal_partially(&self, other: &Self) -> bool {
         (self.start_line == other.start_line)
             && (self.line == other.line)
@@ -237,6 +273,10 @@ where
     /// A successful call returns no error, not err == `ReadError::Eof`. Because `read_all` is
     /// defined to read until EOF, it does not treat end of file as an error to be
     /// reported.
+    /// # Example
+    /// ```
+    #[doc = include_str!("../../examples/reader_read_all.rs")]
+    /// ```
     pub fn read_all(&mut self) -> Result<Vec<Vec<String>>, ParseError> {
         let mut out = vec![];
         loop {
@@ -524,6 +564,8 @@ where
 }
 
 /// Returns a new [Reader] that reads from r.
+///
+/// [Reader::new] is preferred over this function.
 pub fn new_reader<R>(r: R) -> Reader<R>
 where
     R: Read,
