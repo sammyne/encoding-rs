@@ -11,3 +11,5 @@ pub mod binary;
 pub mod hex;
 
 pub use errors::*;
+
+pub use csv;
