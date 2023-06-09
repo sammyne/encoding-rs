@@ -3,7 +3,7 @@ use std::io::Cursor;
 
 use lazy_static::lazy_static;
 
-use super::{ReadError, ParseError, Reader};
+use super::{ParseError, ReadError, Reader};
 
 #[test]
 fn read() {
@@ -52,7 +52,12 @@ fn read() {
                     &err_positions,
                 ))
             } else if rec_num >= tt.output.len() {
-                Some(TestReadError::Parse(ParseError::new(0, 0, 0, ReadError::Eof)))
+                Some(TestReadError::Parse(ParseError::new(
+                    0,
+                    0,
+                    0,
+                    ReadError::Eof,
+                )))
             } else {
                 None
             };

@@ -59,7 +59,7 @@
 //!	{`Multi-line
 //!	field`, `comma is ,`}
 //! ```
-//! 
+//!
 //! [RFC 4180]: https://rfc-editor.org/rfc/rfc4180.html
 
 mod reader;

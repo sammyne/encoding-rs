@@ -12,4 +12,6 @@ if [ ! -d $path ]; then
   exit 1
 fi
 
+docker rm -f encoding-doc-preview
+
 docker run -it --name encoding-doc-preview -p 9090:80 --rm -v $path:/usr/share/nginx/html $repo_tag
