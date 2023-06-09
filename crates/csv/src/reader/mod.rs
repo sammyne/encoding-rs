@@ -58,6 +58,7 @@ pub struct ParseError {
 /// ```
 ///
 /// # Example (Options)
+/// This example shows how csv.Reader can be configured to handle other types of CSV files.
 /// ```
 /// use csv::Reader;
 /// 

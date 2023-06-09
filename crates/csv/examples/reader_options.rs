@@ -1,5 +1,6 @@
 use csv::Reader;
 
+/// This example shows how csv.Reader can be configured to handle other types of CSV files.
 fn main() {
     const IN: &'static str = r#"first_name;last_name;username
 "Rob";"Pike";rob
