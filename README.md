@@ -1,7 +1,7 @@
 # encoding-rs
 
 ![build status](https://github.com/sammyne/encoding-rs/workflows/build/badge.svg)
-[![docs badge](https://img.shields.io/badge/docs-0.2.0-blue)](https://sammyne.github.io/encoding-rs/encoding/)
+[![docs badge](https://img.shields.io/badge/docs-0.3.0-blue)](https://sammyne.github.io/encoding-rs/encoding/)
 ![minimum rustc](https://img.shields.io/badge/rustc-1.65.0%2B-blue)
 
 This repository tries to implement a Go-like encoding library in Rust.
@@ -18,7 +18,7 @@ Supported encodings go as follow
 | base58  |                         |
 | base64  | :ballot_box_with_check: |                                        |         |
 | binary  | :ballot_box_with_check: | [:ballot_box_with_check:][binary-docs] |
-| csv     |                         |
+| csv     | :ballot_box_with_check: |
 | hex     | :ballot_box_with_check: |
 | json    | N/A                     | use [serde_json]                       |
 | pem     |                         |
