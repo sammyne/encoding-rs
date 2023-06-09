@@ -1,6 +1,6 @@
 [package]
 name = "encoding"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["sammyne <xiangminli@alumni.sjtu.edu.cn>"]
 edition = "2021"
 exclude = ["doc-preview.sh"]
