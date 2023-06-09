@@ -11,6 +11,11 @@ const HEXTABLE: [u8; 16] = [
 /// characters and that `src` has even length.
 /// If the input is malformed, `decode` returns the number
 /// of bytes decoded before the error.
+///
+/// # Example
+/// ```
+#[doc = include_str!("../examples/decode.rs")]
+/// ```
 pub fn decode(dst: &mut [u8], src: &[u8]) -> Result<usize, Error> {
     let mut i: usize = 0;
 
@@ -42,6 +47,11 @@ pub fn decoded_len(x: usize) -> usize {
 /// characters and that src has even length.
 /// If the input is malformed, `decode_string` returns
 /// the bytes decoded before the error.
+///
+/// # Example
+/// ```
+#[doc = include_str!("../examples/decode_string.rs")]
+/// ```
 pub fn decode_string(s: &str) -> Result<Vec<u8>, Error> {
     let mut dst = vec![0; s.len() / 2];
 
@@ -57,6 +67,11 @@ pub fn decode_string(s: &str) -> Result<Vec<u8>, Error> {
 /// of bytes written to `dst`, but this value is always
 /// [encoded_len(src.len())][encoded_len].
 /// `encode` implements hexadecimal encoding.
+/// 
+/// # Example
+/// ```
+#[doc = include_str!("../examples/encode.rs")]
+/// ```
 pub fn encode(dst: &mut [u8], src: &[u8]) -> usize {
     let mut j = 0;
     for v in src.iter() {
@@ -77,7 +92,12 @@ pub fn encoded_len(n: usize) -> usize {
     n * 2
 }
 
-/// Returns the hexadecimal encoding of src.
+/// Returns the hexadecimal encoding of `src`.
+/// 
+/// # Example
+/// ```
+#[doc = include_str!("../examples/encode_to_string.rs")]
+/// ```
 pub fn encode_to_string(src: &[u8]) -> String {
     let mut dst = vec![0; encoded_len(src.len())];
 

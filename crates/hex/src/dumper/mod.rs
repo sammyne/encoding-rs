@@ -1,5 +1,7 @@
 use std::io::{Error, ErrorKind, Result, Write};
 
+/// Writes a hex dump of all written data to internal writer `w`. The format of the dump matches the output of
+/// `hexdump -C` on the command line.
 pub struct Dumper<W>
 where
     W: Write,
@@ -16,9 +18,17 @@ impl<W> Dumper<W>
 where
     W: Write,
 {
+    /// Makes a Dumper that writes a hex dump of all written data to
+    /// `w`. The format of the dump matches the output of `hexdump -C` on the command
+    /// line.
+    ///
+    /// # Example
+    /// ```
+    #[doc = include_str!("../../examples/dumper.rs")]
+    /// ```
     pub fn new(w: W) -> Self {
         Self {
-            w: w,
+            w,
             right_chars: [0u8; 18],
             buf: [0u8; 14],
             used: 0,
@@ -72,10 +82,7 @@ where
     /// to this writer" isn't true
     fn write(&mut self, buf: &[u8]) -> Result<usize> {
         if self.closed {
-            return Err(Error::new(
-                ErrorKind::Other,
-                "encoding/hex: dumper closed".to_string(),
-            ));
+            return Err(Error::new(ErrorKind::Other, "dumper closed".to_string()));
         }
 
         for v in buf {
@@ -128,6 +135,11 @@ where
 
 /// Returns a string that contains a hex dump of the given data. The format
 /// of the hex dump matches the output of `hexdump -C` on the command line.
+///
+/// # Example
+/// ```
+#[doc = include_str!("../../examples/dump.rs")]
+/// ```
 pub fn dump(data: &[u8]) -> String {
     if data.len() == 0 {
         return "".to_string();
