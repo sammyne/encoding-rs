@@ -1,7 +1,5 @@
 use std::io::Write;
 
-use hex::Dumper;
-
 fn main() {
     let lines = vec![
         "Go is an open source programming language.",
@@ -10,11 +8,14 @@ fn main() {
     ];
 
     let mut out = vec![];
-    let mut dumper = Dumper::new(&mut out);
+    let mut dumper = hex::dumper(&mut out);
     for line in lines {
         let _ = dumper.write(line.as_bytes());
     }
-    let _ = dumper.flush();
+    // flush is called upon Dumper being dropped. So in case of not caring about error triggerd by underlying writer,
+    // just leaving Dumper being dropped is fine.
+    // let _ = dumper.flush();
+    std::mem::drop(dumper);
 
     let got = unsafe { std::str::from_utf8_unchecked(out.as_slice()) };
 

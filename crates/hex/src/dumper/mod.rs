@@ -1,8 +1,6 @@
 use std::io::{Error, ErrorKind, Result, Write};
 
-/// Writes a hex dump of all written data to internal writer `w`. The format of the dump matches the output of
-/// `hexdump -C` on the command line.
-pub struct Dumper<W>
+struct Dumper<W>
 where
     W: Write,
 {
@@ -18,15 +16,7 @@ impl<W> Dumper<W>
 where
     W: Write,
 {
-    /// Makes a Dumper that writes a hex dump of all written data to
-    /// `w`. The format of the dump matches the output of `hexdump -C` on the command
-    /// line.
-    ///
-    /// # Example
-    /// ```
-    #[doc = include_str!("../../examples/dumper.rs")]
-    /// ```
-    pub fn new(w: W) -> Self {
+    fn new(w: W) -> Self {
         Self {
             w,
             right_chars: [0u8; 18],
@@ -38,10 +28,21 @@ where
     }
 }
 
+impl<W> Drop for Dumper<W>
+where
+    W: Write,
+{
+    fn drop(&mut self) {
+        let _ = self.flush();
+    }
+}
+
 impl<W> Write for Dumper<W>
 where
     W: Write,
 {
+    /// flush is called upon Dumper being dropped. So in case of not caring about error triggerd by underlying writer,
+    /// just leaving Dumper being dropped is fine.
     fn flush(&mut self) -> Result<()> {
         if self.closed {
             return Ok(());
@@ -147,11 +148,28 @@ pub fn dump(data: &[u8]) -> String {
 
     let mut buf = Vec::with_capacity((1 + (data.len() - 1) / 16) * 79);
 
-    let mut dumper = Dumper::new(&mut buf);
-    let _ = dumper.write(data);
-    let _ = dumper.flush();
+    {
+        let mut dumper = Dumper::new(&mut buf);
+        let _ = dumper.write(data);
+        //let _ = dumper.flush();
+    }
 
     String::from_utf8(buf).expect("invalid utf8 string")
+}
+
+/// Makes a Dumper that writes a hex dump of all written data to
+/// `w`. The format of the dump matches the output of `hexdump -C` on the command
+/// line.
+///
+/// # Example
+/// ```
+#[doc = include_str!("../../examples/dumper.rs")]
+/// ```
+pub fn dumper<W>(w: W) -> impl Write
+where
+    W: Write,
+{
+    Dumper::new(w)
 }
 
 fn to_char(b: u8) -> u8 {
