@@ -10,6 +10,7 @@ rust-version = "1.65.0"
 
 [dependencies]
 csv.workspace = true
+hex.workspace = true
 lazy_static = "1.4.0"
 thiserror   = "1.0.16"
 
@@ -27,9 +28,11 @@ harness = false
 [workspace]
 members = [
   "crates/csv",
+  "crates/hex",
 ]
 
 [workspace.dependencies]
 csv.path = "crates/csv"
+hex.path = "crates/hex"
 lazy_static = "1.4.0"
 thiserror   = "1.0.16"
