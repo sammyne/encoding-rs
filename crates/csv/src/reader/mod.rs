@@ -61,7 +61,7 @@ pub struct ParseError {
 /// This example shows how csv.Reader can be configured to handle other types of CSV files.
 /// ```
 /// use csv::Reader;
-/// 
+///
 /// fn main() {
 ///     const IN: &'static str = r#"first_name;last_name;username
 /// "Rob";"Pike";rob
@@ -69,16 +69,16 @@ pub struct ParseError {
 /// Ken;Thompson;ken
 /// "Robert";"Griesemer";"gri"
 /// "#;
-/// 
+///
 ///     let mut r = Reader::new(IN.as_bytes());
 ///     r.comma = ';';
 ///     r.comment = Some('#');
-/// 
+///
 ///     let got = r
 ///         .read_all()
 ///         .map(|v| format!("{v:?}"))
 ///         .expect("read all failed");
-/// 
+///
 ///     const EXPECT: &'static str = std::concat!(
 ///         r#"[["first_name", "last_name", "username"], "#,
 ///         r#"["Rob", "Pike", "rob"], "#,
