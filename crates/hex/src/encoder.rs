@@ -47,6 +47,7 @@ where
     }
 }
 
+/// Returns an [io::Write][std::io::Write] that writes lowercase hexadecimal characters to `w`.
 pub fn new_encoder<W>(w: W) -> impl Write
 where
     W: Write,
