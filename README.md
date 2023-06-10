@@ -1,7 +1,7 @@
 # encoding-rs
 
 ![build status](https://github.com/sammyne/encoding-rs/workflows/build/badge.svg)
-[![docs badge](https://img.shields.io/badge/docs-0.3.0-blue)](https://sammyne.github.io/encoding-rs/encoding/)
+[![docs badge](https://img.shields.io/badge/docs-0.4.0-blue)](https://sammyne.github.io/encoding-rs/encoding/)
 ![minimum rustc](https://img.shields.io/badge/rustc-1.65.0%2B-blue)
 
 This repository tries to implement a Go-like encoding library in Rust.
@@ -19,7 +19,7 @@ Supported encodings go as follow
 - [ ] base64
 - [ ] [binary][binary-doc]
 - [x] [csv][csv-doc]: reads and writes comma-separated values (CSV) files formatted as [RFC 4180].
-- [ ] hex
+- [x] [hex][hex-doc]: implements hex encoding.
 - [ ] json: use [serde_json]
 - [ ] pem
 - [ ] xml
@@ -45,5 +45,6 @@ cargo bench
 
 [binary-doc]: https://sammyne.github.io/encoding-rs/encoding/binary/index.html
 [csv-doc]: https://sammyne.github.io/encoding-rs/csv/
+[hex-doc]: https://sammyne.github.io/encoding-rs/hex/
 [serde_json]: https://crates.io/crates/serde_json
 [RFC 4180]: https://rfc-editor.org/rfc/rfc4180.html
