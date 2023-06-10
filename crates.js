@@ -1,1 +1,1 @@
-window.ALL_CRATES = ["csv","encoding"];
+window.ALL_CRATES = ["csv","encoding","hex"];

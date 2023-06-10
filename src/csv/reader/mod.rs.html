@@ -653,7 +653,7 @@
 /// This example shows how csv.Reader can be configured to handle other types of CSV files.
 /// ```
 /// use csv::Reader;
-/// 
+///
 /// fn main() {
 ///     const IN: &amp;&#39;static str = r#&quot;first_name;last_name;username
 /// &quot;Rob&quot;;&quot;Pike&quot;;rob
@@ -661,16 +661,16 @@
 /// Ken;Thompson;ken
 /// &quot;Robert&quot;;&quot;Griesemer&quot;;&quot;gri&quot;
 /// &quot;#;
-/// 
+///
 ///     let mut r = Reader::new(IN.as_bytes());
 ///     r.comma = &#39;;&#39;;
 ///     r.comment = Some(&#39;#&#39;);
-/// 
+///
 ///     let got = r
 ///         .read_all()
 ///         .map(|v| format!(&quot;{v:?}&quot;))
 ///         .expect(&quot;read all failed&quot;);
-/// 
+///
 ///     const EXPECT: &amp;&#39;static str = std::concat!(
 ///         r#&quot;[[&quot;first_name&quot;, &quot;last_name&quot;, &quot;username&quot;], &quot;#,
 ///         r#&quot;[&quot;Rob&quot;, &quot;Pike&quot;, &quot;rob&quot;], &quot;#,

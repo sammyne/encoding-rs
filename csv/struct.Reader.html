@@ -45,7 +45,7 @@ Ken,Thompson,ken
 <p>This example shows how csv.Reader can be configured to handle other types of CSV files.</p>
 
 <div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>csv::Reader;
- 
+
 <span class="kw">fn </span>main() {
     <span class="kw">const </span>IN: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str = <span class="string">r#&quot;first_name;last_name;username
 &quot;Rob&quot;;&quot;Pike&quot;;rob
@@ -53,16 +53,16 @@ Ken,Thompson,ken
 Ken;Thompson;ken
 &quot;Robert&quot;;&quot;Griesemer&quot;;&quot;gri&quot;
 &quot;#</span>;
- 
+
     <span class="kw">let </span><span class="kw-2">mut </span>r = Reader::new(IN.as_bytes());
     r.comma = <span class="string">&#39;;&#39;</span>;
     r.comment = <span class="prelude-val">Some</span>(<span class="string">&#39;#&#39;</span>);
- 
+
     <span class="kw">let </span>got = r
         .read_all()
         .map(|v| <span class="macro">format!</span>(<span class="string">&quot;{v:?}&quot;</span>))
         .expect(<span class="string">&quot;read all failed&quot;</span>);
- 
+
     <span class="kw">const </span>EXPECT: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str = <span class="macro">std::concat!</span>(
         <span class="string">r#&quot;[[&quot;first_name&quot;, &quot;last_name&quot;, &quot;username&quot;], &quot;#</span>,
         <span class="string">r#&quot;[&quot;Rob&quot;, &quot;Pike&quot;, &quot;rob&quot;], &quot;#</span>,
