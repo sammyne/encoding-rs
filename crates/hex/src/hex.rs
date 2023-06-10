@@ -16,12 +16,14 @@ const HEXTABLE: [u8; 16] = [
 /// ```
 #[doc = include_str!("../examples/decode.rs")]
 /// ```
-pub fn decode(dst: &mut [u8], src: &[u8]) -> Result<usize, Error> {
+pub fn decode(dst: &mut [u8], src: &[u8]) -> Result<usize, (Error, usize)> {
     let mut i: usize = 0;
 
-    for j in (1..src.len()).filter(|idx| (idx % 2 == 1)) {
-        let a = from_hex_char(src[j - 1]).map_err(|_| Error::InvalidByteError(i, src[j - 1]))?;
-        let b = from_hex_char(src[j]).map_err(|_| Error::InvalidByteError(i, src[j]))?;
+    for j in (1..src.len()).step_by(2) {
+        let (p, q) = (src[j - 1], src[j]);
+
+        let a = from_hex_char(p).map_err(|_| (Error::InvalidByte(p), i))?;
+        let b = from_hex_char(q).map_err(|_| (Error::InvalidByte(q), i))?;
 
         dst[i] = (a << 4) | b;
         i += 1;
@@ -29,7 +31,8 @@ pub fn decode(dst: &mut [u8], src: &[u8]) -> Result<usize, Error> {
 
     if src.len() % 2 == 1 {
         let j = src.len() - 1;
-        from_hex_char(src[j]).map_err(|_| Error::InvalidByteError(i, src[j]))?;
+        from_hex_char(src[j]).map_err(|_| (Error::InvalidByte(src[j]), j))?;
+        return Err((Error::Length, i));
     }
 
     Ok(i)
@@ -52,14 +55,16 @@ pub fn decoded_len(x: usize) -> usize {
 /// ```
 #[doc = include_str!("../examples/decode_string.rs")]
 /// ```
-pub fn decode_string(s: &str) -> Result<Vec<u8>, Error> {
+pub fn decode_string(s: &str) -> Result<Vec<u8>, (Error, Vec<u8>)> {
     let mut dst = vec![0; s.len() / 2];
 
-    let ell = decode(dst.as_mut_slice(), s.as_bytes())?;
-
-    dst.resize(ell, 0);
-
-    Ok(dst)
+    match decode(dst.as_mut_slice(), s.as_bytes()) {
+        Ok(_) => Ok(dst),
+        Err((err, ok_len)) => {
+            dst.resize(ok_len, 0);
+            Err((err, dst))
+        }
+    }
 }
 
 /// Encodes `src` into [encoded_len(src.len())][encoded_len]
