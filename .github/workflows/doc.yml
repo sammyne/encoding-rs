@@ -35,7 +35,7 @@ jobs:
         path: ~/.cargo/git
         key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.toml') }}
     - name: Generate docs
-      run: cargo doc  --all-features --no-deps --workspace
+      run: cargo doc --all-features --no-deps --workspace
     - name: Install rsync for JamesIves/github-pages-deploy-action@releases/v4
       run: apt update && apt install -y rsync
     # https://github.blog/2022-04-12-git-security-vulnerability-announced/#cve-2022-24765
