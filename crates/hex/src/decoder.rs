@@ -13,20 +13,6 @@ where
     arr_range: Range<usize>,
 }
 
-impl<R> Decoder<R>
-where
-    R: Read,
-{
-    fn new(r: R) -> Self {
-        Self {
-            r,
-            non_io_err: None,
-            arr: [0u8; BUFFER_SIZE],
-            arr_range: Range::default(),
-        }
-    }
-}
-
 impl<R> Read for Decoder<R>
 where
     R: Read,
@@ -93,11 +79,18 @@ where
     }
 }
 
+/// Returns an [io::Read][std::io::Read] that decodes hexadecimal characters from `r`.
+/// `new_decoder` expects that `r` contain only an even number of hexadecimal characters.
 pub fn new_decoder<R>(r: R) -> impl Read
 where
     R: Read,
 {
-    Decoder::new(r)
+    Decoder {
+        r,
+        non_io_err: None,
+        arr: [0u8; BUFFER_SIZE],
+        arr_range: Range::default(),
+    }
 }
 
 fn other_io_error<E>(e: E) -> io::Error
