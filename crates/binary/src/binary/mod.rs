@@ -126,3 +126,6 @@ impl Display for LittleEndian {
         write!(f, "LittleEndian")
     }
 }
+
+#[cfg(test)]
+mod tests;

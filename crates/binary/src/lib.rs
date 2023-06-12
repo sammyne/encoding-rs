@@ -1,4 +1,4 @@
-//! Module binary implements simple translation between numbers and byte
+//! Implementation of simple translation between numbers and byte
 //! sequences and encoding and decoding of varints.
 //!
 //! Numbers are translated by reading and writing fixed-size values.
@@ -16,10 +16,9 @@
 //! should look at more advanced solutions such as protocol buffers.
 
 mod binary;
+mod errors;
 mod varint;
 
-#[cfg(test)]
-mod tests;
-
-pub use binary::*;
+pub use self::binary::*;
+pub use errors::*;
 pub use varint::*;

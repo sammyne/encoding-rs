@@ -7,9 +7,9 @@ mod errors;
 pub mod ascii85;
 pub mod base32;
 pub mod base64;
-pub mod binary;
 
 pub use errors::*;
 
+pub use binary;
 pub use csv;
 pub use hex;

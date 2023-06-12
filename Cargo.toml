@@ -9,6 +9,7 @@ rust-version = "1.65.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+binary.workspace = true
 csv.workspace = true
 hex.workspace = true
 lazy_static = "1.4.0"
@@ -27,11 +28,13 @@ harness = false
 
 [workspace]
 members = [
+  "crates/binary",
   "crates/csv",
   "crates/hex",
 ]
 
 [workspace.dependencies]
+binary.path = "crates/binary"
 csv.path = "crates/csv"
 hex.path = "crates/hex"
 lazy_static = "1.4.0"
