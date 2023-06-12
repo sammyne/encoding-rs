@@ -1,4 +1,4 @@
-use crate::base64::{self, Encoding};
+use base64::Encoding;
 
 #[test]
 fn encode() {

@@ -6,10 +6,10 @@ mod errors;
 
 pub mod ascii85;
 pub mod base32;
-pub mod base64;
 
 pub use errors::*;
 
+pub use base64;
 pub use binary;
 pub use csv;
 pub use hex;

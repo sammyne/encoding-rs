@@ -1,7 +1,7 @@
 use std::io;
 
-use crate::binary::{BigEndian, ByteOrder};
 use crate::Error;
+use binary::{BigEndian, ByteOrder};
 
 use super::constants;
 
@@ -53,7 +53,7 @@ lazy_static! {
 ///
 /// # Example
 /// ```
-#[doc = include_str!("../../examples/base64.rs")]
+#[doc = include_str!("../examples/base64.rs")]
 /// ```
 ///
 /// [RFC 4648]: https://rfc-editor.org/rfc/rfc4648.html

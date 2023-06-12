@@ -4,9 +4,8 @@
 
 mod constants;
 mod encoder;
-
-#[cfg(test)]
-mod tests;
+mod errors;
 
 pub use constants::*;
 pub use encoder::*;
+pub use errors::*;
