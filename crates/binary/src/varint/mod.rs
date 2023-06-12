@@ -132,3 +132,6 @@ pub fn variant(buf: &[u8]) -> (i64, isize) {
 
     (x, n)
 }
+
+#[cfg(test)]
+mod tests;

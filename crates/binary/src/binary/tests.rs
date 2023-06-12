@@ -1,6 +1,6 @@
 use std::panic;
 
-use crate::binary::{ByteOrder, LittleEndian};
+use crate::{ByteOrder, LittleEndian};
 
 #[test]
 fn uint64_small_slice_length_panics() {
