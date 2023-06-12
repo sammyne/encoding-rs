@@ -43,7 +43,7 @@ cargo bench
 - Stable rust doesn't support benchmark well, so [criterion](https://crates.io/crates/criterion) is used for now.
 - docs is released at the `gh-pages` branch for the `main` branch only
 
-[binary-doc]: https://sammyne.github.io/encoding-rs/encoding/binary/index.html
+[binary-doc]: https://sammyne.github.io/encoding-rs/binary/
 [csv-doc]: https://sammyne.github.io/encoding-rs/csv/
 [hex-doc]: https://sammyne.github.io/encoding-rs/hex/
 [serde_json]: https://crates.io/crates/serde_json
