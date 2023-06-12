@@ -40,7 +40,7 @@ pub fn put_varint(buf: &mut [u8], x: i64) -> usize {
 }
 
 /// Reads an encoded unsigned integer from `r` and returns it as a uint64.
-pub fn read_uvarint<R>(r: R) -> Result<u64, Error>
+pub fn read_uvarint<R>(r: &mut R) -> Result<u64, Error>
 where
     R: Read,
 {
@@ -69,7 +69,7 @@ where
 }
 
 /// Reads an encoded signed integer from `r` and returns it as an int64.
-pub fn read_varint<R>(r: R) -> Result<i64, Error>
+pub fn read_varint<R>(r: &mut R) -> Result<i64, Error>
 where
     R: Read,
 {

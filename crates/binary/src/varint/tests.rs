@@ -12,7 +12,8 @@ fn test_overflow(b: &[u8], n0: isize) {
     assert_eq!(0, x, "uvariant({:?}) expects x=0, got {}", b, x);
     assert_eq!(n0, n, "uvariant({:?}) expects n={}, got {}", b, n0, n);
 
-    match crate::read_uvarint(b) {
+    let mut b = b;
+    match crate::read_uvarint(&mut b) {
         Ok(_) => panic!("read_uvarint() should error out when overflow"),
         Err(Error::Overflow) => {}
         Err(err) => panic!("read_uvarint() returns a unexpected error: {:?}", err),
@@ -28,7 +29,8 @@ fn test_uvarint(x: u64) {
     assert_eq!(x, y, "uvarint({}): got {}", x, y);
     assert_eq!(n, m as usize, "uvarint({}): expect n = {}, got {}", x, n, m);
 
-    let y = crate::read_uvarint(buf.as_slice())
+    let mut reader = buf.as_slice();
+    let y = crate::read_uvarint(&mut reader)
         .map_err(|err| format!("read_uvarint({}): {:?}", x, err))
         .expect("fail to read_uvarint");
     assert_eq!(x, y, "read_uvarint({}): got {}", x, y);
@@ -43,7 +45,8 @@ fn test_varint(x: i64) {
     assert_eq!(x, y, "varint({}): got {}", x, y);
     assert_eq!(n, m as usize, "varint({}): expect n = {}, got {}", x, n, m);
 
-    let y = crate::read_varint(buf.as_slice())
+    let mut reader = buf.as_slice();
+    let y = crate::read_varint(&mut reader)
         .map_err(|err| format!("read_varint({}): {:?}", x, err))
         .expect("fail to read_varint");
     assert_eq!(x, y, "read_varint({}): got {}", x, y);
@@ -82,7 +85,8 @@ fn buffer_too_small() {
         assert_eq!(0, x, "uvariant({:?}): expect x=0, got {}", b, x);
         assert_eq!(0, n, "uvariant({:?}): expect n=0, got {}", b, n);
 
-        match crate::read_uvarint(b) {
+        let mut r = b;
+        match crate::read_uvarint(&mut r) {
             Ok(_) => panic!("should panic"),
             Err(Error::IO(err, n)) => {
                 assert_eq!(io::ErrorKind::UnexpectedEof, err.kind());
