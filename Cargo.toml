@@ -9,6 +9,7 @@ rust-version = "1.65.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+base64.workspace = true
 binary.workspace = true
 csv.workspace = true
 hex.workspace = true
@@ -28,12 +29,14 @@ harness = false
 
 [workspace]
 members = [
+  "crates/base64",
   "crates/binary",
   "crates/csv",
   "crates/hex",
 ]
 
 [workspace.dependencies]
+base64.path = "crates/base64"
 binary.path = "crates/binary"
 csv.path = "crates/csv"
 hex.path = "crates/hex"

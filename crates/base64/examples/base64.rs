@@ -1,4 +1,4 @@
-use encoding::base64::STD_ENCODING;
+use base64::STD_ENCODING;
 
 fn main() {
     let msg = "Hello, 世界";
