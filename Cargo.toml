@@ -11,6 +11,7 @@ rust-version = "1.65.0"
 [dependencies]
 base64.workspace = true
 binary.workspace = true
+builtin.workspace = true
 csv.workspace = true
 hex.workspace = true
 lazy_static = "1.4.0"
@@ -31,6 +32,7 @@ harness = false
 members = [
   "crates/base64",
   "crates/binary",
+  "crates/builtin",
   "crates/csv",
   "crates/hex",
 ]
@@ -38,6 +40,7 @@ members = [
 [workspace.dependencies]
 base64.path = "crates/base64"
 binary.path = "crates/binary"
+builtin.path = "crates/builtin"
 csv.path = "crates/csv"
 hex.path = "crates/hex"
 lazy_static = "1.4.0"
