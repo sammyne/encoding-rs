@@ -811,7 +811,7 @@
     /// The padding character must not be `\r` or `\n`, must not
     /// be contained in the encoding&#39;s alphabet and must be a rune equal or
     /// below &#39;\xff&#39;.
-    /// 
+    ///
     /// To switch back to no padding, just use [without_padding][Self::without_padding].
     </span><span class="kw">pub fn </span>with_padding(<span class="kw-2">&amp;mut </span><span class="self">self</span>, padding: char) -&gt; <span class="kw-2">&amp;</span><span class="self">Self </span>{
         <span class="kw">if </span>!padding.is_ascii() {
@@ -833,7 +833,7 @@
     </span>}
 
     <span class="doccomment">/// Creates a new encoding identical to `self` except without padding.
-    /// 
+    ///
     /// To set padding, just use [with_padding][Self::with_padding].
     </span><span class="kw">pub fn </span>without_padding(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="self">Self </span>{
         <span class="self">self</span>.pad_char = <span class="prelude-val">None</span>;
