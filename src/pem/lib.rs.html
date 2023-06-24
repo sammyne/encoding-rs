@@ -263,7 +263,21 @@
 <span id="263">263</span>
 <span id="264">264</span>
 <span id="265">265</span>
-</pre><pre class="rust"><code><span class="kw">use </span>std::collections::HashMap;
+<span id="266">266</span>
+<span id="267">267</span>
+<span id="268">268</span>
+<span id="269">269</span>
+<span id="270">270</span>
+<span id="271">271</span>
+<span id="272">272</span>
+</pre><pre class="rust"><code><span class="doccomment">//! Implements the PEM data encoding, which originated in Privacy
+//! Enhanced Mail. The most common use of PEM encoding today is in TLS keys and
+//! certificates. See [RFC 1421].
+//!
+//! [RFC 1421]: https://rfc-editor.org/rfc/rfc1421.html
+//!
+
+</span><span class="kw">use </span>std::collections::HashMap;
 <span class="kw">use </span>std::io::{<span class="self">self</span>, Write};
 
 <span class="kw">const </span>COLON: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[u8] = <span class="string">b&quot;:&quot;</span>;
