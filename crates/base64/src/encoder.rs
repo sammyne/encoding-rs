@@ -119,6 +119,11 @@ where
     }
 }
 
+///
+/// # Example
+/// ```
+#[doc = include_str!("../examples/encoder.rs")]
+/// ```
 pub fn new_encoder<W>(enc: Encoding, w: W) -> impl Write
 where
     W: Write,
