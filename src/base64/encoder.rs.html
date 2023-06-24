@@ -258,7 +258,7 @@
         <span class="self">self</span>.w.write_all(<span class="kw-2">&amp;</span><span class="self">self</span>.out[..n])<span class="question-mark">?</span>;
         <span class="self">self</span>.nbuf = <span class="number">0</span>;
 
-        <span class="prelude-val">Ok</span>(())
+        <span class="self">self</span>.w.flush()
     }
 }
 
