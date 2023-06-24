@@ -39,6 +39,8 @@ jobs:
       with:
         path: ~/.cargo/git
         key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.toml') }}
+    - name: Check format
+      run: cargo fmt --check
     - name: Run tests
       run: cargo test --workspace
       shell: bash

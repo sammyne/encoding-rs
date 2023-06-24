@@ -314,7 +314,7 @@ impl Encoding {
     /// The padding character must not be `\r` or `\n`, must not
     /// be contained in the encoding's alphabet and must be a rune equal or
     /// below '\xff'.
-    /// 
+    ///
     /// To switch back to no padding, just use [without_padding][Self::without_padding].
     pub fn with_padding(&mut self, padding: char) -> &Self {
         if !padding.is_ascii() {
@@ -336,7 +336,7 @@ impl Encoding {
     }
 
     /// Creates a new encoding identical to `self` except without padding.
-    /// 
+    ///
     /// To set padding, just use [with_padding][Self::with_padding].
     pub fn without_padding(&mut self) -> &Self {
         self.pad_char = None;
