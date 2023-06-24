@@ -7,14 +7,36 @@ const PEM_END: &'static [u8] = b"\n-----END ";
 const PEM_END_OF_LINE: &'static [u8] = b"-----";
 const PEM_START: &'static [u8] = b"\n-----BEGIN ";
 
+/// A Block represents a PEM encoded structure.
+///
+/// The encoded form is:
+/// ```pem
+///	-----BEGIN Type-----
+///	Headers
+///	base64-encoded Bytes
+///	-----END Type-----
+/// ```
+///
+/// where Headers is a possibly empty sequence of `Key: Value` lines.
 #[derive(Default, PartialEq, Debug)]
 pub struct Block {
+    /// the type, taken from the preamble (i.e. "RSA PRIVATE KEY").
     pub type_: String,
+    /// Optional headers.
     pub headers: HashMap<String, String>,
+    /// The decoded bytes of the contents. Typically a DER encoded ASN.1 structure.
     pub bytes: Vec<u8>,
 }
 
 impl Block {
+    /// decode will find the next PEM formatted block (certificate, private key
+    /// etc) in the input. It returns that block and the remainder of the input. If
+    /// no PEM data is found, the whole of the input is returned in `Err`.
+    ///
+    /// # Example
+    /// ```
+    #[doc =include_str!("../examples/block_decode.rs")]
+    /// ```
     pub fn decode(data: &[u8]) -> Result<(Self, &[u8]), &[u8]> {
         // PEM_START begins with a newline. However, at the very beginning of
         // the byte array, we'll accept the start string without it.
@@ -112,10 +134,22 @@ impl Block {
     }
 }
 
+/// Alias of [Block::decode].
+///
+/// # Example
+/// ```
+#[doc = include_str!("../examples/decode.rs")]
+/// ```
 pub fn decode(data: &[u8]) -> Result<(Block, &[u8]), &[u8]> {
     Block::decode(data)
 }
 
+/// Writes the PEM encoding of `b` to `out`.
+///
+/// # Example
+/// ```
+#[doc = include_str!("../examples/encode.rs")]
+/// ```
 pub fn encode<W>(out: &mut W, b: &Block) -> Result<(), Error>
 where
     W: Write,
@@ -164,6 +198,11 @@ where
     Ok(())
 }
 
+/// Returns the PEM encoding of `b`.
+///
+/// If `b` has invalid headers and cannot be encoded,
+/// `encode_to_memory` returns `None`. If it is important to
+/// report details about this error case, use [encode] instead.
 pub fn encode_to_memory(b: &Block) -> Option<Vec<u8>> {
     let mut buf = vec![];
     if encode(&mut buf, b).is_err() {
