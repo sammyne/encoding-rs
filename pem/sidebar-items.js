@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":[["Error","Possible errors during encoding and decoding."]],"fn":[["decode","Alias of [Block::decode]."],["encode","Writes the PEM encoding of `b` to `out`."],["encode_to_memory","Returns the PEM encoding of `b`."]],"struct":[["Block","A Block represents a PEM encoded structure."]]};
