@@ -13,3 +13,4 @@ pub use base64;
 pub use binary;
 pub use csv;
 pub use hex;
+pub use pem;
