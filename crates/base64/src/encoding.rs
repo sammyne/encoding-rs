@@ -57,9 +57,10 @@ lazy_static! {
 /// [RFC 1421]: https://rfc-editor.org/rfc/rfc1421.html
 #[derive(Clone, Copy)]
 pub struct Encoding {
+    pub(crate) pad_char: Option<u8>,
+
     encode: [u8; 64],
     decode_map: [u8; 256],
-    pub(crate) pad_char: Option<u8>,
     strict: bool,
 }
 
@@ -198,7 +199,7 @@ impl Encoding {
     /// corresponding to `n` bytes of base64-encoded data.
     pub fn decoded_len(&self, n: usize) -> usize {
         match self.pad_char {
-            None => n * 6 / 8,
+            None => n * 6 / 8, // Unpadded data may end with partial block of 2-3 characters.
             _ => n / 4 * 3, // Padded base64 should always be a multiple of 4 characters in length.
         }
     }
@@ -310,9 +311,11 @@ impl Encoding {
 
     /// Creates a new encoding identical to `self` except
     /// with a specified padding character.
-    /// The padding character must not be '\r' or '\n', must not
+    /// The padding character must not be `\r` or `\n`, must not
     /// be contained in the encoding's alphabet and must be a rune equal or
     /// below '\xff'.
+    /// 
+    /// To switch back to no padding, just use [without_padding][Self::without_padding].
     pub fn with_padding(&mut self, padding: char) -> &Self {
         if !padding.is_ascii() {
             panic!("invalid padding")
@@ -333,6 +336,8 @@ impl Encoding {
     }
 
     /// Creates a new encoding identical to `self` except without padding.
+    /// 
+    /// To set padding, just use [with_padding][Self::with_padding].
     pub fn without_padding(&mut self) -> &Self {
         self.pad_char = None;
 
@@ -378,7 +383,7 @@ impl Encoding {
                 continue;
             }
 
-            if !self.is_pad_char(c) {
+            if self.pad_char != Some(c) {
                 return Err(CorruptInputError::new(src, src_idx - 1, 0));
             }
 
@@ -399,7 +404,7 @@ impl Encoding {
                         return Err(CorruptInputError::new(src, src.len(), 0));
                     }
 
-                    if !self.is_pad_char(src[src_idx]) {
+                    if self.pad_char != Some(src[src_idx]) {
                         return Err(CorruptInputError::new(src, src_idx - 1, 0));
                         // incorrect padding
                     }
@@ -452,17 +457,14 @@ impl Encoding {
 
         Ok((src_idx, dlen - 1))
     }
-
-    pub fn is_pad_char(&self, c: u8) -> bool {
-        match self.pad_char {
-            // None if c == 0 => true,
-            Some(v) if c == v => true,
-            _ => false,
-        }
-    }
 }
 
+// Assembles 4 base64 digits into 3 bytes.
+// Each digit comes from the decode map, and will be 0xff
+// if it came from an invalid character.
 fn assemble32(n1: u8, n2: u8, n3: u8, n4: u8) -> Result<u32, ()> {
+    // Check that all the digits are valid. If any of them was 0xff, their
+    // bitwise OR will be 0xff.
     if n1 | n2 | n3 | n4 == 0xff {
         return Err(());
     }
@@ -472,7 +474,12 @@ fn assemble32(n1: u8, n2: u8, n3: u8, n4: u8) -> Result<u32, ()> {
     return Ok(out);
 }
 
+// Assembles 8 base64 digits into 6 bytes.
+// Each digit comes from the decode map, and will be 0xff
+// if it came from an invalid character.
 fn assemble64(n1: u8, n2: u8, n3: u8, n4: u8, n5: u8, n6: u8, n7: u8, n8: u8) -> Result<u64, ()> {
+    // Check that all the digits are valid. If any of them was 0xff, their
+    // bitwise OR will be 0xff.
     if n1 | n2 | n3 | n4 | n5 | n6 | n7 | n8 == 0xff {
         return Err(());
     }
@@ -488,7 +495,3 @@ fn assemble64(n1: u8, n2: u8, n3: u8, n4: u8, n5: u8, n6: u8, n7: u8, n8: u8) ->
 
     return Ok(out);
 }
-
-//fn new_corrupted_error(idx: usize, written: usize) -> Error {
-//    return Error::CorruptInput(CorruptInputError::new(idx, written));
-//}

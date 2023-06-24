@@ -29,6 +29,7 @@ where
 {
     fn read(&mut self, p: &mut [u8]) -> std::io::Result<usize> {
         if !self.outbuf_pending.is_empty() {
+            // Use leftover decoded output from last read.
             let n = builtin::copy(p, &self.outbuf[self.outbuf_pending.clone()]);
             self.outbuf_pending.start += n;
             return Ok(n);
@@ -78,6 +79,7 @@ where
             return Ok(0);
         }
 
+        // Decode chunk into p, or d.out and then p if p is too small.
         let nr = self.nbuf / 4 * 4;
         let nw = self.nbuf / 4 * 3;
         let (written, nr) = if nw > p.len() {
@@ -130,13 +132,14 @@ where
             if offset > 0 {
                 return Ok(offset);
             }
-            n = self.wrapped.read(p)?;
+            n = self.wrapped.read(p)?; // Previous buffer entirely whitespace, read again
         }
 
         Ok(0)
     }
 }
 
+/// Constructs a new base64 stream decoder.
 pub fn new_decoder<R>(enc: Encoding, r: R) -> impl Read
 where
     R: Read,
