@@ -1,3 +1,10 @@
+//! Implements the PEM data encoding, which originated in Privacy
+//! Enhanced Mail. The most common use of PEM encoding today is in TLS keys and
+//! certificates. See [RFC 1421].
+//!
+//! [RFC 1421]: https://rfc-editor.org/rfc/rfc1421.html
+//!
+
 use std::collections::HashMap;
 use std::io::{self, Write};
 
