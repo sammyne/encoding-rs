@@ -1,1 +1,1 @@
-window.ALL_CRATES = ["binary","csv","encoding","hex"];
+window.ALL_CRATES = ["base64","binary","builtin","csv","encoding","hex"];

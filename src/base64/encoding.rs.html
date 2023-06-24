@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/base64/encoder.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>encoder.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../normalize.css"><link rel="stylesheet" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../ayu.css" disabled><link rel="stylesheet" href="../../../dark.css" disabled><link rel="stylesheet" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../encoding/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../../encoding/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../encoding/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/base64/src/encoding.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>encoding.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../base64/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../base64/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../base64/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -463,12 +463,40 @@
 <span id="463">463</span>
 <span id="464">464</span>
 <span id="465">465</span>
-</pre><pre class="rust"><code><span class="kw">use </span>std::io;
-
-<span class="kw">use </span><span class="kw">crate</span>::binary::{BigEndian, ByteOrder};
-<span class="kw">use </span><span class="kw">crate</span>::Error;
-
-<span class="kw">use </span><span class="kw">super</span>::constants;
+<span id="466">466</span>
+<span id="467">467</span>
+<span id="468">468</span>
+<span id="469">469</span>
+<span id="470">470</span>
+<span id="471">471</span>
+<span id="472">472</span>
+<span id="473">473</span>
+<span id="474">474</span>
+<span id="475">475</span>
+<span id="476">476</span>
+<span id="477">477</span>
+<span id="478">478</span>
+<span id="479">479</span>
+<span id="480">480</span>
+<span id="481">481</span>
+<span id="482">482</span>
+<span id="483">483</span>
+<span id="484">484</span>
+<span id="485">485</span>
+<span id="486">486</span>
+<span id="487">487</span>
+<span id="488">488</span>
+<span id="489">489</span>
+<span id="490">490</span>
+<span id="491">491</span>
+<span id="492">492</span>
+<span id="493">493</span>
+<span id="494">494</span>
+<span id="495">495</span>
+<span id="496">496</span>
+<span id="497">497</span>
+</pre><pre class="rust"><code><span class="kw">use crate</span>::{constants, CorruptInputError};
+<span class="kw">use </span>binary::{BigEndian, ByteOrder};
 
 <span class="kw">use </span>lazy_static::lazy_static;
 
@@ -518,17 +546,18 @@
 ///
 /// # Example
 /// ```
-</span><span class="attribute">#[doc = <span class="macro">include_str!</span>(<span class="string">&quot;../../examples/base64.rs&quot;</span>)]
+</span><span class="attribute">#[doc = <span class="macro">include_str!</span>(<span class="string">&quot;../examples/base64.rs&quot;</span>)]
 </span><span class="doccomment">/// ```
 ///
 /// [RFC 4648]: https://rfc-editor.org/rfc/rfc4648.html
 /// [RFC 2045]: https://rfc-editor.org/rfc/rfc2045.html
 /// [RFC 1421]: https://rfc-editor.org/rfc/rfc1421.html
-</span><span class="attribute">#[derive(Clone)]
+</span><span class="attribute">#[derive(Clone, Copy)]
 </span><span class="kw">pub struct </span>Encoding {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) pad_char: <span class="prelude-ty">Option</span>&lt;u8&gt;,
+
     encode: [u8; <span class="number">64</span>],
     decode_map: [u8; <span class="number">256</span>],
-    pad_char: <span class="prelude-ty">Option</span>&lt;u8&gt;,
     strict: bool,
 }
 
@@ -578,95 +607,107 @@
     <span class="doccomment">/// Decodes `src` using the encoding `self`. It writes at most
     /// [decoded_len(src.len())][Self::decoded_len] bytes to `dst` and returns the number of bytes
     /// written. If `src` contains invalid base64 data, it will return the
-    /// number of bytes successfully written and
-    /// [CorruptInputError](crate::Error::CorruptInputError).
-    /// New line characters (\r and \n) are ignored.
-    </span><span class="kw">pub fn </span>decode(<span class="kw-2">&amp;</span><span class="self">self</span>, dst: <span class="kw-2">&amp;mut </span>[u8], src: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;usize, Error&gt; {
+    /// number of bytes successfully written or
+    /// [CorruptInputError](crate::CorruptInputError).
+    /// New line characters (`\r` and `\n`) are ignored.
+    ///
+    /// # Example
+    /// ```
+    </span><span class="attribute">#[doc = <span class="macro">include_str!</span>(<span class="string">&quot;../examples/decode.rs&quot;</span>)]
+    </span><span class="doccomment">/// ```
+    </span><span class="kw">pub fn </span>decode(<span class="kw-2">&amp;</span><span class="self">self</span>, dst: <span class="kw-2">&amp;mut </span>[u8], src: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;usize, CorruptInputError&gt; {
         <span class="kw">if </span>src.len() == <span class="number">0 </span>{
             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="number">0</span>);
         }
 
-        <span class="kw">let </span><span class="kw-2">mut </span>n = <span class="number">0usize</span>; <span class="comment">// number of bytes written to dst
-        </span><span class="kw">let </span><span class="kw-2">mut </span>src_idx = <span class="number">0usize</span>;
-        <span class="kw">while </span>src.len() - src_idx &gt;= <span class="number">8 </span>&amp;&amp; dst.len() - n &gt;= <span class="number">8 </span>{
-            <span class="kw">match </span>assemble64(
-                <span class="self">self</span>.decode_map[src[src_idx + <span class="number">0</span>] <span class="kw">as </span>usize],
-                <span class="self">self</span>.decode_map[src[src_idx + <span class="number">1</span>] <span class="kw">as </span>usize],
-                <span class="self">self</span>.decode_map[src[src_idx + <span class="number">2</span>] <span class="kw">as </span>usize],
-                <span class="self">self</span>.decode_map[src[src_idx + <span class="number">3</span>] <span class="kw">as </span>usize],
-                <span class="self">self</span>.decode_map[src[src_idx + <span class="number">4</span>] <span class="kw">as </span>usize],
-                <span class="self">self</span>.decode_map[src[src_idx + <span class="number">5</span>] <span class="kw">as </span>usize],
-                <span class="self">self</span>.decode_map[src[src_idx + <span class="number">6</span>] <span class="kw">as </span>usize],
-                <span class="self">self</span>.decode_map[src[src_idx + <span class="number">7</span>] <span class="kw">as </span>usize],
-            ) {
-                <span class="prelude-val">Ok</span>(v) =&gt; {
-                    BigEndian::put_uint64(<span class="kw-2">&amp;mut </span>dst[n..], v);
-                    n += <span class="number">6</span>;
-                    src_idx += <span class="number">8</span>;
+        <span class="kw">let </span>(ndst, nsrc) = (dst.len(), src.len());
+
+        <span class="kw">let </span>(<span class="kw-2">mut </span>dst, <span class="kw-2">mut </span>src) = (dst, src);
+
+        <span class="kw">let </span>localize_err = |<span class="kw-2">mut </span>err: CorruptInputError, dst_len: usize, src_len: usize| {
+            err.idx += nsrc - src_len;
+            err.written += ndst - dst_len;
+            err
+        };
+
+        <span class="kw">if </span>usize::BITS == <span class="number">64 </span>{
+            <span class="kw">while </span>src.len() &gt;= <span class="number">8 </span>&amp;&amp; dst.len() &gt;= <span class="number">8 </span>{
+                <span class="kw">match </span>assemble64(
+                    <span class="self">self</span>.decode_map[src[<span class="number">0</span>] <span class="kw">as </span>usize],
+                    <span class="self">self</span>.decode_map[src[<span class="number">1</span>] <span class="kw">as </span>usize],
+                    <span class="self">self</span>.decode_map[src[<span class="number">2</span>] <span class="kw">as </span>usize],
+                    <span class="self">self</span>.decode_map[src[<span class="number">3</span>] <span class="kw">as </span>usize],
+                    <span class="self">self</span>.decode_map[src[<span class="number">4</span>] <span class="kw">as </span>usize],
+                    <span class="self">self</span>.decode_map[src[<span class="number">5</span>] <span class="kw">as </span>usize],
+                    <span class="self">self</span>.decode_map[src[<span class="number">6</span>] <span class="kw">as </span>usize],
+                    <span class="self">self</span>.decode_map[src[<span class="number">7</span>] <span class="kw">as </span>usize],
+                ) {
+                    <span class="prelude-val">Ok</span>(v) =&gt; {
+                        BigEndian::put_uint64(<span class="kw-2">&amp;mut </span>dst, v);
+                        dst = <span class="kw-2">&amp;mut </span>dst[<span class="number">6</span>..];
+                        src = <span class="kw-2">&amp;</span>src[<span class="number">8</span>..];
+                    }
+                    <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; {
+                        <span class="kw">let </span>(nr, nw) = <span class="self">self
+                            </span>.decode_quantum(<span class="kw-2">&amp;mut </span>dst, src)
+                            .map_err(|err| localize_err(err, dst.len(), src.len()))<span class="question-mark">?</span>;
+                        src = <span class="kw-2">&amp;</span>src[nr..];
+                        dst = <span class="kw-2">&amp;mut </span>dst[nw..];
+                    }
                 }
-                <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">match </span><span class="self">self</span>.decode_quantum(<span class="kw-2">&amp;mut </span>dst[n..], <span class="kw-2">&amp;</span>src[src_idx..]) {
-                    <span class="prelude-val">Ok</span>((s, nn)) =&gt; {
-                        src_idx += s;
-                        n += nn;
-                    }
-                    <span class="prelude-val">Err</span>(err) =&gt; {
-                        <span class="kw">return </span><span class="prelude-val">Err</span>(Error::IO(io::Error::new(io::ErrorKind::Other, err), n));
-                    }
-                },
             }
         }
 
-        <span class="kw">while </span>src.len() - src_idx &gt;= <span class="number">4 </span>&amp;&amp; dst.len() - n &gt;= <span class="number">4 </span>{
+        <span class="kw">while </span>src.len() &gt;= <span class="number">4 </span>&amp;&amp; dst.len() &gt;= <span class="number">4 </span>{
             <span class="kw">match </span>assemble32(
-                <span class="self">self</span>.decode_map[src[src_idx + <span class="number">0</span>] <span class="kw">as </span>usize],
-                <span class="self">self</span>.decode_map[src[src_idx + <span class="number">1</span>] <span class="kw">as </span>usize],
-                <span class="self">self</span>.decode_map[src[src_idx + <span class="number">2</span>] <span class="kw">as </span>usize],
-                <span class="self">self</span>.decode_map[src[src_idx + <span class="number">3</span>] <span class="kw">as </span>usize],
+                <span class="self">self</span>.decode_map[src[<span class="number">0</span>] <span class="kw">as </span>usize],
+                <span class="self">self</span>.decode_map[src[<span class="number">1</span>] <span class="kw">as </span>usize],
+                <span class="self">self</span>.decode_map[src[<span class="number">2</span>] <span class="kw">as </span>usize],
+                <span class="self">self</span>.decode_map[src[<span class="number">3</span>] <span class="kw">as </span>usize],
             ) {
                 <span class="prelude-val">Ok</span>(v) =&gt; {
-                    BigEndian::put_uint32(<span class="kw-2">&amp;mut </span>dst[n..], v);
-                    n += <span class="number">3</span>;
-                    src_idx += <span class="number">4</span>;
+                    BigEndian::put_uint32(<span class="kw-2">&amp;mut </span>dst, v);
+                    dst = <span class="kw-2">&amp;mut </span>dst[<span class="number">3</span>..];
+                    src = <span class="kw-2">&amp;</span>src[<span class="number">4</span>..];
                 }
-                <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">match </span><span class="self">self</span>.decode_quantum(<span class="kw-2">&amp;mut </span>dst[n..], <span class="kw-2">&amp;</span>src[src_idx..]) {
-                    <span class="prelude-val">Ok</span>((s, nn)) =&gt; {
-                        src_idx += s;
-                        n += nn;
-                    }
-                    <span class="prelude-val">Err</span>(err) =&gt; {
-                        <span class="kw">return </span><span class="prelude-val">Err</span>(Error::IO(io::Error::new(io::ErrorKind::Other, err), n));
-                    }
-                },
+                <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; {
+                    <span class="kw">let </span>(nr, nw) = <span class="self">self
+                        </span>.decode_quantum(<span class="kw-2">&amp;mut </span>dst, src)
+                        .map_err(|err| localize_err(err, dst.len(), src.len()))<span class="question-mark">?</span>;
+                    src = <span class="kw-2">&amp;</span>src[nr..];
+                    dst = <span class="kw-2">&amp;mut </span>dst[nw..];
+                }
             }
         }
 
         <span class="comment">// @dev whether &#39;if&#39; is ok?
-        </span><span class="kw">while </span>src_idx &lt; src.len() {
-            <span class="kw">match </span><span class="self">self</span>.decode_quantum(<span class="kw-2">&amp;mut </span>dst[n..], <span class="kw-2">&amp;</span>src[src_idx..]) {
-                <span class="prelude-val">Ok</span>((s, nn)) =&gt; {
-                    src_idx += s;
-                    n += nn;
-                }
-                <span class="prelude-val">Err</span>(err) =&gt; {
-                    <span class="kw">return </span><span class="prelude-val">Err</span>(Error::IO(io::Error::new(io::ErrorKind::Other, err), n));
-                }
-            }
+        </span><span class="kw">while </span>src.len() &gt; <span class="number">0 </span>{
+            <span class="kw">let </span>(nr, nw) = <span class="self">self
+                </span>.decode_quantum(<span class="kw-2">&amp;mut </span>dst, src)
+                .map_err(|err| localize_err(err, dst.len(), src.len()))<span class="question-mark">?</span>;
+            src = <span class="kw-2">&amp;</span>src[nr..];
+            dst = <span class="kw-2">&amp;mut </span>dst[nw..];
         }
 
-        <span class="prelude-val">Ok</span>(n)
+        <span class="prelude-val">Ok</span>(ndst - dst.len())
     }
 
     <span class="doccomment">/// Returns the maximum length in bytes of the decoded data
     /// corresponding to `n` bytes of base64-encoded data.
     </span><span class="kw">pub fn </span>decoded_len(<span class="kw-2">&amp;</span><span class="self">self</span>, n: usize) -&gt; usize {
         <span class="kw">match </span><span class="self">self</span>.pad_char {
-            <span class="prelude-val">None </span>=&gt; n * <span class="number">6 </span>/ <span class="number">8</span>,
-            <span class="kw">_ </span>=&gt; n / <span class="number">4 </span>* <span class="number">3</span>,
-        }
+            <span class="prelude-val">None </span>=&gt; n * <span class="number">6 </span>/ <span class="number">8</span>, <span class="comment">// Unpadded data may end with partial block of 2-3 characters.
+            </span><span class="kw">_ </span>=&gt; n / <span class="number">4 </span>* <span class="number">3</span>, <span class="comment">// Padded base64 should always be a multiple of 4 characters in length.
+        </span>}
     }
 
     <span class="doccomment">/// Returns the bytes represented by the base64 string `s`.
-    </span><span class="kw">pub fn </span>decode_string(<span class="kw-2">&amp;</span><span class="self">self</span>, s: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;u8&gt;, Error&gt; {
+    ///
+    /// # Example
+    /// ```
+    </span><span class="attribute">#[doc = <span class="macro">include_str!</span>(<span class="string">&quot;../examples/decode_string.rs&quot;</span>)]
+    </span><span class="doccomment">/// ```
+    </span><span class="kw">pub fn </span>decode_string(<span class="kw-2">&amp;</span><span class="self">self</span>, s: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;u8&gt;, CorruptInputError&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>out = <span class="macro">vec!</span>[<span class="number">0u8</span>; <span class="self">self</span>.encoded_len(s.len())];
         <span class="kw">let </span>n = <span class="self">self</span>.decode(out.as_mut_slice(), s.as_bytes())<span class="question-mark">?</span>;
 
@@ -681,6 +722,11 @@
     /// The encoding pads the output to a multiple of 4 bytes,
     /// so `encode` is not appropriate for use on individual blocks
     /// of a large data stream.
+    ///
+    /// # Example
+    /// ```
+    </span><span class="attribute">#[doc =<span class="macro">include_str!</span>(<span class="string">&quot;../examples/encode.rs&quot;</span>)]
+    </span><span class="doccomment">/// ```
     </span><span class="kw">pub fn </span>encode(<span class="kw-2">&amp;</span><span class="self">self</span>, dst: <span class="kw-2">&amp;mut </span>[u8], src: <span class="kw-2">&amp;</span>[u8]) {
         <span class="kw">if </span>src.len() == <span class="number">0 </span>{
             <span class="kw">return</span>;
@@ -735,6 +781,11 @@
     }
 
     <span class="doccomment">/// Returns the base64 encoding of `src`.
+    ///
+    /// # Example
+    /// ```
+    </span><span class="attribute">#[doc = <span class="macro">include_str!</span>(<span class="string">&quot;../examples/encode_to_string.rs&quot;</span>)]
+    </span><span class="doccomment">/// ```
     </span><span class="kw">pub fn </span>encode_to_string(<span class="kw-2">&amp;</span><span class="self">self</span>, src: <span class="kw-2">&amp;</span>[u8]) -&gt; String {
         <span class="kw">let </span><span class="kw-2">mut </span>buf = <span class="macro">vec!</span>[<span class="number">0u8</span>; <span class="self">self</span>.encoded_len(src.len())];
         <span class="self">self</span>.encode(<span class="kw-2">&amp;mut </span>buf, src);
@@ -757,9 +808,11 @@
 
     <span class="doccomment">/// Creates a new encoding identical to `self` except
     /// with a specified padding character.
-    /// The padding character must not be &#39;\r&#39; or &#39;\n&#39;, must not
+    /// The padding character must not be `\r` or `\n`, must not
     /// be contained in the encoding&#39;s alphabet and must be a rune equal or
     /// below &#39;\xff&#39;.
+    /// 
+    /// To switch back to no padding, just use [without_padding][Self::without_padding].
     </span><span class="kw">pub fn </span>with_padding(<span class="kw-2">&amp;mut </span><span class="self">self</span>, padding: char) -&gt; <span class="kw-2">&amp;</span><span class="self">Self </span>{
         <span class="kw">if </span>!padding.is_ascii() {
             <span class="macro">panic!</span>(<span class="string">&quot;invalid padding&quot;</span>)
@@ -780,13 +833,19 @@
     </span>}
 
     <span class="doccomment">/// Creates a new encoding identical to `self` except without padding.
+    /// 
+    /// To set padding, just use [with_padding][Self::with_padding].
     </span><span class="kw">pub fn </span>without_padding(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="self">Self </span>{
         <span class="self">self</span>.pad_char = <span class="prelude-val">None</span>;
 
         <span class="self">self
     </span>}
 
-    <span class="kw">fn </span>decode_quantum(<span class="kw-2">&amp;</span><span class="self">self</span>, dst: <span class="kw-2">&amp;mut </span>[u8], src: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;(usize, usize), Error&gt; {
+    <span class="kw">fn </span>decode_quantum(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        dst: <span class="kw-2">&amp;mut </span>[u8],
+        src: <span class="kw-2">&amp;</span>[u8],
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;(usize, usize), CorruptInputError&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>dbuf = [<span class="number">0u8</span>; <span class="number">4</span>];
 
         <span class="kw">let </span><span class="kw-2">mut </span>src_idx = <span class="number">0usize</span>;
@@ -798,17 +857,19 @@
 
             <span class="kw">if </span>src.len() == src_idx {
                 <span class="kw">match </span>j {
-                    <span class="number">0 </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>((<span class="number">0</span>, <span class="number">0</span>)),
-                    <span class="number">1 </span>=&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(new_corrupted_error(src_idx)),
-                    <span class="kw">_ if </span><span class="self">self</span>.pad_char.is_some() =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(new_corrupted_error(src_idx - j)),
+                    <span class="number">0 </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>((src_idx, <span class="number">0</span>)),
+                    <span class="number">1 </span>=&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(CorruptInputError::new(src, src_idx - <span class="number">1</span>, <span class="number">0</span>)),
+                    <span class="kw">_ if </span><span class="self">self</span>.pad_char.is_some() =&gt; {
+                        <span class="kw">return </span><span class="prelude-val">Err</span>(CorruptInputError::new(src, src_idx - <span class="number">2</span>, <span class="number">0</span>))
+                    }
                     <span class="kw">_ </span>=&gt; {}
                 }
-
                 <span class="kw">break </span>j;
             }
 
             <span class="kw">let </span>c = src[src_idx];
             src_idx += <span class="number">1</span>;
+
             <span class="kw">if </span><span class="self">self</span>.decode_map[c <span class="kw">as </span>usize] != <span class="number">0xff </span>{
                 dbuf[j] = <span class="self">self</span>.decode_map[c <span class="kw">as </span>usize];
                 j += <span class="number">1</span>;
@@ -819,26 +880,31 @@
                 <span class="kw">continue</span>;
             }
 
-            <span class="kw">if </span>!<span class="self">self</span>.is_pad_char(c) {
-                <span class="kw">return </span><span class="prelude-val">Err</span>(new_corrupted_error(src_idx - <span class="number">1</span>));
+            <span class="kw">if </span><span class="self">self</span>.pad_char != <span class="prelude-val">Some</span>(c) {
+                <span class="kw">return </span><span class="prelude-val">Err</span>(CorruptInputError::new(src, src_idx - <span class="number">1</span>, <span class="number">0</span>));
             }
 
-            <span class="kw">match </span>j {
-                <span class="number">0 </span>| <span class="number">1 </span>=&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(new_corrupted_error(src_idx - <span class="number">1</span>)), <span class="comment">// at most 2 padding char
+            <span class="comment">// We&#39;ve reached the end and there&#39;s padding
+            </span><span class="kw">match </span>j {
+                <span class="number">0 </span>| <span class="number">1 </span>=&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(CorruptInputError::new(src, src_idx - <span class="number">1</span>, <span class="number">0</span>)), <span class="comment">// at most 2 padding char
                 </span><span class="number">2 </span>=&gt; {
-                    <span class="kw">while </span>src_idx &lt; src.len()
+                    <span class="comment">// &quot;==&quot; is expected, the first &quot;=&quot; is already consumed.
+                    // skip over newlines
+                    </span><span class="kw">while </span>src_idx &lt; src.len()
                         &amp;&amp; (src[src_idx] == constants::LF || src[src_idx] == constants::CR)
                     {
                         src_idx += <span class="number">1</span>;
                     }
 
                     <span class="kw">if </span>src_idx == src.len() {
-                        <span class="kw">return </span><span class="prelude-val">Err</span>(new_corrupted_error(src.len()));
+                        <span class="comment">// not enough padding
+                        </span><span class="kw">return </span><span class="prelude-val">Err</span>(CorruptInputError::new(src, src.len(), <span class="number">0</span>));
                     }
 
-                    <span class="kw">if </span>!<span class="self">self</span>.is_pad_char(src[src_idx]) {
-                        <span class="kw">return </span><span class="prelude-val">Err</span>(new_corrupted_error(src_idx - <span class="number">1</span>));
-                    }
+                    <span class="kw">if </span><span class="self">self</span>.pad_char != <span class="prelude-val">Some</span>(src[src_idx]) {
+                        <span class="kw">return </span><span class="prelude-val">Err</span>(CorruptInputError::new(src, src_idx - <span class="number">1</span>, <span class="number">0</span>));
+                        <span class="comment">// incorrect padding
+                    </span>}
 
                     src_idx += <span class="number">1</span>;
                 }
@@ -852,7 +918,7 @@
             }
 
             <span class="kw">if </span>src_idx &lt; src.len() {
-                <span class="kw">return </span><span class="prelude-val">Err</span>(new_corrupted_error(src_idx));
+                <span class="kw">return </span><span class="prelude-val">Err</span>(CorruptInputError::new(src, src_idx, <span class="number">0</span>));
             }
 
             <span class="kw">break </span>j;
@@ -875,31 +941,28 @@
         <span class="kw">if </span>dlen &gt;= <span class="number">3 </span>{
             dst[<span class="number">1</span>] = dbuf[<span class="number">1</span>];
             <span class="kw">if </span><span class="self">self</span>.strict &amp;&amp; dbuf[<span class="number">2</span>] != <span class="number">0 </span>{
-                <span class="kw">return </span><span class="prelude-val">Err</span>(new_corrupted_error(src_idx - <span class="number">1</span>));
+                <span class="kw">return </span><span class="prelude-val">Err</span>(CorruptInputError::new(src, src_idx - <span class="number">1</span>, <span class="number">0</span>));
             }
             dbuf[<span class="number">1</span>] = <span class="number">0</span>;
         }
         <span class="kw">if </span>dlen &gt;= <span class="number">2 </span>{
             dst[<span class="number">0</span>] = dbuf[<span class="number">0</span>];
-            <span class="kw">if </span><span class="self">self</span>.strict &amp;&amp; dbuf[<span class="number">2</span>] != <span class="number">0 </span>{
-                <span class="kw">return </span><span class="prelude-val">Err</span>(new_corrupted_error(src_idx - <span class="number">2</span>));
+            <span class="kw">if </span><span class="self">self</span>.strict &amp;&amp; ((dbuf[<span class="number">1</span>] != <span class="number">0</span>) || (dbuf[<span class="number">2</span>] != <span class="number">0</span>)) {
+                <span class="kw">return </span><span class="prelude-val">Err</span>(CorruptInputError::new(src, src_idx - <span class="number">2</span>, <span class="number">0</span>));
             }
         }
 
         <span class="prelude-val">Ok</span>((src_idx, dlen - <span class="number">1</span>))
     }
-
-    <span class="kw">pub fn </span>is_pad_char(<span class="kw-2">&amp;</span><span class="self">self</span>, c: u8) -&gt; bool {
-        <span class="kw">match </span><span class="self">self</span>.pad_char {
-            <span class="prelude-val">None </span><span class="kw">if </span>c == <span class="number">0 </span>=&gt; <span class="bool-val">true</span>,
-            <span class="prelude-val">Some</span>(v) <span class="kw">if </span>c == v =&gt; <span class="bool-val">true</span>,
-            <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
-        }
-    }
 }
 
-<span class="kw">fn </span>assemble32(n1: u8, n2: u8, n3: u8, n4: u8) -&gt; <span class="prelude-ty">Result</span>&lt;u32, ()&gt; {
-    <span class="kw">if </span>n1 | n2 | n3 | n4 == <span class="number">0xff </span>{
+<span class="comment">// Assembles 4 base64 digits into 3 bytes.
+// Each digit comes from the decode map, and will be 0xff
+// if it came from an invalid character.
+</span><span class="kw">fn </span>assemble32(n1: u8, n2: u8, n3: u8, n4: u8) -&gt; <span class="prelude-ty">Result</span>&lt;u32, ()&gt; {
+    <span class="comment">// Check that all the digits are valid. If any of them was 0xff, their
+    // bitwise OR will be 0xff.
+    </span><span class="kw">if </span>n1 | n2 | n3 | n4 == <span class="number">0xff </span>{
         <span class="kw">return </span><span class="prelude-val">Err</span>(());
     }
 
@@ -908,8 +971,13 @@
     <span class="kw">return </span><span class="prelude-val">Ok</span>(out);
 }
 
-<span class="kw">fn </span>assemble64(n1: u8, n2: u8, n3: u8, n4: u8, n5: u8, n6: u8, n7: u8, n8: u8) -&gt; <span class="prelude-ty">Result</span>&lt;u64, ()&gt; {
-    <span class="kw">if </span>n1 | n2 | n3 | n4 | n5 | n6 | n7 | n8 == <span class="number">0xff </span>{
+<span class="comment">// Assembles 8 base64 digits into 6 bytes.
+// Each digit comes from the decode map, and will be 0xff
+// if it came from an invalid character.
+</span><span class="kw">fn </span>assemble64(n1: u8, n2: u8, n3: u8, n4: u8, n5: u8, n6: u8, n7: u8, n8: u8) -&gt; <span class="prelude-ty">Result</span>&lt;u64, ()&gt; {
+    <span class="comment">// Check that all the digits are valid. If any of them was 0xff, their
+    // bitwise OR will be 0xff.
+    </span><span class="kw">if </span>n1 | n2 | n3 | n4 | n5 | n6 | n7 | n8 == <span class="number">0xff </span>{
         <span class="kw">return </span><span class="prelude-val">Err</span>(());
     }
 
@@ -924,9 +992,5 @@
 
     <span class="kw">return </span><span class="prelude-val">Ok</span>(out);
 }
-
-<span class="kw">fn </span>new_corrupted_error(idx: usize) -&gt; Error {
-    <span class="kw">return </span>Error::CorruptInputError(<span class="string">&quot;base64&quot;</span>, idx);
-}
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="encoding" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0 (897e37553 2022-11-02)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="base64" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0 (897e37553 2022-11-02)" ></div></body></html>

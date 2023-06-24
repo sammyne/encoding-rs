@@ -1,0 +1,3 @@
+(function() {var implementors = {
+"base64":[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.65.0/core/marker/trait.Copy.html\" title=\"trait core::marker::Copy\">Copy</a> for <a class=\"struct\" href=\"base64/struct.Encoding.html\" title=\"struct base64::Encoding\">Encoding</a>"],["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.65.0/core/marker/trait.Copy.html\" title=\"trait core::marker::Copy\">Copy</a> for <a class=\"struct\" href=\"base64/struct.CorruptInputError.html\" title=\"struct base64::CorruptInputError\">CorruptInputError</a>"]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
