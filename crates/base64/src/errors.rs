@@ -1,20 +1,12 @@
 use std::{error::Error, fmt::Display};
 
+/// Error occurs during decoding.
 #[derive(Debug, Default, Clone, Copy)]
-// #[error("illegal base64 data {} at input byte {idx} after writing {written} bytes", c.escape_ascii().to_string())]
 pub struct CorruptInputError {
     pub c: Option<u8>,
     pub idx: usize,
     pub written: usize,
 }
-
-//#[derive(thiserror::Error, Debug)]
-//pub enum Error {
-//    #[error(transparent)]
-//    CorruptInput(CorruptInputError),
-//    #[error("IO error: with {1} elements read/written")]
-//    IO(io::Error, usize),
-//}
 
 impl CorruptInputError {
     pub(crate) fn new(src: &[u8], idx: usize, written: usize) -> Self {
@@ -56,15 +48,3 @@ impl Error for CorruptInputError {
         None
     }
 }
-
-/*
-impl Into<io::Error> for Error {
-    fn into(self) -> io::Error {
-        if let Error::IO(err, _) = self {
-            return err;
-        }
-
-        io::Error::new(io::ErrorKind::Other, self.to_string())
-    }
-}
-*/

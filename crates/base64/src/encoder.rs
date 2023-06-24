@@ -119,7 +119,11 @@ where
     }
 }
 
-///
+/// Returns a new base64 stream encoder. Data written to
+/// the returned writer will be encoded using `enc` and then written to `w`.
+/// Base64 encodings operate in 4-byte blocks; when finished
+/// writing, the caller must [Write::flush] the returned encoder to flush any
+/// partially written blocks.
 /// # Example
 /// ```
 #[doc = include_str!("../examples/encoder.rs")]

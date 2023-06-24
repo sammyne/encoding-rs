@@ -9,4 +9,3 @@ edition = "2021"
 binary.workspace = true
 builtin.workspace = true
 lazy_static.workspace = true
-thiserror.workspace = true
