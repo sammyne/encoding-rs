@@ -115,7 +115,7 @@ where
         self.w.write_all(&self.out[..n])?;
         self.nbuf = 0;
 
-        Ok(())
+        self.w.flush()
     }
 }
 
