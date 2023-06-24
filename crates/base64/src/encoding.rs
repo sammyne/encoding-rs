@@ -111,7 +111,12 @@ impl Encoding {
     /// written. If `src` contains invalid base64 data, it will return the
     /// number of bytes successfully written or
     /// [CorruptInputError](crate::CorruptInputError).
-    /// New line characters (\r and \n) are ignored.
+    /// New line characters (`\r` and `\n`) are ignored.
+    ///
+    /// # Example
+    /// ```
+    #[doc = include_str!("../examples/decode.rs")]
+    /// ```
     pub fn decode(&self, dst: &mut [u8], src: &[u8]) -> Result<usize, CorruptInputError> {
         if src.len() == 0 {
             return Ok(0);
@@ -199,6 +204,11 @@ impl Encoding {
     }
 
     /// Returns the bytes represented by the base64 string `s`.
+    ///
+    /// # Example
+    /// ```
+    #[doc = include_str!("../examples/decode_string.rs")]
+    /// ```
     pub fn decode_string(&self, s: &str) -> Result<Vec<u8>, CorruptInputError> {
         let mut out = vec![0u8; self.encoded_len(s.len())];
         let n = self.decode(out.as_mut_slice(), s.as_bytes())?;
@@ -214,6 +224,11 @@ impl Encoding {
     /// The encoding pads the output to a multiple of 4 bytes,
     /// so `encode` is not appropriate for use on individual blocks
     /// of a large data stream.
+    ///
+    /// # Example
+    /// ```
+    #[doc =include_str!("../examples/encode.rs")]
+    /// ```
     pub fn encode(&self, dst: &mut [u8], src: &[u8]) {
         if src.len() == 0 {
             return;
@@ -268,6 +283,11 @@ impl Encoding {
     }
 
     /// Returns the base64 encoding of `src`.
+    ///
+    /// # Example
+    /// ```
+    #[doc = include_str!("../examples/encode_to_string.rs")]
+    /// ```
     pub fn encode_to_string(&self, src: &[u8]) -> String {
         let mut buf = vec![0u8; self.encoded_len(src.len())];
         self.encode(&mut buf, src);
