@@ -1,12 +1,9 @@
-use std::{
-    io::{self, ErrorKind, Read, Write},
-    sync::{
-        mpsc::{self, Receiver, Sender},
-        Mutex,
-    },
-};
+use std::io::{self, ErrorKind, Read, Write};
+use std::sync::mpsc::{self, Receiver, Sender};
 
-use base32::{CorruptInputError, Decoder, STD_ENCODING};
+use std::sync::Mutex;
+
+use base32::{CorruptInputError, STD_ENCODING};
 
 #[test]
 fn buffered_decoding_same_error() {
@@ -100,7 +97,7 @@ fn buffered_decoding_same_error() {
                 r
             };
 
-            let mut decoder = Decoder::new(STD_ENCODING.clone(), r);
+            let mut decoder = base32::new_decoder(STD_ENCODING.clone(), r);
 
             let mut buf = vec![];
             let status = decoder.read_to_end(&mut buf);
@@ -168,7 +165,7 @@ fn buffered_decoding_padding() {
             });
         });
 
-        let mut decoder = Decoder::new(*STD_ENCODING, pr);
+        let mut decoder = base32::new_decoder(*STD_ENCODING, pr);
         let mut discarded = vec![];
 
         let got = decoder.read_to_end(&mut discarded).unwrap_err();
@@ -183,7 +180,7 @@ fn buffered_decoding_padding() {
 fn decoder_buffering() {
     let bigtest = &testbot::BIGTEST;
     for bs in 1..=12 {
-        let mut decoder = Decoder::new(STD_ENCODING.clone(), bigtest.encoded.as_bytes());
+        let mut decoder = base32::new_decoder(STD_ENCODING.clone(), bigtest.encoded.as_bytes());
         let mut buf = vec![0u8; bigtest.decoded.len() + 12];
 
         let mut total = 0usize;
@@ -203,7 +200,7 @@ fn decoder_buffering() {
 #[test]
 fn decoder() {
     for (i, v) in testbot::PAIRS.iter().enumerate() {
-        let mut decoder = Decoder::new(STD_ENCODING.clone(), v.encoded.as_bytes());
+        let mut decoder = base32::new_decoder(STD_ENCODING.clone(), v.encoded.as_bytes());
         let mut dbuf = vec![0u8; STD_ENCODING.decoded_len(v.encoded.len())];
         let count = decoder.read(&mut dbuf).unwrap();
         assert_eq!(v.decoded.len(), count, "#{} Read from {}", i, v.encoded);
@@ -229,7 +226,7 @@ fn error() {
         ..Default::default()
     };
 
-    let mut decoder = Decoder::new(STD_ENCODING.clone(), br);
+    let mut decoder = base32::new_decoder(STD_ENCODING.clone(), br);
     let got = decoder
         .read(&mut dbuf)
         .expect_err("got no error")
@@ -308,7 +305,7 @@ fn golang_issue20044() {
 
     for (i, tc) in test_vector.iter_mut().enumerate().skip(2) {
         let input = String::from_utf8_lossy(tc.r.data.as_slice()).to_string();
-        let mut decoder = Decoder::new(*STD_ENCODING, &mut tc.r);
+        let mut decoder = base32::new_decoder(*STD_ENCODING, &mut tc.r);
         let dbuflen = if tc.dbuflen > 0 {
             tc.dbuflen
         } else {
@@ -352,12 +349,12 @@ fn golang_issue4779() {
     let encoded_short = ENCODED.replace("\n", "");
 
     let mut res1 = vec![];
-    Decoder::new(STD_ENCODING.clone(), ENCODED.as_bytes())
+    base32::new_decoder(STD_ENCODING.clone(), ENCODED.as_bytes())
         .read_to_end(&mut res1)
         .unwrap();
 
     let mut res2 = vec![];
-    Decoder::new(STD_ENCODING.clone(), encoded_short.as_bytes())
+    base32::new_decoder(STD_ENCODING.clone(), encoded_short.as_bytes())
         .read_to_end(&mut res2)
         .unwrap();
 
@@ -374,7 +371,7 @@ fn reader_eof() {
         ..Default::default()
     };
 
-    let mut decoder = Decoder::new(STD_ENCODING.clone(), br);
+    let mut decoder = base32::new_decoder(STD_ENCODING.clone(), br);
     let mut dbuf = vec![0u8; STD_ENCODING.decoded_len(input.len())];
     let _ = decoder.read(&mut dbuf).expect("1st read should be ok");
 

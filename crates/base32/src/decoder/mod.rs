@@ -6,7 +6,7 @@ use std::{
 
 use crate::{CorruptInputError, Encoding};
 
-pub struct Decoder<R>
+struct Decoder<R>
 where
     R: Read,
 {
@@ -132,6 +132,14 @@ where
             None => Ok(ok),
         }
     }
+}
+
+/// Constructs a new base32 stream decoder.
+pub fn new_decoder<R>(enc: Encoding, r: R) -> impl Read
+where
+    R: Read,
+{
+    Decoder::new(enc, r)
 }
 
 fn new_other_io_err<E>(e: E) -> io::Error
