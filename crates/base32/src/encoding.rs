@@ -1,6 +1,6 @@
 use lazy_static::lazy_static;
 
-use crate::base32::constants;
+use crate::constants;
 use crate::Error;
 
 lazy_static! {
@@ -21,11 +21,12 @@ lazy_static! {
 ///
 /// [RFC 4648]: https://rfc-editor.org/rfc/rfc4648.html
 ///
-#[derive(Clone)]
+#[derive(Clone,Copy)]
 pub struct Encoding {
     encode: [u8; 32],
     decode_map: [u8; 256],
-    pub(super) pad_char: Option<u8>,
+
+    pub(crate) pad_char: Option<u8>,
 }
 
 impl Encoding {
@@ -72,7 +73,7 @@ impl Encoding {
     ///
     /// # Example
     /// ```
-    #[doc = include_str!("../../examples/base32_decode.rs")]
+    #[doc = include_str!("../examples/encoding_decode.rs")]
     /// ```
     pub fn decode(&self, dst: &mut [u8], src: &[u8]) -> Result<usize, Error> {
         if src.len() == 0 {
@@ -113,7 +114,7 @@ impl Encoding {
     ///
     /// # Example
     /// ```
-    #[doc = include_str!("../../examples/base32_encoding_encode.rs")]
+    #[doc = include_str!("../examples/encoding_encode.rs")]
     /// ```
     pub fn encode(&self, dst: &mut [u8], src: &[u8]) {
         let (mut dst, mut src) = (dst, src);
@@ -194,7 +195,7 @@ impl Encoding {
     ///
     /// # Example
     /// ```
-    #[doc = include_str!("../../examples/base32_encoding_encode_to_string.rs")]
+    #[doc = include_str!("../examples/encoding_encode_to_string.rs")]
     /// ```
     pub fn encode_to_string(&self, src: &[u8]) -> String {
         let mut out = " ".repeat(self.encoded_len(src.len()));

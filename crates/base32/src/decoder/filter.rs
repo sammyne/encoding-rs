@@ -1,7 +1,5 @@
 use std::io::Read;
 
-use crate::base32::constants;
-
 pub struct NewlineFilteringReader<R>
 where
     R: Read,
@@ -42,7 +40,7 @@ pub fn strip_newlines(src: &mut [u8]) -> usize {
     let mut offset = 0usize;
     for i in 0..src.len() {
         let c = src[i];
-        if c == constants::CR || c == constants::LF {
+        if c == crate::CR || c == crate::LF {
             continue;
         }
         src[offset] = c;

@@ -1,5 +1,3 @@
-use encoding::base32;
-
 fn main() {
     const ENCODED: &'static str = "ONXW2ZJAMRQXIYJAO5UXI2BAAAQGC3TEEDX3XPY=";
     const EXPECT: &'static str = "some data with \u{0} and \u{feff}";

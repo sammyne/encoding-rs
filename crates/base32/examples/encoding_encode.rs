@@ -1,4 +1,4 @@
-use encoding::base32::STD_ENCODING;
+use base32::STD_ENCODING;
 
 fn main() {
     let data = b"Hello, world!";

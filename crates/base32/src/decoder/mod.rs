@@ -1,9 +1,7 @@
 use std::io::{self, Read};
 
-use crate::base32::decoder::filter::NewlineFilteringReader;
-use crate::base32::Encoding;
-use crate::builtin;
-use crate::errors::Error;
+use crate::Encoding;
+use crate::Error;
 
 pub struct Decoder<R>
 where
@@ -185,3 +183,7 @@ where
         Ok(n)
     }
 }
+
+mod filter;
+
+use filter::NewlineFilteringReader;
