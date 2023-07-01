@@ -1,6 +1,6 @@
 use std::io::{Read, Write};
 
-use ascii85::{Decoder, Encoder};
+use ascii85::Decoder;
 
 #[test]
 fn big() {
@@ -14,7 +14,7 @@ fn big() {
     }
 
     let mut encoded = vec![];
-    let mut w = Encoder::new(&mut encoded);
+    let mut w = ascii85::new_encoder(&mut encoded);
     let nn = w.write(&raw).unwrap();
     assert_eq!(
         N,
@@ -22,7 +22,7 @@ fn big() {
         "Encoder.write({})",
         testbot::escape_ascii_string(&raw)
     );
-    w.flush().unwrap();
+    std::mem::drop(w);
 
     let mut decoded = vec![];
     Decoder::new(encoded.as_slice())
