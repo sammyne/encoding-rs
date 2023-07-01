@@ -1,12 +1,10 @@
 use std::io::Read;
 
-use ascii85::Decoder;
-
 #[test]
 fn buffering() {
     let bigtest = *testbot::BIGTEST;
     for bs in 1..=12 {
-        let mut decoder = Decoder::new(bigtest.encoded.as_bytes());
+        let mut decoder = ascii85::new_decoder(bigtest.encoded.as_bytes());
         let mut buf = vec![0u8; bigtest.decoded.len() + 12];
 
         let mut total = 0usize;
@@ -27,7 +25,7 @@ fn buffering() {
 fn decoder() {
     for (i, p) in testbot::PAIRS.iter().enumerate().skip(1) {
         let encoded = p.encoded.as_bytes();
-        let mut decoder = Decoder::new(encoded);
+        let mut decoder = ascii85::new_decoder(encoded);
         let mut dbuf = vec![];
         decoder.read_to_end(&mut dbuf).unwrap();
 
@@ -49,7 +47,7 @@ fn internal_whitespace() {
     let s = " ".repeat(2048) + "z";
 
     let mut decoded = vec![];
-    Decoder::new(s.as_bytes())
+    ascii85::new_decoder(s.as_bytes())
         .read_to_end(&mut decoded)
         .unwrap();
 

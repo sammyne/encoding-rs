@@ -1,7 +1,5 @@
 use std::io::{Read, Write};
 
-use ascii85::Decoder;
-
 #[test]
 fn big() {
     const N: usize = 3 * 1000 + 1;
@@ -25,7 +23,7 @@ fn big() {
     std::mem::drop(w);
 
     let mut decoded = vec![];
-    Decoder::new(encoded.as_slice())
+    ascii85::new_decoder(encoded.as_slice())
         .read_to_end(&mut decoded)
         .unwrap();
 
