@@ -1,7 +1,7 @@
 use lazy_static::lazy_static;
 
 use crate::constants;
-use crate::Error;
+use crate::CorruptInputError;
 
 lazy_static! {
     /// StdEncoding is the standard base32 encoding, as defined in
@@ -21,7 +21,7 @@ lazy_static! {
 ///
 /// [RFC 4648]: https://rfc-editor.org/rfc/rfc4648.html
 ///
-#[derive(Clone,Copy)]
+#[derive(Clone, Copy)]
 pub struct Encoding {
     encode: [u8; 32],
     decode_map: [u8; 256],
@@ -64,18 +64,18 @@ impl Encoding {
     }
 
     /// Decodes `src` using the encoding `enc`. It writes at most
-    /// [decoded_len(src.len())][crate::base32::Encoding::decoded_len] bytes
+    /// [decoded_len(src.len())][Self::decoded_len] bytes
     /// to `dst` and returns the number of bytes
     /// written. If `src` contains invalid base32 data, it will return the
     /// number of bytes successfully written and
-    /// [CorruptInputError](crate::Error::CorruptInputError).
+    /// [CorruptInputError](crate::CorruptInputError).
     /// New line characters (\r and \n) are ignored.
     ///
     /// # Example
     /// ```
-    #[doc = include_str!("../examples/encoding_decode.rs")]
+    #[doc = include_str!("../../examples/encoding_decode.rs")]
     /// ```
-    pub fn decode(&self, dst: &mut [u8], src: &[u8]) -> Result<usize, Error> {
+    pub fn decode(&self, dst: &mut [u8], src: &[u8]) -> Result<usize, CorruptInputError> {
         if src.len() == 0 {
             return Ok(0);
         }
@@ -96,7 +96,7 @@ impl Encoding {
     }
 
     /// Returns the bytes represented by the base32 string `s`.
-    pub fn decode_string(&self, s: &str) -> Result<Vec<u8>, Error> {
+    pub fn decode_string(&self, s: &str) -> Result<Vec<u8>, CorruptInputError> {
         let mut out = vec![0u8; self.decoded_len(s.len())];
         let n = self.decode(out.as_mut_slice(), s.as_bytes())?;
         out.resize(n, 0);
@@ -114,7 +114,7 @@ impl Encoding {
     ///
     /// # Example
     /// ```
-    #[doc = include_str!("../examples/encoding_encode.rs")]
+    #[doc = include_str!("../../examples/encoding_encode.rs")]
     /// ```
     pub fn encode(&self, dst: &mut [u8], src: &[u8]) {
         let (mut dst, mut src) = (dst, src);
@@ -195,7 +195,7 @@ impl Encoding {
     ///
     /// # Example
     /// ```
-    #[doc = include_str!("../examples/encoding_encode_to_string.rs")]
+    #[doc = include_str!("../../examples/encoding_encode_to_string.rs")]
     /// ```
     pub fn encode_to_string(&self, src: &[u8]) -> String {
         let mut out = " ".repeat(self.encoded_len(src.len()));
@@ -238,7 +238,16 @@ impl Encoding {
         self
     }
 
-    pub(super) fn decode_(&self, dst: &mut [u8], src: &[u8]) -> Result<(usize, bool), Error> {
+    /// decode_ is like [Self::decode] but returns an additional 'end' value, which
+    /// indicates if end-of-message padding was encountered and thus any
+    /// additional data is an error. This method assumes that src has been
+    /// stripped of all supported whitespace ('\r' and '\n').
+    pub(super) fn decode_(
+        &self,
+        dst: &mut [u8],
+        src: &[u8],
+    ) -> Result<(usize, bool), CorruptInputError> {
+        println!("src = {}", unsafe { std::str::from_utf8_unchecked(src) });
         let mut dsti = 0usize;
         let (mut src, olen) = (src, src.len());
 
@@ -253,7 +262,7 @@ impl Encoding {
                 if src.len() == 0 {
                     if self.pad_char.is_some() {
                         // We have reached the end and are missing padding
-                        return Err(new_corrupted_error(olen - src.len() - j));
+                        return Err(CorruptInputError::new(src, olen - src.len() - j, written));
                     }
                     // We have reached the end and are not expecting any padding
                     dlen = j;
@@ -267,13 +276,17 @@ impl Encoding {
                     // We've reached the end and there's padding
                     if src.len() + j < 8 - 1 {
                         // not enough padding
-                        return Err(new_corrupted_error(olen));
+                        return Err(CorruptInputError::new(src, olen, written));
                     }
 
                     for k in 0..(8 - 1 - j) {
                         if (src.len() > k) && (src[k] != pad_char) {
                             // incorrect padding
-                            return Err(new_corrupted_error(olen - src.len() + k - 1));
+                            return Err(CorruptInputError::new(
+                                src,
+                                olen - src.len() + k - 1,
+                                written,
+                            ));
                         }
                     }
                     dlen = j;
@@ -285,14 +298,16 @@ impl Encoding {
                     // Examples" for an illustration for how the 1st, 3rd and 6th base32
                     // src bytes do not yield enough information to decode a dst byte.
                     match dlen {
-                        1 | 3 | 6 => return Err(new_corrupted_error(olen - src.len() - 1)),
+                        1 | 3 | 6 => {
+                            return Err(CorruptInputError::new(src, olen - src.len() - 1, written))
+                        }
                         _ => {}
                     }
                     break;
                 }
                 dbuf[j] = self.decode_map[c as usize];
                 if dbuf[j] == 0xFF {
-                    return Err(new_corrupted_error(olen - src.len() - 1));
+                    return Err(CorruptInputError::new(src, olen - src.len() - 1, written));
                 }
             }
 
@@ -324,19 +339,6 @@ impl Encoding {
     }
 }
 
-fn new_corrupted_error(idx: usize) -> Error {
-    Error::CorruptInputError("base32", idx)
-}
-
-/*
-fn new_io_error<E>(err: E, n: usize) -> Error
-where
-    E: Into<Box<dyn error::Error + Send + Sync>>,
-{
-    Error::IO(io::Error::new(io::ErrorKind::Other, err), n)
-}
-*/
-
 pub fn strip_newlines(dst: &mut [u8], src: &[u8]) -> usize {
     let mut offset = 0usize;
     for &c in src {
@@ -349,3 +351,6 @@ pub fn strip_newlines(dst: &mut [u8], src: &[u8]) -> usize {
 
     offset
 }
+
+#[cfg(test)]
+mod tests;

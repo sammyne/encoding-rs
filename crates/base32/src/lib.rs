@@ -15,5 +15,3 @@ pub use encoder::*;
 pub use encoding::*;
 pub use errors::*;
 
-#[cfg(test)]
-mod tests;
