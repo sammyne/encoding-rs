@@ -14,7 +14,7 @@ Supported encodings go as follow
 
 - [x] ascii85
 - [ ] asn1
-- [ ] base32
+- [x] [base32][base32-doc]: implements base32 encoding as specified by [RFC 4648].
 - [ ] base58
 - [x] [base64][base64-doc]: implements base64 encoding as specified by [RFC 4648].
 - [ ] [binary][binary-doc]
@@ -43,6 +43,7 @@ cargo bench
 - Stable rust doesn't support benchmark well, so [criterion](https://crates.io/crates/criterion) is used for now.
 - docs is released at the `gh-pages` branch for the `main` branch only
 
+[base32-doc]: https://sammyne.github.io/encoding-rs/base32/
 [base64-doc]: https://sammyne.github.io/encoding-rs/base64/
 [binary-doc]: https://sammyne.github.io/encoding-rs/binary/
 [csv-doc]: https://sammyne.github.io/encoding-rs/csv/
