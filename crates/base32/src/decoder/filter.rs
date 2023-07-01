@@ -38,7 +38,7 @@ where
     }
 }
 
-pub fn strip_newlines(src: &mut [u8]) -> usize {
+fn strip_newlines(src: &mut [u8]) -> usize {
     let mut offset = 0usize;
     for i in 0..src.len() {
         let c = src[i];

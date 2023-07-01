@@ -110,12 +110,12 @@ impl Encoding {
     }
 
     /// Encodes `src` using the encoding `enc`, writing
-    /// [encoded_len(len(src))][crate::base32::Encoding::encoded_len]
+    /// [encoded_len(len(src))][crate::Encoding::encoded_len]
     /// bytes to `dst`.
     ///
     /// The encoding pads the output to a multiple of 8 bytes,
     /// so `encode` is not appropriate for use on individual blocks
-    /// of a large data stream. Use [Encoder::new()][crate::base32::Encoder::new] instead.
+    /// of a large data stream. Use [new_encoder()][crate::new_encoder] instead.
     ///
     /// # Example
     /// ```
@@ -343,7 +343,7 @@ impl Encoding {
     }
 }
 
-pub fn strip_newlines(dst: &mut [u8], src: &[u8]) -> usize {
+fn strip_newlines(dst: &mut [u8], src: &[u8]) -> usize {
     let mut offset = 0usize;
     for &c in src {
         if c == constants::CR || c == constants::LF {
