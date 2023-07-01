@@ -1,6 +1,5 @@
 use std::io::Write;
 
-
 fn main() {
     const INPUT: &'static str = "foo\x00bar";
     const EXPECT: &'static str = "MZXW6ADCMFZA====";

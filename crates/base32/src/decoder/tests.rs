@@ -1,6 +1,6 @@
 use std::io::Read;
 
-use crate::{Decoder, STD_ENCODING};
+use crate::STD_ENCODING;
 
 #[test]
 fn decode_read_all() {
@@ -18,7 +18,7 @@ fn decode_read_all() {
             };
 
             let mut dec_reader = vec![];
-            Decoder::new(encoding.clone(), encoded.as_bytes())
+            crate::new_decoder(*encoding, encoded.as_bytes())
                 .read_to_end(&mut dec_reader)
                 .unwrap();
 
@@ -46,7 +46,7 @@ fn decode_small_buffer() {
                     pair.encoded.replace('=', "")
                 };
 
-                let mut decoder = Decoder::new(encoding.clone(), encoded.as_bytes());
+                let mut decoder = crate::new_decoder(*encoding, encoded.as_bytes());
 
                 let mut all_read = vec![];
                 loop {

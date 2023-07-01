@@ -1,6 +1,6 @@
 use std::io::{Read, Write};
 
-use base32::{Decoder, STD_ENCODING};
+use base32::STD_ENCODING;
 
 #[test]
 fn big() {
@@ -22,7 +22,7 @@ fn big() {
     std::mem::drop(w);
 
     let mut decoded = vec![];
-    Decoder::new(STD_ENCODING.clone(), encoded.as_slice())
+    base32::new_decoder(STD_ENCODING.clone(), encoded.as_slice())
         .read_to_end(&mut decoded)
         .unwrap();
 
