@@ -14,4 +14,3 @@ pub use decoder::*;
 pub use encoder::*;
 pub use encoding::*;
 pub use errors::*;
-
