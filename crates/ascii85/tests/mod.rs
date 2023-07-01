@@ -1,6 +1,4 @@
-use crate::ascii85::{self, Decoder, Encoder};
-
-use crate::Error;
+use ascii85::{Decoder, Encoder};
 
 use std::io::{Read, Write};
 use std::panic;
@@ -68,15 +66,9 @@ fn decode_corrupt() {
 
     for (i, e) in examples.iter().enumerate() {
         let mut dbuf = vec![0u8; e.e.len() * 4];
-        match ascii85::decode(&mut dbuf, e.e.as_bytes(), true).expect_err("") {
-            Error::CorruptInputError(_, offset) => {
-                assert_eq!(offset, e.p, "#{} corruption in {}", i, e.e)
-            }
-            _ => panic!(
-                "#{} decoder failed to detect corruption in ({},{})",
-                i, e.e, e.p
-            ),
-        }
+        let got = ascii85::decode(&mut dbuf, e.e.as_bytes(), true).unwrap_err();
+
+        assert_eq!(e.p, got.idx, "#{} corruption in {}", i, e.e);
     }
 }
 
