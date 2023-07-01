@@ -8,24 +8,24 @@
 use std::collections::HashMap;
 use std::io::{self, Write};
 
-const COLON: &'static [u8] = b":";
-const NL: &'static [u8] = b"\n";
-const PEM_END: &'static [u8] = b"\n-----END ";
-const PEM_END_OF_LINE: &'static [u8] = b"-----";
-const PEM_START: &'static [u8] = b"\n-----BEGIN ";
+const COLON: &[u8] = b":";
+const NL: &[u8] = b"\n";
+const PEM_END: &[u8] = b"\n-----END ";
+const PEM_END_OF_LINE: &[u8] = b"-----";
+const PEM_START: &[u8] = b"\n-----BEGIN ";
 
 /// A Block represents a PEM encoded structure.
 ///
 /// The encoded form is:
 /// ```pem
-///	-----BEGIN Type-----
-///	Headers
-///	base64-encoded Bytes
-///	-----END Type-----
+/// -----BEGIN Type-----
+/// Headers
+/// base64-encoded Bytes
+/// -----END Type-----
 /// ```
 ///
 /// where Headers is a possibly empty sequence of `Key: Value` lines.
-#[derive(Default, PartialEq, Debug)]
+#[derive(Default, PartialEq, Debug, Eq)]
 pub struct Block {
     /// the type, taken from the preamble (i.e. "RSA PRIVATE KEY").
     pub type_: String,
@@ -76,7 +76,7 @@ impl Block {
             loop {
                 // This loop terminates because getLine's second result is
                 // always smaller than its argument.
-                if rest.len() == 0 {
+                if rest.is_empty() {
                     return Err(data);
                 }
                 let (line, next) = get_line(rest);
@@ -121,7 +121,7 @@ impl Block {
 
             // The line must end with only whitespace.
             let (s, _) = get_line(rest_end_of_line);
-            if s.len() != 0 {
+            if !s.is_empty() {
                 continue;
             }
 
@@ -170,8 +170,8 @@ where
     out.write_all(&PEM_START[1..])?;
     out.write_all((b.type_.clone() + "-----\n").as_bytes())?;
 
-    if b.headers.len() > 0 {
-        const PROC_TYPE: &'static str = "Proc-Type";
+    if !b.headers.is_empty() {
+        const PROC_TYPE: &str = "Proc-Type";
 
         let mut h = Vec::with_capacity(b.headers.len());
         let mut has_proc_type = false;

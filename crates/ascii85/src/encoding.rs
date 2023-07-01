@@ -31,7 +31,7 @@ pub fn decode(
         } else if b == b'z' && nb == 0 {
             nb = 5;
             v = 0;
-        } else if b'!' <= b && b <= b'u' {
+        } else if (b'!'..=b'u').contains(&b) {
             nb += 1;
             v = v * 85 + (b - b'!') as u32;
         } else {
@@ -77,7 +77,7 @@ pub fn decode(
 
     nsrc = src.len();
 
-    return Ok((ndst, nsrc));
+    Ok((ndst, nsrc))
 }
 
 /// Encodes `src` into at most [max_encoded_len(src.len())](max_encoded_len)
@@ -91,7 +91,7 @@ pub fn decode(
 /// Often, ascii85-encoded data is wrapped in <~ and ~> symbols.
 /// `encode` does not add these.
 pub fn encode(dst: &mut [u8], src: &[u8]) -> usize {
-    if src.len() == 0 {
+    if src.is_empty() {
         return 0;
     }
 
@@ -113,7 +113,7 @@ pub fn encode(dst: &mut [u8], src: &[u8]) -> usize {
         if src.len() >= 2 {
             v |= (src[1] as u32) << 16;
         }
-        if src.len() >= 1 {
+        if !src.is_empty() {
             v |= (src[0] as u32) << 24;
         }
 
@@ -144,7 +144,7 @@ pub fn encode(dst: &mut [u8], src: &[u8]) -> usize {
         written += m;
     }
 
-    return written;
+    written
 }
 
 /// Returns the maximum length of an encoding of `n` source bytes.

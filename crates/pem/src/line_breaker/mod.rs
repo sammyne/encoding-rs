@@ -48,7 +48,7 @@ where
     }
 }
 
-pub fn new<'a, W>(out: &'a mut W) -> impl Write + 'a
+pub fn new<W>(out: &mut W) -> impl Write + '_
 where
     W: Write,
 {

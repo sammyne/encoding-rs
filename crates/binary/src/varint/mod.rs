@@ -87,10 +87,11 @@ where
 /// Decodes a uint64 from `buf` and returns that value and the
 /// number of bytes read (> 0). If an error occurred, the value is 0
 /// and the number of bytes `n` is <= 0 meaning:
-///
-///	n == 0: buf too small
-///	n  < 0: value larger than 64 bits (overflow)
-///	        and -n is the number of bytes read
+/// ```text
+/// n == 0: buf too small
+/// n  < 0: value larger than 64 bits (overflow)
+///         and -n is the number of bytes read
+/// ```
 pub fn uvariant(buf: &[u8]) -> (u64, isize) {
     let mut x = 0u64;
     let mut s = 0u32;
@@ -116,10 +117,11 @@ pub fn uvariant(buf: &[u8]) -> (u64, isize) {
 /// Decodes an int64 from `buf` and returns that value and the
 /// number of bytes read (> 0). If an error occurred, the value is 0
 /// and the number of bytes `n` is <= 0 with the following meaning:
-//
-///	n == 0: buf too small
-///	n  < 0: value larger than 64 bits (overflow)
-///	        and -n is the number of bytes read
+/// ```text
+/// n == 0: buf too small
+/// n  < 0: value larger than 64 bits (overflow)
+///         and -n is the number of bytes read
+/// ```
 pub fn variant(buf: &[u8]) -> (i64, isize) {
     let (ux, n) = uvariant(buf);
     let x = {

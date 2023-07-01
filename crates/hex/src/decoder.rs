@@ -33,7 +33,7 @@ where
             match self.r.read(&mut self.arr[narr..])? {
                 0 => {
                     let b = &self.arr[self.arr_range.clone()];
-                    if b.len() == 0 {
+                    if b.is_empty() {
                         return Ok(0);
                     }
 
@@ -69,7 +69,7 @@ where
                 return Err(other_io_error(err));
             }
             Err((err, decoded_len)) => {
-                self.non_io_err = Some(err.clone());
+                self.non_io_err = Some(err);
                 decoded_len
             }
         };

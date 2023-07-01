@@ -18,13 +18,13 @@ where
         let mut n = 0usize;
 
         let mut p = p;
-        'done: while p.len() > 0 {
+        'done: while !p.is_empty() {
             let chunk_size = p.len().min(BUFFER_SIZE / 2);
 
             let encoded = crate::encode(&mut self.out, &p[..chunk_size]);
             let mut buf = &self.out[..encoded];
 
-            while buf.len() > 0 {
+            while !buf.is_empty() {
                 match self.w.write(buf) {
                     Ok(0) => break 'done,
                     Ok(written) => {

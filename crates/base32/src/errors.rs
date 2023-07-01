@@ -1,7 +1,7 @@
 use std::{error::Error, fmt::Display};
 
 /// Error occurs during decoding.
-#[derive(Debug, Default, Clone, Copy, PartialEq)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub struct CorruptInputError {
     /// Corrupted character if any.
     pub c: Option<u8>,
@@ -13,7 +13,7 @@ pub struct CorruptInputError {
 
 impl CorruptInputError {
     pub(crate) fn new(src: &[u8], idx: usize, written: usize) -> Self {
-        let c = src.get(idx).map(|v| *v);
+        let c = src.get(idx).copied();
         Self { c, idx, written }
     }
 }
@@ -24,7 +24,7 @@ impl Display for CorruptInputError {
             write!(
                 f,
                 "illegal base32 data '{}' at input byte {} after writing {} bytes",
-                c.escape_ascii().to_string(),
+                c.escape_ascii(),
                 self.idx,
                 self.written
             )

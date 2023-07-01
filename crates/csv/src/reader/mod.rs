@@ -181,11 +181,8 @@ impl ParseError {
 
 impl Display for ParseError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match &self.err {
-            ReadError::FieldCount => {
-                return write!(f, "record on line {}: {}", self.line, self.err)
-            }
-            _ => {}
+        if let ReadError::FieldCount = &self.err {
+            return write!(f, "record on line {}: {}", self.line, self.err);
         }
 
         if self.start_line != self.line {
@@ -317,9 +314,8 @@ where
     /// todo: pass line buf from outside
     fn read_line(&mut self) -> Result<String, ReadError> {
         let mut line = String::new();
-        match self.r.read_line(&mut line).map_err(ReadError::Io)? {
-            0 => return Err(ReadError::Eof),
-            _ => {}
+        if self.r.read_line(&mut line).map_err(ReadError::Io)? == 0 {
+            return Err(ReadError::Eof);
         }
 
         let read_size = line.len();
@@ -581,11 +577,7 @@ where
 {
     let b = b.as_ref();
 
-    if (b.len() > 0) && (b[b.len() - 1] == b'\n') {
-        1
-    } else {
-        0
-    }
+    usize::from(!b.is_empty() && (b[b.len() - 1] == b'\n'))
 }
 
 #[cfg(test)]

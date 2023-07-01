@@ -67,14 +67,14 @@ where
                 _ => 3,
             };
 
-            self.w.write(&self.buf[..l])?;
+            let _ = self.w.write(&self.buf[..l])?;
             self.used += 1;
         }
 
         self.right_chars[n_bytes] = b'|';
         self.right_chars[n_bytes + 1] = b'\n';
 
-        self.w.write(&self.right_chars[..n_bytes + 2])?;
+        let _ = self.w.write(&self.right_chars[..n_bytes + 2])?;
 
         Ok(())
     }
@@ -96,7 +96,7 @@ where
                 self.buf[12] = b' ';
                 self.buf[13] = b' ';
 
-                self.w.write(&self.buf[4..])?;
+                let _ = self.w.write(&self.buf[4..])?;
             }
 
             super::encode(&mut self.buf[..], &[*v]);
@@ -115,7 +115,7 @@ where
                 _ => 3,
             };
 
-            self.w.write(&self.buf[..l])?;
+            let _ = self.w.write(&self.buf[..l])?;
 
             self.right_chars[self.used] = to_char(*v);
             self.used += 1;
@@ -125,7 +125,7 @@ where
                 self.right_chars[16] = b'|';
                 self.right_chars[17] = b'\n';
 
-                self.w.write(&self.right_chars[..])?;
+                let _ = self.w.write(&self.right_chars[..])?;
                 self.used = 0;
             }
         }
@@ -142,7 +142,7 @@ where
 #[doc = include_str!("../../examples/dump.rs")]
 /// ```
 pub fn dump(data: &[u8]) -> String {
-    if data.len() == 0 {
+    if data.is_empty() {
         return "".to_string();
     }
 
