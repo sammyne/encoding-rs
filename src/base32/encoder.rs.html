@@ -125,6 +125,15 @@
 <span id="125">125</span>
 <span id="126">126</span>
 <span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
+<span id="135">135</span>
+<span id="136">136</span>
 </pre><pre class="rust"><code><span class="kw">use </span>std::io::{<span class="self">self</span>, Write};
 
 <span class="kw">use </span><span class="kw">crate</span>::Encoding;
@@ -140,6 +149,39 @@
     buf: [u8; <span class="number">5</span>],
     nbuf: usize,
     out: [u8; <span class="number">1024</span>],
+}
+
+<span class="kw">impl</span>&lt;W&gt; Encoder&lt;W&gt;
+<span class="kw">where
+    </span>W: Write,
+{
+    <span class="kw">fn </span>new(enc: Encoding, w: W) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            enc,
+            w,
+            err: <span class="prelude-val">None</span>,
+            buf: [<span class="number">0u8</span>; <span class="number">5</span>],
+            nbuf: <span class="number">0</span>,
+            out: [<span class="number">0u8</span>; <span class="number">1024</span>],
+        }
+    }
+
+    <span class="kw">fn </span>error_or&lt;T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, ok: T) -&gt; io::Result&lt;T&gt; {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(err) = <span class="kw-2">&amp;</span><span class="self">self</span>.err {
+            <span class="prelude-val">Err</span>(io::Error::new(err.kind(), err.to_string()))
+        } <span class="kw">else </span>{
+            <span class="prelude-val">Ok</span>(ok)
+        }
+    }
+}
+
+<span class="kw">impl</span>&lt;W&gt; Drop <span class="kw">for </span>Encoder&lt;W&gt;
+<span class="kw">where
+    </span>W: Write,
+{
+    <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="kw">let _ </span>= <span class="self">self</span>.flush();
+    }
 }
 
 <span class="kw">impl</span>&lt;W&gt; Write <span class="kw">for </span>Encoder&lt;W&gt;
@@ -211,30 +253,6 @@
         }
 
         <span class="self">self</span>.error_or(())
-    }
-}
-
-<span class="kw">impl</span>&lt;W&gt; Encoder&lt;W&gt;
-<span class="kw">where
-    </span>W: Write,
-{
-    <span class="kw">fn </span>new(enc: Encoding, w: W) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            enc,
-            w,
-            err: <span class="prelude-val">None</span>,
-            buf: [<span class="number">0u8</span>; <span class="number">5</span>],
-            nbuf: <span class="number">0</span>,
-            out: [<span class="number">0u8</span>; <span class="number">1024</span>],
-        }
-    }
-
-    <span class="kw">fn </span>error_or&lt;T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, ok: T) -&gt; io::Result&lt;T&gt; {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(err) = <span class="kw-2">&amp;</span><span class="self">self</span>.err {
-            <span class="prelude-val">Err</span>(io::Error::new(err.kind(), err.to_string()))
-        } <span class="kw">else </span>{
-            <span class="prelude-val">Ok</span>(ok)
-        }
     }
 }
 
