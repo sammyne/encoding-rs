@@ -7,3 +7,6 @@ edition = "2021"
 
 [dependencies]
 builtin.workspace = true
+
+[dev-dependencies]
+lazy_static.workspace = true
