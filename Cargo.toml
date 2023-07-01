@@ -19,13 +19,6 @@ lazy_static = "1.4.0"
 pem.workspace = true
 thiserror   = "1.0.16"
 
-[dev-dependencies]
-criterion = "0.3"
-
-[[bench]]
-name = "hex"
-harness = false
-
 [workspace]
 members = [
   "crates/base32",
