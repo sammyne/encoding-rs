@@ -12,7 +12,9 @@ where
     R: Read,
 {
     fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {
+        println!("before NewlineFilteringReader::read");
         let mut n = self.wrapped.read(buf)?;
+        println!("after NewlineFilteringReader::read");
         while n > 0 {
             let s = &mut buf[..n];
             let offset = strip_newlines(s);
