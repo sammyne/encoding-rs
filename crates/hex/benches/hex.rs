@@ -1,5 +1,3 @@
-use encoding::hex;
-
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 fn dump(c: &mut Criterion) {
