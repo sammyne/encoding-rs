@@ -2,9 +2,8 @@ use crate::errors::CorruptInputError;
 
 /// Decodes `src` into `dst`, returning both the number
 /// of bytes written to `dst` and the number consumed from `src`.
-/// If `src` contains invalid ascii85 data, `decode` will return the
-/// number of bytes successfully written and a
-/// [CorruptInputError](crate::Error::CorruptInputError).
+/// If `src` contains invalid ascii85 data, `decode` will return  a
+/// [CorruptInputError](crate::CorruptInputError).
 /// `decode` ignores space and control characters in `src`.
 /// Often, ascii85-encoded data is wrapped in <~ and ~> symbols.
 /// `decode` expects these to have been stripped by the caller.
@@ -13,7 +12,7 @@ use crate::errors::CorruptInputError;
 /// end of the input stream and processes it completely rather
 /// than wait for the completion of another 32-bit block.
 ///
-/// [Decoder::new](crate::ascii85::Decoder::new) wraps an io::Read
+/// [new_decoder](crate::new_decoder) wraps an io::Read
 /// interface around `decode`.
 pub fn decode(
     dst: &mut [u8],
@@ -87,7 +86,7 @@ pub fn decode(
 /// The encoding handles 4-byte chunks, using a special encoding
 /// for the last fragment, so `encode` is not appropriate for use on
 /// individual blocks of a large data stream. Use
-/// [Encoder::new()](crate::ascii85::Encoder::new) instead.
+/// [new_encoder()](crate::new_encoder) instead.
 //
 /// Often, ascii85-encoded data is wrapped in <~ and ~> symbols.
 /// `encode` does not add these.

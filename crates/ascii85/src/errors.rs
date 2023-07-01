@@ -3,8 +3,11 @@ use std::{error::Error, fmt::Display};
 /// Error occurs during decoding.
 #[derive(Debug, Default, Clone, Copy, PartialEq)]
 pub struct CorruptInputError {
+    /// Corrupted character if any.
     pub c: Option<u8>,
+    /// Index of the corrupted character.
     pub idx: usize,
+    /// Number of bytes has been written to destination buffer.
     pub written: usize,
 }
 
