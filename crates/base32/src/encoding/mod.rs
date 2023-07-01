@@ -96,6 +96,11 @@ impl Encoding {
     }
 
     /// Returns the bytes represented by the base32 string `s`.
+    /// 
+    /// # Example
+    /// ```
+    #[doc = include_str!("../../examples/encoding_decode_string.rs")]
+    /// ```
     pub fn decode_string(&self, s: &str) -> Result<Vec<u8>, CorruptInputError> {
         let mut out = vec![0u8; self.decoded_len(s.len())];
         let n = self.decode(out.as_mut_slice(), s.as_bytes())?;
@@ -247,7 +252,6 @@ impl Encoding {
         dst: &mut [u8],
         src: &[u8],
     ) -> Result<(usize, bool), CorruptInputError> {
-        println!("src = {}", unsafe { std::str::from_utf8_unchecked(src) });
         let mut dsti = 0usize;
         let (mut src, olen) = (src, src.len());
 
