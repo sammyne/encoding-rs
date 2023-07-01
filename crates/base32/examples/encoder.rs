@@ -1,6 +1,6 @@
 use std::io::Write;
 
-use encoding::base32::{self, Encoder};
+use base32::Encoder;
 
 fn main() {
     const INPUT: &'static str = "foo\x00bar";

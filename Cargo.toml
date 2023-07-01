@@ -9,6 +9,7 @@ rust-version = "1.65.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+base32.workspace = true
 base64.workspace = true
 binary.workspace = true
 builtin.workspace = true
@@ -31,6 +32,7 @@ harness = false
 
 [workspace]
 members = [
+  "crates/base32",
   "crates/base64",
   "crates/binary",
   "crates/builtin",
@@ -40,6 +42,7 @@ members = [
 ]
 
 [workspace.dependencies]
+base32.path = "crates/base32"
 base64.path = "crates/base64"
 binary.path = "crates/binary"
 builtin.path = "crates/builtin"

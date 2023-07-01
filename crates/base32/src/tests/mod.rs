@@ -1,7 +1,6 @@
 use std::io::{self, ErrorKind, Read, Write};
 
-use crate::base32::{Decoder, Encoder, STD_ENCODING};
-use crate::{builtin, Error};
+use crate::{Decoder, Encoder, Error, STD_ENCODING};
 
 #[test]
 fn big() {

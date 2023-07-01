@@ -1,6 +1,6 @@
 use std::io::{self, Write};
 
-use crate::base32::Encoding;
+use crate::Encoding;
 
 pub struct Encoder<'a, W>
 where
@@ -97,7 +97,7 @@ where
     ///
     /// # Example
     /// ```
-    #[doc = include_str!("../../examples/base32_encoder.rs")]
+    #[doc = include_str!("../examples/encoder.rs")]
     /// ```
     pub fn new(enc: Encoding, w: &'a mut W) -> Self {
         Self {

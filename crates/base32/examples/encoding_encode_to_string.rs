@@ -1,5 +1,3 @@
-use encoding::base32;
-
 fn main() {
     let data = "any + old & data";
     const EXPECT: &'static str = "MFXHSIBLEBXWYZBAEYQGIYLUME======";
