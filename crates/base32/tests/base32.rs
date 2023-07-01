@@ -18,7 +18,6 @@ fn big() {
     let nn = w.write(&raw).unwrap();
     assert_eq!(n, nn);
 
-    w.flush().unwrap();
     std::mem::drop(w);
 
     let mut decoded = vec![];

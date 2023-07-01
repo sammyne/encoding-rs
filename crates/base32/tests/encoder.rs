@@ -23,7 +23,6 @@ fn buffering() {
                 pos
             )
         }
-        encoder.flush().unwrap();
         std::mem::drop(encoder);
 
         let got = String::from_utf8_lossy(bb.as_slice()).to_string();
@@ -42,7 +41,7 @@ fn encoder() {
         let mut bb = vec![];
         let mut encoder = base32::new_encoder(*STD_ENCODING, &mut bb);
         let _ = encoder.write(p.decoded);
-        let _ = encoder.flush();
+        let _ = encoder.flush(); // the flush is redundant because it's called once encoder is dropped.
         std::mem::drop(encoder);
 
         let got = String::from_utf8_lossy(bb.as_slice()).to_string();
