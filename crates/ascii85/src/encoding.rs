@@ -1,4 +1,4 @@
-use crate::Error;
+use crate::errors::CorruptInputError;
 
 /// Decodes `src` into `dst`, returning both the number
 /// of bytes written to `dst` and the number consumed from `src`.
@@ -15,7 +15,11 @@ use crate::Error;
 ///
 /// [Decoder::new](crate::ascii85::Decoder::new) wraps an io::Read
 /// interface around `decode`.
-pub fn decode(dst: &mut [u8], src: &[u8], flush: bool) -> Result<(usize, usize), Error> {
+pub fn decode(
+    dst: &mut [u8],
+    src: &[u8],
+    flush: bool,
+) -> Result<(usize, usize), CorruptInputError> {
     let (mut v, mut nb, mut ndst, mut nsrc) = (0u32, 0, 0usize, 0usize);
 
     for (i, &b) in src.iter().enumerate() {
@@ -32,7 +36,7 @@ pub fn decode(dst: &mut [u8], src: &[u8], flush: bool) -> Result<(usize, usize),
             nb += 1;
             v = v * 85 + (b - b'!') as u32;
         } else {
-            return Err(Error::CorruptInputError("ascii85", i));
+            return Err(CorruptInputError::new(src, i, ndst));
         }
 
         if nb == 5 {
@@ -56,7 +60,7 @@ pub fn decode(dst: &mut [u8], src: &[u8], flush: bool) -> Result<(usize, usize),
     // the extra byte provides enough bits to cover
     // the inefficiency of the encoding for the block.
     if nb == 1 {
-        return Err(Error::CorruptInputError("ascii85", src.len()));
+        return Err(CorruptInputError::new(src, src.len(), ndst));
     }
 
     for _i in nb..5 {
