@@ -12,7 +12,8 @@ Supported encodings go as follow
 
 > Click the encoding link would show the doc page of that encoding.
 
-- [x] ascii85
+- [x] [ascii85][ascii85-doc]: Implements data encoding as used in the btoa tool and Adobe's PostScript and
+    PDF document formats.
 - [ ] asn1
 - [x] [base32][base32-doc]: implements base32 encoding as specified by [RFC 4648].
 - [ ] base58
@@ -24,25 +25,12 @@ Supported encodings go as follow
 - [x] [pem][pem-doc]: implements the PEM data encoding as specified by [RFC 1421].
 - [ ] xml
 
-## Quickstart
-
-### tests
-
-```bash
-cargo test
-```
-
-### benchmark
-
-```bash
-cargo bench
-```
-
 ## Head Ups
 
 - Stable rust doesn't support benchmark well, so [criterion](https://crates.io/crates/criterion) is used for now.
 - docs is released at the `gh-pages` branch for the `main` branch only
 
+[ascii85-doc]: https://sammyne.github.io/encoding-rs/ascii85/
 [base32-doc]: https://sammyne.github.io/encoding-rs/base32/
 [base64-doc]: https://sammyne.github.io/encoding-rs/base64/
 [binary-doc]: https://sammyne.github.io/encoding-rs/binary/
