@@ -23,10 +23,6 @@ thiserror   = "1.0.16"
 criterion = "0.3"
 
 [[bench]]
-name = "base32"
-harness = false
-
-[[bench]]
 name = "hex"
 harness = false
 

@@ -1,4 +1,4 @@
-use encoding::base32::STD_ENCODING;
+use base32::STD_ENCODING;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
