@@ -15,6 +15,39 @@ where
     out: [u8; 1024],
 }
 
+impl<W> Encoder<W>
+where
+    W: Write,
+{
+    fn new(enc: Encoding, w: W) -> Self {
+        Self {
+            enc,
+            w,
+            err: None,
+            buf: [0u8; 5],
+            nbuf: 0,
+            out: [0u8; 1024],
+        }
+    }
+
+    fn error_or<T>(&self, ok: T) -> io::Result<T> {
+        if let Some(err) = &self.err {
+            Err(io::Error::new(err.kind(), err.to_string()))
+        } else {
+            Ok(ok)
+        }
+    }
+}
+
+impl<W> Drop for Encoder<W>
+where
+    W: Write,
+{
+    fn drop(&mut self) {
+        let _ = self.flush();
+    }
+}
+
 impl<W> Write for Encoder<W>
 where
     W: Write,
@@ -84,30 +117,6 @@ where
         }
 
         self.error_or(())
-    }
-}
-
-impl<W> Encoder<W>
-where
-    W: Write,
-{
-    fn new(enc: Encoding, w: W) -> Self {
-        Self {
-            enc,
-            w,
-            err: None,
-            buf: [0u8; 5],
-            nbuf: 0,
-            out: [0u8; 1024],
-        }
-    }
-
-    fn error_or<T>(&self, ok: T) -> io::Result<T> {
-        if let Some(err) = &self.err {
-            Err(io::Error::new(err.kind(), err.to_string()))
-        } else {
-            Ok(ok)
-        }
     }
 }
 
