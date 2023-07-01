@@ -5,7 +5,7 @@ use std::{
 
 use crate::CorruptInputError;
 
-pub struct Decoder<R>
+struct Decoder<R>
 where
     R: Read,
 {
@@ -22,7 +22,7 @@ where
     R: Read,
 {
     /// Constructs a new ascii85 stream decoder.
-    pub fn new(r: R) -> Self {
+    fn new(r: R) -> Self {
         Self {
             corrupted_err: None,
             r,
@@ -102,4 +102,12 @@ where
             }
         }
     }
+}
+
+/// Constructs a new ascii85 stream decoder.
+pub fn new_decoder<R>(r: R) -> impl Read
+where
+    R: Read,
+{
+    Decoder::new(r)
 }
