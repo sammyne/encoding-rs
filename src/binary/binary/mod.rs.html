@@ -167,7 +167,7 @@
         <span class="kw">let _ </span>= dst[<span class="number">1</span>];
 
         dst[<span class="number">0</span>] = ((v &gt;&gt; <span class="number">8</span>) &amp; <span class="number">0xff</span>) <span class="kw">as </span>u8;
-        dst[<span class="number">1</span>] = ((v &gt;&gt; <span class="number">0</span>) &amp; <span class="number">0xff</span>) <span class="kw">as </span>u8;
+        dst[<span class="number">1</span>] = (v &amp; <span class="number">0xff</span>) <span class="kw">as </span>u8;
     }
 
     <span class="kw">fn </span>put_uint32(dst: <span class="kw-2">&amp;mut </span>[u8], v: u32) {
@@ -176,7 +176,7 @@
         dst[<span class="number">0</span>] = ((v &gt;&gt; <span class="number">24</span>) &amp; <span class="number">0xff</span>) <span class="kw">as </span>u8;
         dst[<span class="number">1</span>] = ((v &gt;&gt; <span class="number">16</span>) &amp; <span class="number">0xff</span>) <span class="kw">as </span>u8;
         dst[<span class="number">2</span>] = ((v &gt;&gt; <span class="number">8</span>) &amp; <span class="number">0xff</span>) <span class="kw">as </span>u8;
-        dst[<span class="number">3</span>] = ((v &gt;&gt; <span class="number">0</span>) &amp; <span class="number">0xff</span>) <span class="kw">as </span>u8;
+        dst[<span class="number">3</span>] = (v &amp; <span class="number">0xff</span>) <span class="kw">as </span>u8;
     }
 
     <span class="kw">fn </span>put_uint64(dst: <span class="kw-2">&amp;mut </span>[u8], v: u64) {
@@ -189,7 +189,7 @@
         dst[<span class="number">4</span>] = ((v &gt;&gt; <span class="number">24</span>) &amp; <span class="number">0xff</span>) <span class="kw">as </span>u8;
         dst[<span class="number">5</span>] = ((v &gt;&gt; <span class="number">16</span>) &amp; <span class="number">0xff</span>) <span class="kw">as </span>u8;
         dst[<span class="number">6</span>] = ((v &gt;&gt; <span class="number">8</span>) &amp; <span class="number">0xff</span>) <span class="kw">as </span>u8;
-        dst[<span class="number">7</span>] = ((v &gt;&gt; <span class="number">0</span>) &amp; <span class="number">0xff</span>) <span class="kw">as </span>u8;
+        dst[<span class="number">7</span>] = (v &amp; <span class="number">0xff</span>) <span class="kw">as </span>u8;
     }
 }
 
@@ -220,14 +220,14 @@
     <span class="kw">fn </span>put_uint16(dst: <span class="kw-2">&amp;mut </span>[u8], v: u16) {
         <span class="kw">let _ </span>= dst[<span class="number">1</span>];
 
-        dst[<span class="number">0</span>] = ((v &gt;&gt; <span class="number">0</span>) &amp; <span class="number">0xff</span>) <span class="kw">as </span>u8;
+        dst[<span class="number">0</span>] = (v &amp; <span class="number">0xff</span>) <span class="kw">as </span>u8;
         dst[<span class="number">1</span>] = ((v &gt;&gt; <span class="number">8</span>) &amp; <span class="number">0xff</span>) <span class="kw">as </span>u8;
     }
 
     <span class="kw">fn </span>put_uint32(dst: <span class="kw-2">&amp;mut </span>[u8], v: u32) {
         <span class="kw">let _ </span>= dst[<span class="number">3</span>];
 
-        dst[<span class="number">0</span>] = ((v &gt;&gt; <span class="number">0</span>) &amp; <span class="number">0xff</span>) <span class="kw">as </span>u8;
+        dst[<span class="number">0</span>] = (v &amp; <span class="number">0xff</span>) <span class="kw">as </span>u8;
         dst[<span class="number">1</span>] = ((v &gt;&gt; <span class="number">8</span>) &amp; <span class="number">0xff</span>) <span class="kw">as </span>u8;
         dst[<span class="number">2</span>] = ((v &gt;&gt; <span class="number">16</span>) &amp; <span class="number">0xff</span>) <span class="kw">as </span>u8;
         dst[<span class="number">3</span>] = ((v &gt;&gt; <span class="number">24</span>) &amp; <span class="number">0xff</span>) <span class="kw">as </span>u8;
@@ -236,7 +236,7 @@
     <span class="kw">fn </span>put_uint64(dst: <span class="kw-2">&amp;mut </span>[u8], v: u64) {
         <span class="kw">let _ </span>= dst[<span class="number">7</span>];
 
-        dst[<span class="number">0</span>] = ((v &gt;&gt; <span class="number">0</span>) &amp; <span class="number">0xff</span>) <span class="kw">as </span>u8;
+        dst[<span class="number">0</span>] = (v &amp; <span class="number">0xff</span>) <span class="kw">as </span>u8;
         dst[<span class="number">1</span>] = ((v &gt;&gt; <span class="number">8</span>) &amp; <span class="number">0xff</span>) <span class="kw">as </span>u8;
         dst[<span class="number">2</span>] = ((v &gt;&gt; <span class="number">16</span>) &amp; <span class="number">0xff</span>) <span class="kw">as </span>u8;
         dst[<span class="number">3</span>] = ((v &gt;&gt; <span class="number">24</span>) &amp; <span class="number">0xff</span>) <span class="kw">as </span>u8;

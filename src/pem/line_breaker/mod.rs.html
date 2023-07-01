@@ -111,7 +111,7 @@
     }
 }
 
-<span class="kw">pub fn </span>new&lt;<span class="lifetime">&#39;a</span>, W&gt;(out: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>W) -&gt; <span class="kw">impl </span>Write + <span class="lifetime">&#39;a
+<span class="kw">pub fn </span>new&lt;W&gt;(out: <span class="kw-2">&amp;mut </span>W) -&gt; <span class="kw">impl </span>Write + <span class="lifetime">&#39;_
 </span><span class="kw">where
     </span>W: Write,
 {

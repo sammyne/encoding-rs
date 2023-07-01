@@ -247,14 +247,14 @@
                 <span class="kw">_ </span>=&gt; <span class="number">3</span>,
             };
 
-            <span class="self">self</span>.w.write(<span class="kw-2">&amp;</span><span class="self">self</span>.buf[..l])<span class="question-mark">?</span>;
+            <span class="kw">let _ </span>= <span class="self">self</span>.w.write(<span class="kw-2">&amp;</span><span class="self">self</span>.buf[..l])<span class="question-mark">?</span>;
             <span class="self">self</span>.used += <span class="number">1</span>;
         }
 
         <span class="self">self</span>.right_chars[n_bytes] = <span class="string">b&#39;|&#39;</span>;
         <span class="self">self</span>.right_chars[n_bytes + <span class="number">1</span>] = <span class="string">b&#39;\n&#39;</span>;
 
-        <span class="self">self</span>.w.write(<span class="kw-2">&amp;</span><span class="self">self</span>.right_chars[..n_bytes + <span class="number">2</span>])<span class="question-mark">?</span>;
+        <span class="kw">let _ </span>= <span class="self">self</span>.w.write(<span class="kw-2">&amp;</span><span class="self">self</span>.right_chars[..n_bytes + <span class="number">2</span>])<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(())
     }
@@ -276,7 +276,7 @@
                 <span class="self">self</span>.buf[<span class="number">12</span>] = <span class="string">b&#39; &#39;</span>;
                 <span class="self">self</span>.buf[<span class="number">13</span>] = <span class="string">b&#39; &#39;</span>;
 
-                <span class="self">self</span>.w.write(<span class="kw-2">&amp;</span><span class="self">self</span>.buf[<span class="number">4</span>..])<span class="question-mark">?</span>;
+                <span class="kw">let _ </span>= <span class="self">self</span>.w.write(<span class="kw-2">&amp;</span><span class="self">self</span>.buf[<span class="number">4</span>..])<span class="question-mark">?</span>;
             }
 
             <span class="kw">super</span>::encode(<span class="kw-2">&amp;mut </span><span class="self">self</span>.buf[..], <span class="kw-2">&amp;</span>[<span class="kw-2">*</span>v]);
@@ -295,7 +295,7 @@
                 <span class="kw">_ </span>=&gt; <span class="number">3</span>,
             };
 
-            <span class="self">self</span>.w.write(<span class="kw-2">&amp;</span><span class="self">self</span>.buf[..l])<span class="question-mark">?</span>;
+            <span class="kw">let _ </span>= <span class="self">self</span>.w.write(<span class="kw-2">&amp;</span><span class="self">self</span>.buf[..l])<span class="question-mark">?</span>;
 
             <span class="self">self</span>.right_chars[<span class="self">self</span>.used] = to_char(<span class="kw-2">*</span>v);
             <span class="self">self</span>.used += <span class="number">1</span>;
@@ -305,7 +305,7 @@
                 <span class="self">self</span>.right_chars[<span class="number">16</span>] = <span class="string">b&#39;|&#39;</span>;
                 <span class="self">self</span>.right_chars[<span class="number">17</span>] = <span class="string">b&#39;\n&#39;</span>;
 
-                <span class="self">self</span>.w.write(<span class="kw-2">&amp;</span><span class="self">self</span>.right_chars[..])<span class="question-mark">?</span>;
+                <span class="kw">let _ </span>= <span class="self">self</span>.w.write(<span class="kw-2">&amp;</span><span class="self">self</span>.right_chars[..])<span class="question-mark">?</span>;
                 <span class="self">self</span>.used = <span class="number">0</span>;
             }
         }
@@ -322,7 +322,7 @@
 </span><span class="attribute">#[doc = <span class="macro">include_str!</span>(<span class="string">&quot;../../examples/dump.rs&quot;</span>)]
 </span><span class="doccomment">/// ```
 </span><span class="kw">pub fn </span>dump(data: <span class="kw-2">&amp;</span>[u8]) -&gt; String {
-    <span class="kw">if </span>data.len() == <span class="number">0 </span>{
+    <span class="kw">if </span>data.is_empty() {
         <span class="kw">return </span><span class="string">&quot;&quot;</span>.to_string();
     }
 

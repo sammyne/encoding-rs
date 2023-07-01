@@ -54,7 +54,7 @@
 </pre><pre class="rust"><code><span class="kw">use </span>std::{error::Error, fmt::Display};
 
 <span class="doccomment">/// Error occurs during decoding.
-</span><span class="attribute">#[derive(Debug, Default, Clone, Copy, PartialEq)]
+</span><span class="attribute">#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 </span><span class="kw">pub struct </span>CorruptInputError {
     <span class="doccomment">/// Corrupted character if any.
     </span><span class="kw">pub </span>c: <span class="prelude-ty">Option</span>&lt;u8&gt;,
@@ -66,7 +66,7 @@
 
 <span class="kw">impl </span>CorruptInputError {
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new(src: <span class="kw-2">&amp;</span>[u8], idx: usize, written: usize) -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span>c = src.get(idx).map(|v| <span class="kw-2">*</span>v);
+        <span class="kw">let </span>c = src.get(idx).copied();
         <span class="self">Self </span>{ c, idx, written }
     }
 }
@@ -77,7 +77,7 @@
             <span class="macro">write!</span>(
                 f,
                 <span class="string">&quot;illegal ascii85 data &#39;{}&#39; at input byte {} after writing {} bytes&quot;</span>,
-                c.escape_ascii().to_string(),
+                c.escape_ascii(),
                 <span class="self">self</span>.idx,
                 <span class="self">self</span>.written
             )

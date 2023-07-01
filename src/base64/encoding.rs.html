@@ -495,6 +495,7 @@
 <span id="495">495</span>
 <span id="496">496</span>
 <span id="497">497</span>
+<span id="498">498</span>
 </pre><pre class="rust"><code><span class="kw">use crate</span>::{constants, CorruptInputError};
 <span class="kw">use </span>binary::{BigEndian, ByteOrder};
 
@@ -572,10 +573,10 @@
             <span class="macro">panic!</span>(<span class="string">&quot;encoding alphabet is not 64-bytes long&quot;</span>)
         }
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw">_</span>) = encoder
+        <span class="kw">if </span>encoder
             .as_bytes()
             .iter()
-            .find(|&amp;&amp;c| c == constants::LF || c == constants::CR)
+            .any(|<span class="kw-2">&amp;</span>c| c == constants::LF || c == constants::CR)
         {
             <span class="macro">panic!</span>(<span class="string">&quot;encoding alphabet contains newline character&quot;</span>);
         }
@@ -616,7 +617,7 @@
     </span><span class="attribute">#[doc = <span class="macro">include_str!</span>(<span class="string">&quot;../examples/decode.rs&quot;</span>)]
     </span><span class="doccomment">/// ```
     </span><span class="kw">pub fn </span>decode(<span class="kw-2">&amp;</span><span class="self">self</span>, dst: <span class="kw-2">&amp;mut </span>[u8], src: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;usize, CorruptInputError&gt; {
-        <span class="kw">if </span>src.len() == <span class="number">0 </span>{
+        <span class="kw">if </span>src.is_empty() {
             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="number">0</span>);
         }
 
@@ -643,13 +644,13 @@
                     <span class="self">self</span>.decode_map[src[<span class="number">7</span>] <span class="kw">as </span>usize],
                 ) {
                     <span class="prelude-val">Ok</span>(v) =&gt; {
-                        BigEndian::put_uint64(<span class="kw-2">&amp;mut </span>dst, v);
+                        BigEndian::put_uint64(dst, v);
                         dst = <span class="kw-2">&amp;mut </span>dst[<span class="number">6</span>..];
                         src = <span class="kw-2">&amp;</span>src[<span class="number">8</span>..];
                     }
                     <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; {
                         <span class="kw">let </span>(nr, nw) = <span class="self">self
-                            </span>.decode_quantum(<span class="kw-2">&amp;mut </span>dst, src)
+                            </span>.decode_quantum(dst, src)
                             .map_err(|err| localize_err(err, dst.len(), src.len()))<span class="question-mark">?</span>;
                         src = <span class="kw-2">&amp;</span>src[nr..];
                         dst = <span class="kw-2">&amp;mut </span>dst[nw..];
@@ -666,13 +667,13 @@
                 <span class="self">self</span>.decode_map[src[<span class="number">3</span>] <span class="kw">as </span>usize],
             ) {
                 <span class="prelude-val">Ok</span>(v) =&gt; {
-                    BigEndian::put_uint32(<span class="kw-2">&amp;mut </span>dst, v);
+                    BigEndian::put_uint32(dst, v);
                     dst = <span class="kw-2">&amp;mut </span>dst[<span class="number">3</span>..];
                     src = <span class="kw-2">&amp;</span>src[<span class="number">4</span>..];
                 }
                 <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; {
                     <span class="kw">let </span>(nr, nw) = <span class="self">self
-                        </span>.decode_quantum(<span class="kw-2">&amp;mut </span>dst, src)
+                        </span>.decode_quantum(dst, src)
                         .map_err(|err| localize_err(err, dst.len(), src.len()))<span class="question-mark">?</span>;
                     src = <span class="kw-2">&amp;</span>src[nr..];
                     dst = <span class="kw-2">&amp;mut </span>dst[nw..];
@@ -681,9 +682,9 @@
         }
 
         <span class="comment">// @dev whether &#39;if&#39; is ok?
-        </span><span class="kw">while </span>src.len() &gt; <span class="number">0 </span>{
+        </span><span class="kw">while </span>!src.is_empty() {
             <span class="kw">let </span>(nr, nw) = <span class="self">self
-                </span>.decode_quantum(<span class="kw-2">&amp;mut </span>dst, src)
+                </span>.decode_quantum(dst, src)
                 .map_err(|err| localize_err(err, dst.len(), src.len()))<span class="question-mark">?</span>;
             src = <span class="kw-2">&amp;</span>src[nr..];
             dst = <span class="kw-2">&amp;mut </span>dst[nw..];
@@ -728,16 +729,16 @@
     </span><span class="attribute">#[doc =<span class="macro">include_str!</span>(<span class="string">&quot;../examples/encode.rs&quot;</span>)]
     </span><span class="doccomment">/// ```
     </span><span class="kw">pub fn </span>encode(<span class="kw-2">&amp;</span><span class="self">self</span>, dst: <span class="kw-2">&amp;mut </span>[u8], src: <span class="kw-2">&amp;</span>[u8]) {
-        <span class="kw">if </span>src.len() == <span class="number">0 </span>{
+        <span class="kw">if </span>src.is_empty() {
             <span class="kw">return</span>;
         }
 
         <span class="kw">let </span><span class="kw-2">mut </span>chunks = src.chunks_exact(<span class="number">3</span>);
         <span class="kw">let </span><span class="kw-2">mut </span>dst_idx = <span class="number">0</span>;
-        <span class="kw">while let </span><span class="prelude-val">Some</span>(chunk) = chunks.next() {
+        <span class="kw">for </span>chunk <span class="kw">in </span>chunks.by_ref() {
             <span class="kw">let </span>v = ((chunk[<span class="number">0</span>] <span class="kw">as </span>usize) &lt;&lt; <span class="number">16</span>) | ((chunk[<span class="number">1</span>] <span class="kw">as </span>usize) &lt;&lt; <span class="number">8</span>) | (chunk[<span class="number">2</span>] <span class="kw">as </span>usize);
 
-            dst[dst_idx + <span class="number">0</span>] = <span class="self">self</span>.encode[(v &gt;&gt; <span class="number">18</span>) &amp; <span class="number">0x3f</span>];
+            dst[dst_idx] = <span class="self">self</span>.encode[(v &gt;&gt; <span class="number">18</span>) &amp; <span class="number">0x3f</span>];
             dst[dst_idx + <span class="number">1</span>] = <span class="self">self</span>.encode[(v &gt;&gt; <span class="number">12</span>) &amp; <span class="number">0x3f</span>];
             dst[dst_idx + <span class="number">2</span>] = <span class="self">self</span>.encode[(v &gt;&gt; <span class="number">6</span>) &amp; <span class="number">0x3f</span>];
             dst[dst_idx + <span class="number">3</span>] = <span class="self">self</span>.encode[v &amp; <span class="number">0x3f</span>];
@@ -751,7 +752,7 @@
             <span class="kw">_ </span>=&gt; <span class="kw">return</span>,
         };
 
-        dst[dst_idx + <span class="number">0</span>] = <span class="self">self</span>.encode[(val &gt;&gt; <span class="number">18</span>) &amp; <span class="number">0x3f</span>];
+        dst[dst_idx] = <span class="self">self</span>.encode[(val &gt;&gt; <span class="number">18</span>) &amp; <span class="number">0x3f</span>];
         dst[dst_idx + <span class="number">1</span>] = <span class="self">self</span>.encode[(val &gt;&gt; <span class="number">12</span>) &amp; <span class="number">0x3f</span>];
 
         <span class="kw">match </span>remainder.len() {
@@ -928,8 +929,8 @@
         </span><span class="kw">let </span>val = ((dbuf[<span class="number">0</span>] <span class="kw">as </span>u32) &lt;&lt; <span class="number">18</span>)
             | ((dbuf[<span class="number">1</span>] <span class="kw">as </span>u32) &lt;&lt; <span class="number">12</span>)
             | ((dbuf[<span class="number">2</span>] <span class="kw">as </span>u32) &lt;&lt; <span class="number">6</span>)
-            | ((dbuf[<span class="number">3</span>] <span class="kw">as </span>u32) &lt;&lt; <span class="number">0</span>);
-        dbuf[<span class="number">2</span>] = (val &gt;&gt; <span class="number">0</span>) <span class="kw">as </span>u8;
+            | (dbuf[<span class="number">3</span>] <span class="kw">as </span>u32);
+        dbuf[<span class="number">2</span>] = val <span class="kw">as </span>u8;
         dbuf[<span class="number">1</span>] = (val &gt;&gt; <span class="number">8</span>) <span class="kw">as </span>u8;
         dbuf[<span class="number">0</span>] = (val &gt;&gt; <span class="number">16</span>) <span class="kw">as </span>u8;
 
@@ -968,12 +969,13 @@
 
     <span class="kw">let </span>out = ((n1 <span class="kw">as </span>u32) &lt;&lt; <span class="number">26</span>) | ((n2 <span class="kw">as </span>u32) &lt;&lt; <span class="number">20</span>) | ((n3 <span class="kw">as </span>u32) &lt;&lt; <span class="number">14</span>) | ((n4 <span class="kw">as </span>u32) &lt;&lt; <span class="number">8</span>);
 
-    <span class="kw">return </span><span class="prelude-val">Ok</span>(out);
+    <span class="prelude-val">Ok</span>(out)
 }
 
 <span class="comment">// Assembles 8 base64 digits into 6 bytes.
 // Each digit comes from the decode map, and will be 0xff
 // if it came from an invalid character.
+</span><span class="attribute">#[allow(clippy::too_many_arguments)]
 </span><span class="kw">fn </span>assemble64(n1: u8, n2: u8, n3: u8, n4: u8, n5: u8, n6: u8, n7: u8, n8: u8) -&gt; <span class="prelude-ty">Result</span>&lt;u64, ()&gt; {
     <span class="comment">// Check that all the digits are valid. If any of them was 0xff, their
     // bitwise OR will be 0xff.
@@ -990,7 +992,7 @@
         </span>| (n7 <span class="kw">as </span>u64) &lt;&lt; <span class="number">22
         </span>| (n8 <span class="kw">as </span>u64) &lt;&lt; <span class="number">16</span>;
 
-    <span class="kw">return </span><span class="prelude-val">Ok</span>(out);
+    <span class="prelude-val">Ok</span>(out)
 }
 </code></pre></div>
 </section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="base64" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0 (897e37553 2022-11-02)" ></div></body></html>

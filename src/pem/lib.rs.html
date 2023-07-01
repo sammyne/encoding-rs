@@ -280,24 +280,24 @@
 </span><span class="kw">use </span>std::collections::HashMap;
 <span class="kw">use </span>std::io::{<span class="self">self</span>, Write};
 
-<span class="kw">const </span>COLON: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[u8] = <span class="string">b&quot;:&quot;</span>;
-<span class="kw">const </span>NL: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[u8] = <span class="string">b&quot;\n&quot;</span>;
-<span class="kw">const </span>PEM_END: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[u8] = <span class="string">b&quot;\n-----END &quot;</span>;
-<span class="kw">const </span>PEM_END_OF_LINE: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[u8] = <span class="string">b&quot;-----&quot;</span>;
-<span class="kw">const </span>PEM_START: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[u8] = <span class="string">b&quot;\n-----BEGIN &quot;</span>;
+<span class="kw">const </span>COLON: <span class="kw-2">&amp;</span>[u8] = <span class="string">b&quot;:&quot;</span>;
+<span class="kw">const </span>NL: <span class="kw-2">&amp;</span>[u8] = <span class="string">b&quot;\n&quot;</span>;
+<span class="kw">const </span>PEM_END: <span class="kw-2">&amp;</span>[u8] = <span class="string">b&quot;\n-----END &quot;</span>;
+<span class="kw">const </span>PEM_END_OF_LINE: <span class="kw-2">&amp;</span>[u8] = <span class="string">b&quot;-----&quot;</span>;
+<span class="kw">const </span>PEM_START: <span class="kw-2">&amp;</span>[u8] = <span class="string">b&quot;\n-----BEGIN &quot;</span>;
 
 <span class="doccomment">/// A Block represents a PEM encoded structure.
 ///
 /// The encoded form is:
 /// ```pem
-///	-----BEGIN Type-----
-///	Headers
-///	base64-encoded Bytes
-///	-----END Type-----
+/// -----BEGIN Type-----
+/// Headers
+/// base64-encoded Bytes
+/// -----END Type-----
 /// ```
 ///
 /// where Headers is a possibly empty sequence of `Key: Value` lines.
-</span><span class="attribute">#[derive(Default, PartialEq, Debug)]
+</span><span class="attribute">#[derive(Default, PartialEq, Debug, Eq)]
 </span><span class="kw">pub struct </span>Block {
     <span class="doccomment">/// the type, taken from the preamble (i.e. &quot;RSA PRIVATE KEY&quot;).
     </span><span class="kw">pub </span>type_: String,
@@ -348,7 +348,7 @@
             <span class="kw">loop </span>{
                 <span class="comment">// This loop terminates because getLine&#39;s second result is
                 // always smaller than its argument.
-                </span><span class="kw">if </span>rest.len() == <span class="number">0 </span>{
+                </span><span class="kw">if </span>rest.is_empty() {
                     <span class="kw">return </span><span class="prelude-val">Err</span>(data);
                 }
                 <span class="kw">let </span>(line, next) = get_line(rest);
@@ -393,7 +393,7 @@
 
             <span class="comment">// The line must end with only whitespace.
             </span><span class="kw">let </span>(s, <span class="kw">_</span>) = get_line(rest_end_of_line);
-            <span class="kw">if </span>s.len() != <span class="number">0 </span>{
+            <span class="kw">if </span>!s.is_empty() {
                 <span class="kw">continue</span>;
             }
 
@@ -442,8 +442,8 @@
     </span>out.write_all(<span class="kw-2">&amp;</span>PEM_START[<span class="number">1</span>..])<span class="question-mark">?</span>;
     out.write_all((b.type_.clone() + <span class="string">&quot;-----\n&quot;</span>).as_bytes())<span class="question-mark">?</span>;
 
-    <span class="kw">if </span>b.headers.len() &gt; <span class="number">0 </span>{
-        <span class="kw">const </span>PROC_TYPE: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str = <span class="string">&quot;Proc-Type&quot;</span>;
+    <span class="kw">if </span>!b.headers.is_empty() {
+        <span class="kw">const </span>PROC_TYPE: <span class="kw-2">&amp;</span>str = <span class="string">&quot;Proc-Type&quot;</span>;
 
         <span class="kw">let </span><span class="kw-2">mut </span>h = Vec::with_capacity(b.headers.len());
         <span class="kw">let </span><span class="kw-2">mut </span>has_proc_type = <span class="bool-val">false</span>;

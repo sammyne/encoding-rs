@@ -21,9 +21,7 @@
 <span id="21">21</span>
 <span id="22">22</span>
 <span id="23">23</span>
-<span id="24">24</span>
-</pre><pre class="rust"><code><span class="kw">use </span>std::convert::Into;
-<span class="kw">use </span>std::io;
+</pre><pre class="rust"><code><span class="kw">use </span>std::io;
 
 <span class="attribute">#[derive(thiserror::Error, Debug)]
 </span><span class="kw">pub enum </span>Error {
@@ -37,13 +35,13 @@
     </span>Overflow,
 }
 
-<span class="kw">impl </span>Into&lt;io::Error&gt; <span class="kw">for </span>Error {
-    <span class="kw">fn </span>into(<span class="self">self</span>) -&gt; io::Error {
-        <span class="kw">if let </span>Error::IO(err, <span class="kw">_</span>) = <span class="self">self </span>{
+<span class="kw">impl </span>From&lt;Error&gt; <span class="kw">for </span>io::Error {
+    <span class="kw">fn </span>from(value: Error) -&gt; <span class="self">Self </span>{
+        <span class="kw">if let </span>Error::IO(err, <span class="kw">_</span>) = value {
             <span class="kw">return </span>err;
         }
 
-        io::Error::new(io::ErrorKind::Other, <span class="self">self</span>.to_string())
+        io::Error::new(io::ErrorKind::Other, value)
     }
 }
 </code></pre></div>

@@ -184,7 +184,7 @@
         } <span class="kw">else if </span>b == <span class="string">b&#39;z&#39; </span>&amp;&amp; nb == <span class="number">0 </span>{
             nb = <span class="number">5</span>;
             v = <span class="number">0</span>;
-        } <span class="kw">else if </span><span class="string">b&#39;!&#39; </span>&lt;= b &amp;&amp; b &lt;= <span class="string">b&#39;u&#39; </span>{
+        } <span class="kw">else if </span>(<span class="string">b&#39;!&#39;</span>..=<span class="string">b&#39;u&#39;</span>).contains(<span class="kw-2">&amp;</span>b) {
             nb += <span class="number">1</span>;
             v = v * <span class="number">85 </span>+ (b - <span class="string">b&#39;!&#39;</span>) <span class="kw">as </span>u32;
         } <span class="kw">else </span>{
@@ -230,7 +230,7 @@
 
     nsrc = src.len();
 
-    <span class="kw">return </span><span class="prelude-val">Ok</span>((ndst, nsrc));
+    <span class="prelude-val">Ok</span>((ndst, nsrc))
 }
 
 <span class="doccomment">/// Encodes `src` into at most [max_encoded_len(src.len())](max_encoded_len)
@@ -244,7 +244,7 @@
 </span><span class="doccomment">/// Often, ascii85-encoded data is wrapped in &lt;~ and ~&gt; symbols.
 /// `encode` does not add these.
 </span><span class="kw">pub fn </span>encode(dst: <span class="kw-2">&amp;mut </span>[u8], src: <span class="kw-2">&amp;</span>[u8]) -&gt; usize {
-    <span class="kw">if </span>src.len() == <span class="number">0 </span>{
+    <span class="kw">if </span>src.is_empty() {
         <span class="kw">return </span><span class="number">0</span>;
     }
 
@@ -266,7 +266,7 @@
         <span class="kw">if </span>src.len() &gt;= <span class="number">2 </span>{
             v |= (src[<span class="number">1</span>] <span class="kw">as </span>u32) &lt;&lt; <span class="number">16</span>;
         }
-        <span class="kw">if </span>src.len() &gt;= <span class="number">1 </span>{
+        <span class="kw">if </span>!src.is_empty() {
             v |= (src[<span class="number">0</span>] <span class="kw">as </span>u32) &lt;&lt; <span class="number">24</span>;
         }
 
@@ -297,7 +297,7 @@
         written += m;
     }
 
-    <span class="kw">return </span>written;
+    written
 }
 
 <span class="doccomment">/// Returns the maximum length of an encoding of `n` source bytes.

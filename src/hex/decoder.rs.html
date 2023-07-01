@@ -134,7 +134,7 @@
             <span class="kw">match </span><span class="self">self</span>.r.read(<span class="kw-2">&amp;mut </span><span class="self">self</span>.arr[narr..])<span class="question-mark">? </span>{
                 <span class="number">0 </span>=&gt; {
                     <span class="kw">let </span>b = <span class="kw-2">&amp;</span><span class="self">self</span>.arr[<span class="self">self</span>.arr_range.clone()];
-                    <span class="kw">if </span>b.len() == <span class="number">0 </span>{
+                    <span class="kw">if </span>b.is_empty() {
                         <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="number">0</span>);
                     }
 
@@ -170,7 +170,7 @@
                 <span class="kw">return </span><span class="prelude-val">Err</span>(other_io_error(err));
             }
             <span class="prelude-val">Err</span>((err, decoded_len)) =&gt; {
-                <span class="self">self</span>.non_io_err = <span class="prelude-val">Some</span>(err.clone());
+                <span class="self">self</span>.non_io_err = <span class="prelude-val">Some</span>(err);
                 decoded_len
             }
         };

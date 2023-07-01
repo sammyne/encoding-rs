@@ -77,13 +77,13 @@
         <span class="kw">let </span><span class="kw-2">mut </span>n = <span class="number">0usize</span>;
 
         <span class="kw">let </span><span class="kw-2">mut </span>p = p;
-        <span class="lifetime">&#39;done</span>: <span class="kw">while </span>p.len() &gt; <span class="number">0 </span>{
+        <span class="lifetime">&#39;done</span>: <span class="kw">while </span>!p.is_empty() {
             <span class="kw">let </span>chunk_size = p.len().min(BUFFER_SIZE / <span class="number">2</span>);
 
             <span class="kw">let </span>encoded = <span class="kw">crate</span>::encode(<span class="kw-2">&amp;mut </span><span class="self">self</span>.out, <span class="kw-2">&amp;</span>p[..chunk_size]);
             <span class="kw">let </span><span class="kw-2">mut </span>buf = <span class="kw-2">&amp;</span><span class="self">self</span>.out[..encoded];
 
-            <span class="kw">while </span>buf.len() &gt; <span class="number">0 </span>{
+            <span class="kw">while </span>!buf.is_empty() {
                 <span class="kw">match </span><span class="self">self</span>.w.write(buf) {
                     <span class="prelude-val">Ok</span>(<span class="number">0</span>) =&gt; <span class="kw">break </span><span class="lifetime">&#39;done</span>,
                     <span class="prelude-val">Ok</span>(written) =&gt; {

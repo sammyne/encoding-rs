@@ -135,6 +135,8 @@
 <span id="135">135</span>
 <span id="136">136</span>
 <span id="137">137</span>
+<span id="138">138</span>
+<span id="139">139</span>
 </pre><pre class="rust"><code><span class="kw">use </span>std::io::{<span class="self">self</span>, Read};
 
 <span class="kw">use </span><span class="kw">crate</span>::Error;
@@ -224,10 +226,11 @@
 <span class="doccomment">/// Decodes a uint64 from `buf` and returns that value and the
 /// number of bytes read (&gt; 0). If an error occurred, the value is 0
 /// and the number of bytes `n` is &lt;= 0 meaning:
-///
-///	n == 0: buf too small
-///	n  &lt; 0: value larger than 64 bits (overflow)
-///	        and -n is the number of bytes read
+/// ```text
+/// n == 0: buf too small
+/// n  &lt; 0: value larger than 64 bits (overflow)
+///         and -n is the number of bytes read
+/// ```
 </span><span class="kw">pub fn </span>uvariant(buf: <span class="kw-2">&amp;</span>[u8]) -&gt; (u64, isize) {
     <span class="kw">let </span><span class="kw-2">mut </span>x = <span class="number">0u64</span>;
     <span class="kw">let </span><span class="kw-2">mut </span>s = <span class="number">0u32</span>;
@@ -253,10 +256,11 @@
 <span class="doccomment">/// Decodes an int64 from `buf` and returns that value and the
 /// number of bytes read (&gt; 0). If an error occurred, the value is 0
 /// and the number of bytes `n` is &lt;= 0 with the following meaning:
-</span><span class="comment">//
-</span><span class="doccomment">///	n == 0: buf too small
-///	n  &lt; 0: value larger than 64 bits (overflow)
-///	        and -n is the number of bytes read
+/// ```text
+/// n == 0: buf too small
+/// n  &lt; 0: value larger than 64 bits (overflow)
+///         and -n is the number of bytes read
+/// ```
 </span><span class="kw">pub fn </span>variant(buf: <span class="kw-2">&amp;</span>[u8]) -&gt; (i64, isize) {
     <span class="kw">let </span>(ux, n) = uvariant(buf);
     <span class="kw">let </span>x = {

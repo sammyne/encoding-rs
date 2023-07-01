@@ -358,6 +358,7 @@
 <span id="358">358</span>
 <span id="359">359</span>
 <span id="360">360</span>
+<span id="361">361</span>
 </pre><pre class="rust"><code><span class="kw">use </span>lazy_static::lazy_static;
 
 <span class="kw">use </span><span class="kw">crate</span>::constants;
@@ -436,7 +437,7 @@
     </span><span class="attribute">#[doc = <span class="macro">include_str!</span>(<span class="string">&quot;../../examples/encoding_decode.rs&quot;</span>)]
     </span><span class="doccomment">/// ```
     </span><span class="kw">pub fn </span>decode(<span class="kw-2">&amp;</span><span class="self">self</span>, dst: <span class="kw-2">&amp;mut </span>[u8], src: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;usize, CorruptInputError&gt; {
-        <span class="kw">if </span>src.len() == <span class="number">0 </span>{
+        <span class="kw">if </span>src.is_empty() {
             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="number">0</span>);
         }
 
@@ -483,7 +484,7 @@
     </span><span class="doccomment">/// ```
     </span><span class="kw">pub fn </span>encode(<span class="kw-2">&amp;</span><span class="self">self</span>, dst: <span class="kw-2">&amp;mut </span>[u8], src: <span class="kw-2">&amp;</span>[u8]) {
         <span class="kw">let </span>(<span class="kw-2">mut </span>dst, <span class="kw-2">mut </span>src) = (dst, src);
-        <span class="kw">while </span>src.len() &gt; <span class="number">0 </span>{
+        <span class="kw">while </span>!src.is_empty() {
             <span class="kw">let </span><span class="kw-2">mut </span>b = [<span class="number">0u8</span>; <span class="number">8</span>];
 
             <span class="comment">// Unpack 8x 5-bit source blocks into a 5 byte destination quantum
@@ -505,7 +506,8 @@
                 b[<span class="number">2</span>] = (src[<span class="number">1</span>] &gt;&gt; <span class="number">1</span>) &amp; <span class="number">0x1F</span>;
                 b[<span class="number">1</span>] = (src[<span class="number">1</span>] &gt;&gt; <span class="number">6</span>) &amp; <span class="number">0x1F</span>;
             }
-            <span class="kw">if </span>src.len() &gt;= <span class="number">1 </span>{
+            <span class="attribute">#[allow(clippy::len_zero)]
+            </span><span class="kw">if </span>src.len() &gt;= <span class="number">1 </span>{
                 b[<span class="number">1</span>] |= (src[<span class="number">0</span>] &lt;&lt; <span class="number">2</span>) &amp; <span class="number">0x1F</span>;
                 b[<span class="number">0</span>] = src[<span class="number">0</span>] &gt;&gt; <span class="number">3</span>;
             }
@@ -617,13 +619,13 @@
 
         <span class="kw">let </span>(<span class="kw-2">mut </span>written, <span class="kw-2">mut </span>end) = (<span class="number">0usize</span>, <span class="bool-val">false</span>);
         <span class="kw">let </span>pad_char = <span class="self">self</span>.pad_char.unwrap_or(<span class="number">0</span>);
-        <span class="kw">while </span>src.len() &gt; <span class="number">0 </span>&amp;&amp; !end {
+        <span class="kw">while </span>!src.is_empty() &amp;&amp; !end {
             <span class="comment">// Decode quantum using the base32 alphabet
             </span><span class="kw">let </span><span class="kw-2">mut </span>dbuf = [<span class="number">0u8</span>; <span class="number">8</span>];
             <span class="kw">let </span><span class="kw-2">mut </span>dlen = <span class="number">8usize</span>;
 
-            <span class="kw">for </span>j <span class="kw">in </span><span class="number">0</span>..<span class="number">8 </span>{
-                <span class="kw">if </span>src.len() == <span class="number">0 </span>{
+            <span class="kw">for </span>(j, v) <span class="kw">in </span>dbuf.iter_mut().enumerate() {
+                <span class="kw">if </span>src.is_empty() {
                     <span class="kw">if </span><span class="self">self</span>.pad_char.is_some() {
                         <span class="comment">// We have reached the end and are missing padding
                         </span><span class="kw">return </span><span class="prelude-val">Err</span>(CorruptInputError::new(src, olen - src.len() - j, written));
@@ -669,8 +671,8 @@
                     }
                     <span class="kw">break</span>;
                 }
-                dbuf[j] = <span class="self">self</span>.decode_map[c <span class="kw">as </span>usize];
-                <span class="kw">if </span>dbuf[j] == <span class="number">0xFF </span>{
+                <span class="kw-2">*</span>v = <span class="self">self</span>.decode_map[c <span class="kw">as </span>usize];
+                <span class="kw">if </span><span class="kw-2">*</span>v == <span class="number">0xFF </span>{
                     <span class="kw">return </span><span class="prelude-val">Err</span>(CorruptInputError::new(src, olen - src.len() - <span class="number">1</span>, written));
                 }
             }
@@ -693,7 +695,7 @@
                 written += <span class="number">1</span>;
             }
             <span class="kw">if </span>dlen &gt;= <span class="number">2 </span>{
-                dst[dsti + <span class="number">0</span>] = (dbuf[<span class="number">0</span>] &lt;&lt; <span class="number">3</span>) | dbuf[<span class="number">1</span>] &gt;&gt; <span class="number">2</span>;
+                dst[dsti] = (dbuf[<span class="number">0</span>] &lt;&lt; <span class="number">3</span>) | dbuf[<span class="number">1</span>] &gt;&gt; <span class="number">2</span>;
                 written += <span class="number">1</span>;
             }
             dsti += <span class="number">5</span>;

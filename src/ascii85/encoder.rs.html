@@ -135,8 +135,6 @@
 <span id="135">135</span>
 <span id="136">136</span>
 <span id="137">137</span>
-<span id="138">138</span>
-<span id="139">139</span>
 </pre><pre class="rust"><code><span class="kw">use </span>std::io::{<span class="self">self</span>, Write};
 
 <span class="kw">struct </span>Encoder&lt;W&gt;
@@ -158,15 +156,13 @@
     /// the returned writer will be encoded and then written to `w`.
     /// Ascii85 encodings operate in 32-bit blocks.
     </span><span class="kw">pub fn </span>new(w: W) -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span>out = <span class="self">Self </span>{
+        <span class="self">Self </span>{
             err: <span class="prelude-val">None</span>,
             w,
             buf: [<span class="number">0u8</span>; <span class="number">4</span>],
             nbuf: <span class="number">0</span>,
             out: [<span class="number">0u8</span>; <span class="number">1024</span>],
-        };
-
-        out
+        }
     }
 
     <span class="kw">fn </span>error_or&lt;T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, ok: T) -&gt; io::Result&lt;T&gt; {
