@@ -1,17 +1,62 @@
 use std::io::{self, Write};
 
-pub struct Encoder<'a, W>
+struct Encoder<W>
 where
     W: Write,
 {
     err: Option<io::Error>,
-    w: &'a mut W,
+    w: W,
     buf: [u8; 4],
     nbuf: usize,
     out: [u8; 1024],
 }
 
-impl<'a, W> Write for Encoder<'a, W>
+impl<W> Encoder<W>
+where
+    W: Write,
+{
+    /// Returns a new ascii85 stream encoder. Data written to
+    /// the returned writer will be encoded and then written to `w`.
+    /// Ascii85 encodings operate in 32-bit blocks.
+    pub fn new(w: W) -> Self {
+        let out = Self {
+            err: None,
+            w,
+            buf: [0u8; 4],
+            nbuf: 0,
+            out: [0u8; 1024],
+        };
+
+        out
+    }
+
+    fn error_or<T>(&self, ok: T) -> io::Result<T> {
+        if let Some(err) = &self.err {
+            Err(io::Error::new(err.kind(), err.to_string()))
+        } else {
+            Ok(ok)
+        }
+    }
+
+    fn nonzero_or_error(&self, ok: usize) -> io::Result<usize> {
+        if ok != 0 {
+            return Ok(ok);
+        }
+
+        self.error_or(0)
+    }
+}
+
+impl<W> Drop for Encoder<W>
+where
+    W: Write,
+{
+    fn drop(&mut self) {
+        let _ = self.flush();
+    }
+}
+
+impl<W> Write for Encoder<W>
 where
     W: Write,
 {
@@ -83,38 +128,12 @@ where
     }
 }
 
-impl<'a, W> Encoder<'a, W>
+/// Returns a new ascii85 stream encoder. Data written to
+/// the returned writer will be encoded and then written to `w`.
+/// Ascii85 encodings operate in 32-bit blocks.
+pub fn new_encoder<W>(w: W) -> impl Write
 where
     W: Write,
 {
-    /// Returns a new ascii85 stream encoder. Data written to
-    /// the returned writer will be encoded and then written to `w`.
-    /// Ascii85 encodings operate in 32-bit blocks.
-    pub fn new(w: &'a mut W) -> Self {
-        let out = Self {
-            err: None,
-            w: w,
-            buf: [0u8; 4],
-            nbuf: 0,
-            out: [0u8; 1024],
-        };
-
-        out
-    }
-
-    fn error_or<T>(&self, ok: T) -> io::Result<T> {
-        if let Some(err) = &self.err {
-            Err(io::Error::new(err.kind(), err.to_string()))
-        } else {
-            Ok(ok)
-        }
-    }
-
-    fn nonzero_or_error(&self, ok: usize) -> io::Result<usize> {
-        if ok != 0 {
-            return Ok(ok);
-        }
-
-        self.error_or(0)
-    }
+    Encoder::new(w)
 }
