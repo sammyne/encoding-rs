@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/base32/encoding.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>encoding.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../normalize.css"><link rel="stylesheet" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../ayu.css" disabled><link rel="stylesheet" href="../../../dark.css" disabled><link rel="stylesheet" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../encoding/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../../encoding/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../encoding/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/base32/src/encoding/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../normalize.css"><link rel="stylesheet" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../ayu.css" disabled><link rel="stylesheet" href="../../../dark.css" disabled><link rel="stylesheet" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../base32/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../../base32/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../base32/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -348,10 +348,20 @@
 <span id="348">348</span>
 <span id="349">349</span>
 <span id="350">350</span>
+<span id="351">351</span>
+<span id="352">352</span>
+<span id="353">353</span>
+<span id="354">354</span>
+<span id="355">355</span>
+<span id="356">356</span>
+<span id="357">357</span>
+<span id="358">358</span>
+<span id="359">359</span>
+<span id="360">360</span>
 </pre><pre class="rust"><code><span class="kw">use </span>lazy_static::lazy_static;
 
-<span class="kw">use </span><span class="kw">crate</span>::base32::constants;
-<span class="kw">use </span><span class="kw">crate</span>::Error;
+<span class="kw">use </span><span class="kw">crate</span>::constants;
+<span class="kw">use </span><span class="kw">crate</span>::CorruptInputError;
 
 <span class="macro">lazy_static! </span>{
     <span class="doccomment">/// StdEncoding is the standard base32 encoding, as defined in
@@ -371,11 +381,12 @@
 ///
 /// [RFC 4648]: https://rfc-editor.org/rfc/rfc4648.html
 ///
-</span><span class="attribute">#[derive(Clone)]
+</span><span class="attribute">#[derive(Clone, Copy)]
 </span><span class="kw">pub struct </span>Encoding {
     encode: [u8; <span class="number">32</span>],
     decode_map: [u8; <span class="number">256</span>],
-    <span class="kw">pub</span>(<span class="kw">super</span>) pad_char: <span class="prelude-ty">Option</span>&lt;u8&gt;,
+
+    <span class="kw">pub</span>(<span class="kw">crate</span>) pad_char: <span class="prelude-ty">Option</span>&lt;u8&gt;,
 }
 
 <span class="kw">impl </span>Encoding {
@@ -413,18 +424,18 @@
     }
 
     <span class="doccomment">/// Decodes `src` using the encoding `enc`. It writes at most
-    /// [decoded_len(src.len())][crate::base32::Encoding::decoded_len] bytes
+    /// [decoded_len(src.len())][Self::decoded_len] bytes
     /// to `dst` and returns the number of bytes
     /// written. If `src` contains invalid base32 data, it will return the
     /// number of bytes successfully written and
-    /// [CorruptInputError](crate::Error::CorruptInputError).
+    /// [CorruptInputError](crate::CorruptInputError).
     /// New line characters (\r and \n) are ignored.
     ///
     /// # Example
     /// ```
-    </span><span class="attribute">#[doc = <span class="macro">include_str!</span>(<span class="string">&quot;../../examples/base32_decode.rs&quot;</span>)]
+    </span><span class="attribute">#[doc = <span class="macro">include_str!</span>(<span class="string">&quot;../../examples/encoding_decode.rs&quot;</span>)]
     </span><span class="doccomment">/// ```
-    </span><span class="kw">pub fn </span>decode(<span class="kw-2">&amp;</span><span class="self">self</span>, dst: <span class="kw-2">&amp;mut </span>[u8], src: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;usize, Error&gt; {
+    </span><span class="kw">pub fn </span>decode(<span class="kw-2">&amp;</span><span class="self">self</span>, dst: <span class="kw-2">&amp;mut </span>[u8], src: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;usize, CorruptInputError&gt; {
         <span class="kw">if </span>src.len() == <span class="number">0 </span>{
             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="number">0</span>);
         }
@@ -445,7 +456,12 @@
     }
 
     <span class="doccomment">/// Returns the bytes represented by the base32 string `s`.
-    </span><span class="kw">pub fn </span>decode_string(<span class="kw-2">&amp;</span><span class="self">self</span>, s: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;u8&gt;, Error&gt; {
+    ///
+    /// # Example
+    /// ```
+    </span><span class="attribute">#[doc = <span class="macro">include_str!</span>(<span class="string">&quot;../../examples/encoding_decode_string.rs&quot;</span>)]
+    </span><span class="doccomment">/// ```
+    </span><span class="kw">pub fn </span>decode_string(<span class="kw-2">&amp;</span><span class="self">self</span>, s: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;u8&gt;, CorruptInputError&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>out = <span class="macro">vec!</span>[<span class="number">0u8</span>; <span class="self">self</span>.decoded_len(s.len())];
         <span class="kw">let </span>n = <span class="self">self</span>.decode(out.as_mut_slice(), s.as_bytes())<span class="question-mark">?</span>;
         out.resize(n, <span class="number">0</span>);
@@ -454,16 +470,16 @@
     }
 
     <span class="doccomment">/// Encodes `src` using the encoding `enc`, writing
-    /// [encoded_len(len(src))][crate::base32::Encoding::encoded_len]
+    /// [encoded_len(len(src))][crate::Encoding::encoded_len]
     /// bytes to `dst`.
     ///
     /// The encoding pads the output to a multiple of 8 bytes,
     /// so `encode` is not appropriate for use on individual blocks
-    /// of a large data stream. Use [Encoder::new()][crate::base32::Encoder::new] instead.
+    /// of a large data stream. Use [new_encoder()][crate::new_encoder] instead.
     ///
     /// # Example
     /// ```
-    </span><span class="attribute">#[doc = <span class="macro">include_str!</span>(<span class="string">&quot;../../examples/base32_encoding_encode.rs&quot;</span>)]
+    </span><span class="attribute">#[doc = <span class="macro">include_str!</span>(<span class="string">&quot;../../examples/encoding_encode.rs&quot;</span>)]
     </span><span class="doccomment">/// ```
     </span><span class="kw">pub fn </span>encode(<span class="kw-2">&amp;</span><span class="self">self</span>, dst: <span class="kw-2">&amp;mut </span>[u8], src: <span class="kw-2">&amp;</span>[u8]) {
         <span class="kw">let </span>(<span class="kw-2">mut </span>dst, <span class="kw-2">mut </span>src) = (dst, src);
@@ -544,7 +560,7 @@
     ///
     /// # Example
     /// ```
-    </span><span class="attribute">#[doc = <span class="macro">include_str!</span>(<span class="string">&quot;../../examples/base32_encoding_encode_to_string.rs&quot;</span>)]
+    </span><span class="attribute">#[doc = <span class="macro">include_str!</span>(<span class="string">&quot;../../examples/encoding_encode_to_string.rs&quot;</span>)]
     </span><span class="doccomment">/// ```
     </span><span class="kw">pub fn </span>encode_to_string(<span class="kw-2">&amp;</span><span class="self">self</span>, src: <span class="kw-2">&amp;</span>[u8]) -&gt; String {
         <span class="kw">let </span><span class="kw-2">mut </span>out = <span class="string">&quot; &quot;</span>.repeat(<span class="self">self</span>.encoded_len(src.len()));
@@ -587,7 +603,15 @@
         <span class="self">self
     </span>}
 
-    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>decode_(<span class="kw-2">&amp;</span><span class="self">self</span>, dst: <span class="kw-2">&amp;mut </span>[u8], src: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;(usize, bool), Error&gt; {
+    <span class="doccomment">/// decode_ is like [Self::decode] but returns an additional &#39;end&#39; value, which
+    /// indicates if end-of-message padding was encountered and thus any
+    /// additional data is an error. This method assumes that src has been
+    /// stripped of all supported whitespace (&#39;\r&#39; and &#39;\n&#39;).
+    </span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>decode_(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        dst: <span class="kw-2">&amp;mut </span>[u8],
+        src: <span class="kw-2">&amp;</span>[u8],
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;(usize, bool), CorruptInputError&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>dsti = <span class="number">0usize</span>;
         <span class="kw">let </span>(<span class="kw-2">mut </span>src, olen) = (src, src.len());
 
@@ -602,7 +626,7 @@
                 <span class="kw">if </span>src.len() == <span class="number">0 </span>{
                     <span class="kw">if </span><span class="self">self</span>.pad_char.is_some() {
                         <span class="comment">// We have reached the end and are missing padding
-                        </span><span class="kw">return </span><span class="prelude-val">Err</span>(new_corrupted_error(olen - src.len() - j));
+                        </span><span class="kw">return </span><span class="prelude-val">Err</span>(CorruptInputError::new(src, olen - src.len() - j, written));
                     }
                     <span class="comment">// We have reached the end and are not expecting any padding
                     </span>dlen = j;
@@ -616,13 +640,17 @@
                     <span class="comment">// We&#39;ve reached the end and there&#39;s padding
                     </span><span class="kw">if </span>src.len() + j &lt; <span class="number">8 </span>- <span class="number">1 </span>{
                         <span class="comment">// not enough padding
-                        </span><span class="kw">return </span><span class="prelude-val">Err</span>(new_corrupted_error(olen));
+                        </span><span class="kw">return </span><span class="prelude-val">Err</span>(CorruptInputError::new(src, olen, written));
                     }
 
                     <span class="kw">for </span>k <span class="kw">in </span><span class="number">0</span>..(<span class="number">8 </span>- <span class="number">1 </span>- j) {
                         <span class="kw">if </span>(src.len() &gt; k) &amp;&amp; (src[k] != pad_char) {
                             <span class="comment">// incorrect padding
-                            </span><span class="kw">return </span><span class="prelude-val">Err</span>(new_corrupted_error(olen - src.len() + k - <span class="number">1</span>));
+                            </span><span class="kw">return </span><span class="prelude-val">Err</span>(CorruptInputError::new(
+                                src,
+                                olen - src.len() + k - <span class="number">1</span>,
+                                written,
+                            ));
                         }
                     }
                     dlen = j;
@@ -634,14 +662,16 @@
                     // Examples&quot; for an illustration for how the 1st, 3rd and 6th base32
                     // src bytes do not yield enough information to decode a dst byte.
                     </span><span class="kw">match </span>dlen {
-                        <span class="number">1 </span>| <span class="number">3 </span>| <span class="number">6 </span>=&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(new_corrupted_error(olen - src.len() - <span class="number">1</span>)),
+                        <span class="number">1 </span>| <span class="number">3 </span>| <span class="number">6 </span>=&gt; {
+                            <span class="kw">return </span><span class="prelude-val">Err</span>(CorruptInputError::new(src, olen - src.len() - <span class="number">1</span>, written))
+                        }
                         <span class="kw">_ </span>=&gt; {}
                     }
                     <span class="kw">break</span>;
                 }
                 dbuf[j] = <span class="self">self</span>.decode_map[c <span class="kw">as </span>usize];
                 <span class="kw">if </span>dbuf[j] == <span class="number">0xFF </span>{
-                    <span class="kw">return </span><span class="prelude-val">Err</span>(new_corrupted_error(olen - src.len() - <span class="number">1</span>));
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(CorruptInputError::new(src, olen - src.len() - <span class="number">1</span>, written));
                 }
             }
 
@@ -673,20 +703,7 @@
     }
 }
 
-<span class="kw">fn </span>new_corrupted_error(idx: usize) -&gt; Error {
-    Error::CorruptInputError(<span class="string">&quot;base32&quot;</span>, idx)
-}
-
-<span class="comment">/*
-fn new_io_error&lt;E&gt;(err: E, n: usize) -&gt; Error
-where
-    E: Into&lt;Box&lt;dyn error::Error + Send + Sync&gt;&gt;,
-{
-    Error::IO(io::Error::new(io::ErrorKind::Other, err), n)
-}
-*/
-
-</span><span class="kw">pub fn </span>strip_newlines(dst: <span class="kw-2">&amp;mut </span>[u8], src: <span class="kw-2">&amp;</span>[u8]) -&gt; usize {
+<span class="kw">fn </span>strip_newlines(dst: <span class="kw-2">&amp;mut </span>[u8], src: <span class="kw-2">&amp;</span>[u8]) -&gt; usize {
     <span class="kw">let </span><span class="kw-2">mut </span>offset = <span class="number">0usize</span>;
     <span class="kw">for </span><span class="kw-2">&amp;</span>c <span class="kw">in </span>src {
         <span class="kw">if </span>c == constants::CR || c == constants::LF {
@@ -698,5 +715,8 @@ where
 
     offset
 }
+
+<span class="attribute">#[cfg(test)]
+</span><span class="kw">mod </span>tests;
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="encoding" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0 (897e37553 2022-11-02)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="base32" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0 (897e37553 2022-11-02)" ></div></body></html>
