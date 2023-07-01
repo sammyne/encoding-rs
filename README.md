@@ -1,7 +1,7 @@
 # encoding-rs
 
 ![build status](https://github.com/sammyne/encoding-rs/workflows/build/badge.svg)
-[![docs badge](https://img.shields.io/badge/docs-0.5.0-blue)](https://sammyne.github.io/encoding-rs/encoding/)
+[![docs badge](https://img.shields.io/badge/docs-0.6.0-blue)](https://sammyne.github.io/encoding-rs/encoding/)
 ![minimum rustc](https://img.shields.io/badge/rustc-1.65.0%2B-blue)
 
 This repository tries to implement a Go-like encoding library in Rust.
