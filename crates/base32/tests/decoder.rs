@@ -141,12 +141,12 @@ fn buffered_decoding_padding() {
         new(["I4======", "=="], "unexpected end of file"),
         new(
             ["I4======N4======"],
-            "illegal base64 data '=' at input byte 2 after writing 0 bytes",
+            "illegal base32 data '=' at input byte 2 after writing 0 bytes",
         ),
         // this impl supports decodes well-formatted base32 chunks, differing itself from golang's.
         //new(
         //    ["I4======", "N4======"],
-        //    "illegal base64 data '=' at input byte 0 after writing 0 bytes",
+        //    "illegal base32 data '=' at input byte 0 after writing 0 bytes",
         //),
     ];
 

@@ -3,8 +3,11 @@ use std::{error::Error, fmt::Display};
 /// Error occurs during decoding.
 #[derive(Debug, Default, Clone, Copy, PartialEq)]
 pub struct CorruptInputError {
+    /// Corrupted character if any.
     pub c: Option<u8>,
+    /// Index of the corrupted character.
     pub idx: usize,
+    /// Number of bytes has been written to destination buffer.
     pub written: usize,
 }
 
@@ -20,7 +23,7 @@ impl Display for CorruptInputError {
         if let Some(c) = self.c {
             write!(
                 f,
-                "illegal base64 data '{}' at input byte {} after writing {} bytes",
+                "illegal base32 data '{}' at input byte {} after writing {} bytes",
                 c.escape_ascii().to_string(),
                 self.idx,
                 self.written
@@ -28,7 +31,7 @@ impl Display for CorruptInputError {
         } else {
             write!(
                 f,
-                "illegal base64 data at input byte {} after writing {} bytes",
+                "illegal base32 data at input byte {} after writing {} bytes",
                 self.idx, self.written
             )
         }
