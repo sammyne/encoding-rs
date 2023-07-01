@@ -2,12 +2,12 @@ use std::io::{self, Write};
 
 use crate::Encoding;
 
-pub struct Encoder<'a, W>
+struct Encoder<W>
 where
     W: Write,
 {
     enc: Encoding,
-    w: &'a mut W,
+    w: W,
     err: Option<io::Error>,
 
     buf: [u8; 5],
@@ -15,7 +15,7 @@ where
     out: [u8; 1024],
 }
 
-impl<'a, W> Write for Encoder<'a, W>
+impl<W> Write for Encoder<W>
 where
     W: Write,
 {
@@ -87,22 +87,14 @@ where
     }
 }
 
-impl<'a, W> Encoder<'a, W>
+impl<W> Encoder<W>
 where
     W: Write,
 {
-    /// Returns a new base32 stream encoder. Data written to
-    /// the returned writer will be encoded using `enc` and then written to `w`.
-    /// Base32 encodings operate in 5-byte blocks.
-    ///
-    /// # Example
-    /// ```
-    #[doc = include_str!("../examples/encoder.rs")]
-    /// ```
-    pub fn new(enc: Encoding, w: &'a mut W) -> Self {
+    fn new(enc: Encoding, w: W) -> Self {
         Self {
-            enc: enc,
-            w: w,
+            enc,
+            w,
             err: None,
             buf: [0u8; 5],
             nbuf: 0,
@@ -117,4 +109,19 @@ where
             Ok(ok)
         }
     }
+}
+
+/// Returns a new base32 stream encoder. Data written to
+/// the returned writer will be encoded using `enc` and then written to `w`.
+/// Base32 encodings operate in 5-byte blocks.
+///
+/// # Example
+/// ```
+#[doc = include_str!("../examples/encoder.rs")]
+/// ```
+pub fn new_encoder<W>(enc: Encoding, w: W) -> impl Write
+where
+    W: Write,
+{
+    Encoder::new(enc, w)
 }

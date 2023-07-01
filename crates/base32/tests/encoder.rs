@@ -1,6 +1,6 @@
 use std::io::Write;
 
-use base32::{Encoder, STD_ENCODING};
+use base32::STD_ENCODING;
 
 #[test]
 fn buffering() {
@@ -11,7 +11,7 @@ fn buffering() {
 
     for bs in 1..=12 {
         let mut bb = vec![];
-        let mut encoder = Encoder::new(STD_ENCODING.clone(), &mut bb);
+        let mut encoder = base32::new_encoder(*STD_ENCODING, &mut bb);
         for pos in (0..input.len()).step_by(bs) {
             let end = usize::min(pos + bs, input.len());
             let n = encoder.write(input[pos..end].as_ref()).unwrap();
@@ -24,6 +24,7 @@ fn buffering() {
             )
         }
         encoder.flush().unwrap();
+        std::mem::drop(encoder);
 
         let got = String::from_utf8_lossy(bb.as_slice()).to_string();
 
@@ -39,9 +40,10 @@ fn buffering() {
 fn encoder() {
     for (i, p) in testbot::PAIRS.iter().enumerate() {
         let mut bb = vec![];
-        let mut encoder = Encoder::new(STD_ENCODING.clone(), &mut bb);
+        let mut encoder = base32::new_encoder(*STD_ENCODING, &mut bb);
         let _ = encoder.write(p.decoded);
         let _ = encoder.flush();
+        std::mem::drop(encoder);
 
         let got = String::from_utf8_lossy(bb.as_slice()).to_string();
 

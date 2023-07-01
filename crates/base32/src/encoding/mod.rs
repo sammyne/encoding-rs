@@ -96,7 +96,7 @@ impl Encoding {
     }
 
     /// Returns the bytes represented by the base32 string `s`.
-    /// 
+    ///
     /// # Example
     /// ```
     #[doc = include_str!("../../examples/encoding_decode_string.rs")]

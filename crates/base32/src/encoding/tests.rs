@@ -1,6 +1,6 @@
 use std::io::Write;
 
-use crate::{Encoder, STD_ENCODING};
+use crate::STD_ENCODING;
 
 #[test]
 fn without_padding_close() {
@@ -12,7 +12,7 @@ fn without_padding_close() {
     for (i, encoding) in encodings.iter().enumerate() {
         for (j, testpair) in testbot::PAIRS.iter().enumerate() {
             let mut buf = vec![];
-            let mut encoder = Encoder::new(encoding.clone(), &mut buf);
+            let mut encoder = crate::new_encoder(*encoding, &mut buf);
             encoder.write(testpair.decoded).unwrap();
             encoder.flush().unwrap();
 
@@ -21,6 +21,7 @@ fn without_padding_close() {
             } else {
                 testpair.encoded.replace('=', "")
             };
+            std::mem::drop(encoder);
 
             let got = String::from_utf8_lossy(&buf).to_string();
             assert_eq!(
