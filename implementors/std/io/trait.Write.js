@@ -1,3 +1,0 @@
-(function() {var implementors = {
-"encoding":[["impl&lt;'a, W&gt; <a class=\"trait\" href=\"https://doc.rust-lang.org/1.65.0/std/io/trait.Write.html\" title=\"trait std::io::Write\">Write</a> for <a class=\"struct\" href=\"encoding/ascii85/struct.Encoder.html\" title=\"struct encoding::ascii85::Encoder\">Encoder</a>&lt;'a, W&gt;<span class=\"where fmt-newline\">where<br>&nbsp;&nbsp;&nbsp;&nbsp;W: <a class=\"trait\" href=\"https://doc.rust-lang.org/1.65.0/std/io/trait.Write.html\" title=\"trait std::io::Write\">Write</a>,</span>"]]
-};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
