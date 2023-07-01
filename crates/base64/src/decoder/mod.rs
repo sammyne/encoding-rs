@@ -67,7 +67,7 @@ where
                 let n = builtin::copy(p, &self.outbuf[..nw]);
                 self.outbuf_pending.start = n;
                 self.outbuf_pending.end = nw;
-                if (n > 0) || ((p.len() == 0) && !self.outbuf_pending.is_empty()) {
+                if (n > 0) || (p.is_empty() && !self.outbuf_pending.is_empty()) {
                     return Ok(n);
                 }
             }

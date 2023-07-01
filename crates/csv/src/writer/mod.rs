@@ -144,7 +144,7 @@ where
             _ => {}
         }
 
-        const QUOTING_HINT: &'static str = std::concat!('"', "\r\n");
+        const QUOTING_HINT: &str = std::concat!('"', "\r\n");
         if field.contains(|c| (c == self.comma) || QUOTING_HINT.contains(c)) {
             return true;
         }
@@ -160,7 +160,7 @@ where
         self.w.write_all(b"\"").map_err(WriteError::Io)?;
 
         let mut field = field.as_bytes();
-        while field.len() > 0 {
+        while !field.is_empty() {
             // Search for special characters.
             let i = field
                 .iter()
@@ -172,7 +172,7 @@ where
             field = &field[i..];
 
             // Encode the special character.
-            if field.len() > 0 {
+            if !field.is_empty() {
                 match field[0] {
                     b'"' => self.w.write_all(br#""""#).map_err(WriteError::Io)?,
                     b'\r' => {

@@ -7,6 +7,7 @@ on:
     branches: [ 'main' ]
     paths:
     - 'benches/**'
+    - 'crates/**'
     - 'examples/**'
     - 'src/**'
     - 'tests/**'
@@ -40,10 +41,12 @@ jobs:
       with:
         path: ~/.cargo/git
         key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.toml') }}
-    - name: Install rustfmt
-      run: rustup component add rustfmt
+    - name: Install rustfmt and clippy
+      run: rustup component add rustfmt clippy
     - name: Check format
       run: cargo fmt --check
+    - name: Clippy lint
+      run: cargo clippy -- -D warnings
     - name: Run tests
       run: cargo test --workspace
       shell: bash

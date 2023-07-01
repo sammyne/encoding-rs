@@ -36,7 +36,7 @@ impl ByteOrder for BigEndian {
         let _ = dst[1];
 
         dst[0] = ((v >> 8) & 0xff) as u8;
-        dst[1] = ((v >> 0) & 0xff) as u8;
+        dst[1] = (v & 0xff) as u8;
     }
 
     fn put_uint32(dst: &mut [u8], v: u32) {
@@ -45,7 +45,7 @@ impl ByteOrder for BigEndian {
         dst[0] = ((v >> 24) & 0xff) as u8;
         dst[1] = ((v >> 16) & 0xff) as u8;
         dst[2] = ((v >> 8) & 0xff) as u8;
-        dst[3] = ((v >> 0) & 0xff) as u8;
+        dst[3] = (v & 0xff) as u8;
     }
 
     fn put_uint64(dst: &mut [u8], v: u64) {
@@ -58,7 +58,7 @@ impl ByteOrder for BigEndian {
         dst[4] = ((v >> 24) & 0xff) as u8;
         dst[5] = ((v >> 16) & 0xff) as u8;
         dst[6] = ((v >> 8) & 0xff) as u8;
-        dst[7] = ((v >> 0) & 0xff) as u8;
+        dst[7] = (v & 0xff) as u8;
     }
 }
 
@@ -89,14 +89,14 @@ impl ByteOrder for LittleEndian {
     fn put_uint16(dst: &mut [u8], v: u16) {
         let _ = dst[1];
 
-        dst[0] = ((v >> 0) & 0xff) as u8;
+        dst[0] = (v & 0xff) as u8;
         dst[1] = ((v >> 8) & 0xff) as u8;
     }
 
     fn put_uint32(dst: &mut [u8], v: u32) {
         let _ = dst[3];
 
-        dst[0] = ((v >> 0) & 0xff) as u8;
+        dst[0] = (v & 0xff) as u8;
         dst[1] = ((v >> 8) & 0xff) as u8;
         dst[2] = ((v >> 16) & 0xff) as u8;
         dst[3] = ((v >> 24) & 0xff) as u8;
@@ -105,7 +105,7 @@ impl ByteOrder for LittleEndian {
     fn put_uint64(dst: &mut [u8], v: u64) {
         let _ = dst[7];
 
-        dst[0] = ((v >> 0) & 0xff) as u8;
+        dst[0] = (v & 0xff) as u8;
         dst[1] = ((v >> 8) & 0xff) as u8;
         dst[2] = ((v >> 16) & 0xff) as u8;
         dst[3] = ((v >> 24) & 0xff) as u8;

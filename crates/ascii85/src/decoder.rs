@@ -47,7 +47,7 @@ where
     R: Read,
 {
     fn read(&mut self, p: &mut [u8]) -> io::Result<usize> {
-        if p.len() == 0 {
+        if p.is_empty() {
             return Ok(0);
         }
         self.error_or(())?;
@@ -81,7 +81,7 @@ where
                         self.outbuf_pending.end = written;
 
                         self.buf.copy_within(nsrc..self.nbuf, 0);
-                        self.nbuf = self.nbuf - nsrc;
+                        self.nbuf -= nsrc;
 
                         continue;
                     }

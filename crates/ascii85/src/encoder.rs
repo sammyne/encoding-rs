@@ -19,15 +19,13 @@ where
     /// the returned writer will be encoded and then written to `w`.
     /// Ascii85 encodings operate in 32-bit blocks.
     pub fn new(w: W) -> Self {
-        let out = Self {
+        Self {
             err: None,
             w,
             buf: [0u8; 4],
             nbuf: 0,
             out: [0u8; 1024],
-        };
-
-        out
+        }
     }
 
     fn error_or<T>(&self, ok: T) -> io::Result<T> {

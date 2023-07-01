@@ -7,7 +7,7 @@
 //! optionally be followed by a newline character.
 //!
 //! ```text
-//!	field1,field2,field3
+//! field1,field2,field3
 //! ```
 //!
 //! White space is considered part of a field.
@@ -24,40 +24,40 @@
 //! The source:
 //!
 //! ```text
-//!	normal string,"quoted-field"
+//! normal string,"quoted-field"
 //! ```
 //!
 //! results in the fields
 //!
 //! ```text
-//!	{`normal string`, `quoted-field`}
+//! {`normal string`, `quoted-field`}
 //! ```
 //!
 //! Within a quoted-field a quote character followed by a second quote
 //! character is considered a single quote.
 //!
 //! ```text
-//!	"the ""word"" is true","a ""quoted-field"""
+//! "the ""word"" is true","a ""quoted-field"""
 //! ```
 //!
 //! results in
 //!
 //! ```text
-//!	{`the "word" is true`, `a "quoted-field"`}
+//! {`the "word" is true`, `a "quoted-field"`}
 //! ```
 //!
 //! Newlines and commas may be included in a quoted-field
 //!
 //! ```text
-//!	"Multi-line
-//!	field","comma is ,"
+//! "Multi-line
+//! field","comma is ,"
 //! ```
 //!
 //! results in
 //!
 //! ```text
-//!	{`Multi-line
-//!	field`, `comma is ,`}
+//! {`Multi-line
+//! field`, `comma is ,`}
 //! ```
 //!
 //! [RFC 4180]: https://rfc-editor.org/rfc/rfc4180.html

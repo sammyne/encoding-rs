@@ -11,7 +11,7 @@ pub fn cut<'a>(s: &'a [u8], sep: &[u8]) -> Option<(&'a [u8], &'a [u8])> {
     Some((before, after))
 }
 
-pub fn index<'a>(s: &'a [u8], sep: &[u8]) -> Option<usize> {
+pub fn index(s: &[u8], sep: &[u8]) -> Option<usize> {
     s.windows(sep.len())
         .enumerate()
         .find(|&(_, w)| w == sep)

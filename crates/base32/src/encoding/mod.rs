@@ -76,7 +76,7 @@ impl Encoding {
     #[doc = include_str!("../../examples/encoding_decode.rs")]
     /// ```
     pub fn decode(&self, dst: &mut [u8], src: &[u8]) -> Result<usize, CorruptInputError> {
-        if src.len() == 0 {
+        if src.is_empty() {
             return Ok(0);
         }
 
@@ -123,7 +123,7 @@ impl Encoding {
     /// ```
     pub fn encode(&self, dst: &mut [u8], src: &[u8]) {
         let (mut dst, mut src) = (dst, src);
-        while src.len() > 0 {
+        while !src.is_empty() {
             let mut b = [0u8; 8];
 
             // Unpack 8x 5-bit source blocks into a 5 byte destination quantum
@@ -145,6 +145,7 @@ impl Encoding {
                 b[2] = (src[1] >> 1) & 0x1F;
                 b[1] = (src[1] >> 6) & 0x1F;
             }
+            #[allow(clippy::len_zero)]
             if src.len() >= 1 {
                 b[1] |= (src[0] << 2) & 0x1F;
                 b[0] = src[0] >> 3;
@@ -257,13 +258,13 @@ impl Encoding {
 
         let (mut written, mut end) = (0usize, false);
         let pad_char = self.pad_char.unwrap_or(0);
-        while src.len() > 0 && !end {
+        while !src.is_empty() && !end {
             // Decode quantum using the base32 alphabet
             let mut dbuf = [0u8; 8];
             let mut dlen = 8usize;
 
-            for j in 0..8 {
-                if src.len() == 0 {
+            for (j, v) in dbuf.iter_mut().enumerate() {
+                if src.is_empty() {
                     if self.pad_char.is_some() {
                         // We have reached the end and are missing padding
                         return Err(CorruptInputError::new(src, olen - src.len() - j, written));
@@ -309,8 +310,8 @@ impl Encoding {
                     }
                     break;
                 }
-                dbuf[j] = self.decode_map[c as usize];
-                if dbuf[j] == 0xFF {
+                *v = self.decode_map[c as usize];
+                if *v == 0xFF {
                     return Err(CorruptInputError::new(src, olen - src.len() - 1, written));
                 }
             }
@@ -333,7 +334,7 @@ impl Encoding {
                 written += 1;
             }
             if dlen >= 2 {
-                dst[dsti + 0] = (dbuf[0] << 3) | dbuf[1] >> 2;
+                dst[dsti] = (dbuf[0] << 3) | dbuf[1] >> 2;
                 written += 1;
             }
             dsti += 5;

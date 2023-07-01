@@ -75,10 +75,10 @@ impl Encoding {
             panic!("encoding alphabet is not 64-bytes long")
         }
 
-        if let Some(_) = encoder
+        if encoder
             .as_bytes()
             .iter()
-            .find(|&&c| c == constants::LF || c == constants::CR)
+            .any(|&c| c == constants::LF || c == constants::CR)
         {
             panic!("encoding alphabet contains newline character");
         }
@@ -119,7 +119,7 @@ impl Encoding {
     #[doc = include_str!("../examples/decode.rs")]
     /// ```
     pub fn decode(&self, dst: &mut [u8], src: &[u8]) -> Result<usize, CorruptInputError> {
-        if src.len() == 0 {
+        if src.is_empty() {
             return Ok(0);
         }
 
@@ -146,13 +146,13 @@ impl Encoding {
                     self.decode_map[src[7] as usize],
                 ) {
                     Ok(v) => {
-                        BigEndian::put_uint64(&mut dst, v);
+                        BigEndian::put_uint64(dst, v);
                         dst = &mut dst[6..];
                         src = &src[8..];
                     }
                     Err(_) => {
                         let (nr, nw) = self
-                            .decode_quantum(&mut dst, src)
+                            .decode_quantum(dst, src)
                             .map_err(|err| localize_err(err, dst.len(), src.len()))?;
                         src = &src[nr..];
                         dst = &mut dst[nw..];
@@ -169,13 +169,13 @@ impl Encoding {
                 self.decode_map[src[3] as usize],
             ) {
                 Ok(v) => {
-                    BigEndian::put_uint32(&mut dst, v);
+                    BigEndian::put_uint32(dst, v);
                     dst = &mut dst[3..];
                     src = &src[4..];
                 }
                 Err(_) => {
                     let (nr, nw) = self
-                        .decode_quantum(&mut dst, src)
+                        .decode_quantum(dst, src)
                         .map_err(|err| localize_err(err, dst.len(), src.len()))?;
                     src = &src[nr..];
                     dst = &mut dst[nw..];
@@ -184,9 +184,9 @@ impl Encoding {
         }
 
         // @dev whether 'if' is ok?
-        while src.len() > 0 {
+        while !src.is_empty() {
             let (nr, nw) = self
-                .decode_quantum(&mut dst, src)
+                .decode_quantum(dst, src)
                 .map_err(|err| localize_err(err, dst.len(), src.len()))?;
             src = &src[nr..];
             dst = &mut dst[nw..];
@@ -231,16 +231,16 @@ impl Encoding {
     #[doc =include_str!("../examples/encode.rs")]
     /// ```
     pub fn encode(&self, dst: &mut [u8], src: &[u8]) {
-        if src.len() == 0 {
+        if src.is_empty() {
             return;
         }
 
         let mut chunks = src.chunks_exact(3);
         let mut dst_idx = 0;
-        while let Some(chunk) = chunks.next() {
+        for chunk in chunks.by_ref() {
             let v = ((chunk[0] as usize) << 16) | ((chunk[1] as usize) << 8) | (chunk[2] as usize);
 
-            dst[dst_idx + 0] = self.encode[(v >> 18) & 0x3f];
+            dst[dst_idx] = self.encode[(v >> 18) & 0x3f];
             dst[dst_idx + 1] = self.encode[(v >> 12) & 0x3f];
             dst[dst_idx + 2] = self.encode[(v >> 6) & 0x3f];
             dst[dst_idx + 3] = self.encode[v & 0x3f];
@@ -254,7 +254,7 @@ impl Encoding {
             _ => return,
         };
 
-        dst[dst_idx + 0] = self.encode[(val >> 18) & 0x3f];
+        dst[dst_idx] = self.encode[(val >> 18) & 0x3f];
         dst[dst_idx + 1] = self.encode[(val >> 12) & 0x3f];
 
         match remainder.len() {
@@ -431,8 +431,8 @@ impl Encoding {
         let val = ((dbuf[0] as u32) << 18)
             | ((dbuf[1] as u32) << 12)
             | ((dbuf[2] as u32) << 6)
-            | ((dbuf[3] as u32) << 0);
-        dbuf[2] = (val >> 0) as u8;
+            | (dbuf[3] as u32);
+        dbuf[2] = val as u8;
         dbuf[1] = (val >> 8) as u8;
         dbuf[0] = (val >> 16) as u8;
 
@@ -471,12 +471,13 @@ fn assemble32(n1: u8, n2: u8, n3: u8, n4: u8) -> Result<u32, ()> {
 
     let out = ((n1 as u32) << 26) | ((n2 as u32) << 20) | ((n3 as u32) << 14) | ((n4 as u32) << 8);
 
-    return Ok(out);
+    Ok(out)
 }
 
 // Assembles 8 base64 digits into 6 bytes.
 // Each digit comes from the decode map, and will be 0xff
 // if it came from an invalid character.
+#[allow(clippy::too_many_arguments)]
 fn assemble64(n1: u8, n2: u8, n3: u8, n4: u8, n5: u8, n6: u8, n7: u8, n8: u8) -> Result<u64, ()> {
     // Check that all the digits are valid. If any of them was 0xff, their
     // bitwise OR will be 0xff.
@@ -493,5 +494,5 @@ fn assemble64(n1: u8, n2: u8, n3: u8, n4: u8, n5: u8, n6: u8, n7: u8, n8: u8) ->
         | (n7 as u64) << 22
         | (n8 as u64) << 16;
 
-    return Ok(out);
+    Ok(out)
 }
