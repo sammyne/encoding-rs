@@ -1,6 +1,6 @@
 use std::io::{Read, Write};
 
-use base32::{Decoder, Encoder, STD_ENCODING};
+use base32::{Decoder, STD_ENCODING};
 
 #[test]
 fn big() {
@@ -14,11 +14,12 @@ fn big() {
     }
 
     let mut encoded = vec![];
-    let mut w = Encoder::new(STD_ENCODING.clone(), &mut encoded);
+    let mut w = base32::new_encoder(*STD_ENCODING, &mut encoded);
     let nn = w.write(&raw).unwrap();
     assert_eq!(n, nn);
 
     w.flush().unwrap();
+    std::mem::drop(w);
 
     let mut decoded = vec![];
     Decoder::new(STD_ENCODING.clone(), encoded.as_slice())
